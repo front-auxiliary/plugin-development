@@ -1,0 +1,12 @@
+{
+  "name": "html-template",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/front-auxiliary/html-template.git",
+  "author": "andy <15711367521@163.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel serve src/index.html --no-cache  --port 80",
+    "build": " parcel build src/index.html --no-cache"
+  }
+}

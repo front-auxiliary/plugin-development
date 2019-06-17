@@ -1,0 +1,1 @@
+{"version":3,"sources":["js/index.js"],"names":["aa","console","log"],"mappings":";AAAA,SAASA,IACRC,QAAQC,IAAI","file":"js.114c3c80.js","sourceRoot":"..\\src","sourcesContent":["function aa(){\r\n console.log(\"11111111111111111\")\r\n}"]}
