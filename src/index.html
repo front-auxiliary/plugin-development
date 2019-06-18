@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,49 @@
     <title>Document</title>
 </head>
 <script src="./plugin/draw-editer/index.js"></script>
+<style>
+    body,
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .canvas {
+        width: 730px;
+        height: 1142px;
+        background: rgba(0, 0, 0, 0.5);
+        margin: auto;
+        /* transform: scale(0.7); */
+        transform-origin: left top;
+        moz-user-select: -moz-none;
+        -moz-user-select: none;
+        -o-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+</style>
+
 <body>
-    <h1>sdfdfa</h1>
+    <button id="button">点击</button>
+    <div id="canvas" class="canvas">
+
+    </div>
 </body>
 <script>
+    // document.execCommand("print",false,null)
+    window.onload = function () {
+        var canvas = document.getElementById('canvas');
+        var btn = document.getElementById('button');
+
+        var drawEditer1 = new drawEditer(canvas)
+        //  console.log(drawEditer1,"kkkkkk")
+        btn.onclick = function () {
+            drawEditer1.add('text');
+        }
+        // 
+    }
 </script>
+
 </html>
