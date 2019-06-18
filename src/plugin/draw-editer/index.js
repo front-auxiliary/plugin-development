@@ -1,3 +1,3 @@
-function aa(){
- console.log("11111111111111111")
-}
+;(function(global,doc,$,undefined){
+
+}(window,document,jQuery))

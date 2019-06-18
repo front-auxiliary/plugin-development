@@ -1,0 +1,1 @@
+{"version":3,"sources":["plugin/draw-editer/index.js"],"names":["console","log"],"mappings":"AAAA,aAAI;AACHA,EAAAA,OAAO,CAACC,GAAR,CAAY,mBAAZ;AACA,CAFD","file":"draw-editer.ec25b2a9.js","sourceRoot":"..\\src","sourcesContent":["()=>{\r\n console.log(\"11111111111111111\")\r\n}"]}
