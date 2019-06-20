@@ -8,6 +8,8 @@
     <title>Document</title>
 </head>
 <script src="/draw-editer.ec25b2a9.js"></script>
+<!-- <script src="./pdf/pdf.js"></script> -->
+<!-- <script src="./plugin/go/index.js"></script> -->
 <style>body,
     html {
         margin: 0;
@@ -15,9 +17,10 @@
     }
 
     .canvas {
-        width: 730px;
-        height: 1142px;
+        width: 413px;
+        height: 600px;
         background: rgba(0, 0, 0, 0.5);
+        /* background: #000; */
         margin: auto;
         /* transform: scale(0.7); */
         transform-origin: left top;
@@ -28,23 +31,55 @@
         -webkit-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        /* background: url(./public/1.emf); */
+        background-size: 100%;
+        background-repeat: no-repeat;
+
     }</style>
 
 <body>
-    <button id="button">点击</button>
+    <button id="button">文本</button>
+    <button id="buttonsave">save</button>
+    <!-- <button id="buttonImg">图片</button> -->
     <div id="canvas" class="canvas">
+        <!-- <img src="./public/2.svg" alt="" srcset=""> -->
 
     </div>
+    <!-- <button id="button">点击</button>
+    <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1>
+    <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1>
+    <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1>
+    <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1>
+    <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1> -->
 </body>
-<script>// document.execCommand("print",false,null)
+<script>// setTimeout()
+var dom = null;
+
 window.onload = function () {
-  var canvas = document.getElementById('canvas');
+  var canvas = document.getElementById('canvas'); // var url = './public/1.pdf';
+  // PDFJS.workerSrc = './pdf/pdf.worker.js';
+  // PDFJS.getDocument(url);
+
   var btn = document.getElementById('button');
-  var drawEditer1 = new drawEditer(canvas); //  console.log(drawEditer1,"kkkkkk")
+  var btnSave = document.getElementById('buttonsave');
+  var drawEditer1 = new drawEditer(canvas, {
+    elemClick: function elemClick(event) {
+      console.log(event);
+    },
+    elemMove: function elemMove() {},
+    elemDelete: function elemDelete() {}
+  });
+
+  btnSave.onclick = function () {
+    var data = drawEditer1.getData();
+    console.log(data, "kkkkk");
+  }; // //  console.log(drawEditer1,"kkkkkk")
+
 
   btn.onclick = function () {
-    drawEditer1.add('text');
+    drawEditer1.add('text'); // document.execCommand("print",false,null)
   }; // 
+  //绘制
 
 };</script>
 

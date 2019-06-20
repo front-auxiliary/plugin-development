@@ -187,14 +187,19 @@ function () {
     this.rightTopIcon = null;
     this.rightBottomIcon = null;
     this.leftBottomIcon = null;
+    this.elemClick = null;
+    this.canvasDetail = null;
   }
 
   _createClass(drop, [{
     key: "init",
-    value: function init(canvas) {
+    value: function init(canvas, params) {
       var _this = this;
 
       this.canvas = canvas;
+      this.canvasDetail = this.canvas.getBoundingClientRect(); // console.log(this.canvasDetail)
+
+      this.elemClick = params.elemClick;
 
       this.canvas.onmouseup = function (event) {
         _this.onmouseup(event, _this.canvas);
@@ -218,8 +223,12 @@ function () {
         display: 'inline-block',
         position: 'absolute',
         border: '1px solid #fff',
-        cursor: 'move'
-      }, elem.style); // 添加旋转图标
+        cursor: 'move',
+        transformOrigin: '50% 50%',
+        transform: 'translateX(0px) translateY(0px) rotate(0deg)'
+      }, elem.style);
+      dropDom.innerText = elem.text;
+      dropDom.className = 'box'; // 添加旋转图标
 
       dropDom.appendChild(angleDom); // 添加缩放图标
 
@@ -234,6 +243,10 @@ function () {
         event.stopPropagation();
 
         _this2.onmousedown(event, dropDom, canvas);
+
+        if (_this2.elemClick) {
+          _this2.elemClick(event);
+        }
       };
 
       return dropDom;
@@ -473,57 +486,84 @@ function () {
           rigthTopDown = null,
           rightBottomDown = null,
           leftBottomDown = null,
-          canvasDetail = this.canvas.getBoundingClientRect();
+          activeElem = null,
+          // distanceX = null,
+      // distanceY = null,
+      x = 0,
+          y = 0,
+          width = 0,
+          height = 0,
+          angle = 0,
+          canvasDetail = this.canvasDetail;
 
       if (this.dropDom) {
+        activeElem = this.dropDom;
         monusedown = this.dropDom.dataset.monusedown;
       }
 
       if (this.angleIcon) {
+        activeElem = this.angleIcon.parentNode;
         angleMonusedown = this.angleIcon.dataset.monusedown;
       }
 
       if (this.leftTopIcon) {
+        activeElem = this.leftTopIcon.parentNode;
         leftTopDown = this.leftTopIcon.dataset.monusedown;
       }
 
       if (this.rightTopIcon) {
+        activeElem = this.rightTopIcon.parentNode;
         rigthTopDown = this.rightTopIcon.dataset.monusedown;
       }
 
       if (this.rightBottomIcon) {
+        activeElem = this.rightBottomIcon.parentNode;
         rightBottomDown = this.rightBottomIcon.dataset.monusedown;
       }
 
       if (this.leftBottomIcon) {
+        activeElem = this.leftBottomIcon.parentNode;
         leftBottomDown = this.leftBottomIcon.dataset.monusedown;
       }
 
+      if (activeElem) {
+        var transform = activeElem.style.transform;
+        var transforms = transform.split(' ');
+
+        if (transform) {
+          x = transforms[0].replace('translateX(', '').replace('px)', '') + 'px';
+          y = transforms[1].replace('translateY(', '').replace('px)', '') + 'px';
+          angle = transforms[2].replace('rotate(', '').replace('deg)', ''); //  console.log(transforms[0].replace('translateX('))
+          // console.log(transforms[2],"kk")
+        } // console.log(activeElem.style)
+
+      }
+
       if (monusedown === '1') {
-        var monuseFromDomTop = +this.dropDom.dataset.mousetop,
-            monuseFromDomLeft = +this.dropDom.dataset.mouseleft,
+        var monuseFromDomTop = +activeElem.dataset.mousetop,
+            monuseFromDomLeft = +activeElem.dataset.mouseleft,
             mousePageX = evt.pageX,
-            mousePageY = evt.pageY;
-        this.dropDom.style.left = mousePageX - canvasDetail.left - monuseFromDomLeft + 'px';
-        this.dropDom.style.top = mousePageY - canvasDetail.top - monuseFromDomTop + 'px';
+            mousePageY = evt.pageY; // this.dropDom.style.transform = `trs`
+
+        x = mousePageX - canvasDetail.left - monuseFromDomLeft + 'px';
+        y = mousePageY - canvasDetail.top - monuseFromDomTop + 'px'; // this.dropDom.style.left = mousePageX - canvasDetail.left - monuseFromDomLeft + 'px';
+        // this.dropDom.style.top = mousePageY - canvasDetail.top - monuseFromDomTop + 'px';
       }
 
       if (angleMonusedown === '1') {
-        var parentNode = this.angleIcon.parentNode;
-        var parentNodeDetail = parentNode.getBoundingClientRect();
+        var parentNodeDetail = activeElem.getBoundingClientRect();
         var centerPage = {
           x: parentNodeDetail.x + parentNodeDetail.width / 2,
           y: parentNodeDetail.y + parentNodeDetail.height / 2
         };
-        var angle = this.getAngle(centerPage, {
+        angle = this.getAngle(centerPage, {
           x: evt.pageX,
           y: evt.pageY
-        });
-        parentNode.style.transform = "rotate(".concat(angle, "deg)");
+        }); // parentNode.style.transform = `rotate(${angle}deg)`
       }
 
       if (leftTopDown === '1') {
-        var _parentNode = this.leftTopIcon.parentNode;
+        activeElem = this.leftTopIcon.parentNode;
 
         var _parentNodeDetail = JSON.parse(this.leftTopIcon.dataset.parentdetail);
 
@@ -532,21 +572,21 @@ function () {
 
         if (distanceX > distanceY) {
           distanceY = distanceX * _parentNodeDetail.height / _parentNodeDetail.width;
-          _parentNode.style.width = distanceX + _parentNodeDetail.width + 'px';
-          _parentNode.style.height = distanceY + _parentNodeDetail.height + 'px';
-          _parentNode.style.left = _parentNodeDetail.x - distanceX - canvasDetail.x + 'px';
-          _parentNode.style.top = _parentNodeDetail.y - distanceY - canvasDetail.y + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
+          width = distanceX + _parentNodeDetail.width + 'px';
+          height = distanceY + _parentNodeDetail.height + 'px';
+          x = _parentNodeDetail.x - distanceX - canvasDetail.x + 'px';
+          y = _parentNodeDetail.y - distanceY - canvasDetail.y + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
         } else {
           distanceX = distanceY * _parentNodeDetail.width / _parentNodeDetail.height;
-          _parentNode.style.width = distanceX + _parentNodeDetail.width + 'px';
-          _parentNode.style.height = distanceY + _parentNodeDetail.height + 'px';
-          _parentNode.style.left = _parentNodeDetail.x - distanceX - canvasDetail.x + 'px';
-          _parentNode.style.top = _parentNodeDetail.y - distanceY - canvasDetail.y + 'px';
+          width = distanceX + _parentNodeDetail.width + 'px';
+          height = distanceY + _parentNodeDetail.height + 'px';
+          x = _parentNodeDetail.x - distanceX - canvasDetail.x + 'px';
+          y = _parentNodeDetail.y - distanceY - canvasDetail.y + 'px';
         }
       }
 
       if (rigthTopDown === '1') {
-        var _parentNode2 = this.rightTopIcon.parentNode;
+        activeElem = this.rightTopIcon.parentNode;
 
         var _parentNodeDetail2 = JSON.parse(this.rightTopIcon.dataset.parentdetail);
 
@@ -556,21 +596,21 @@ function () {
 
         if (_distanceX > _distanceY) {
           _distanceY = _distanceX * _parentNodeDetail2.height / _parentNodeDetail2.width;
-          _parentNode2.style.width = _distanceX + _parentNodeDetail2.width + 'px';
-          _parentNode2.style.height = _distanceY + _parentNodeDetail2.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
+          width = _distanceX + _parentNodeDetail2.width + 'px';
+          height = _distanceY + _parentNodeDetail2.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
 
-          _parentNode2.style.top = _parentNodeDetail2.y - _distanceY - canvasDetail.y + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
+          y = _parentNodeDetail2.y - _distanceY - canvasDetail.y + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
         } else {
           _distanceX = _distanceY * _parentNodeDetail2.width / _parentNodeDetail2.height;
-          _parentNode2.style.width = _distanceX + _parentNodeDetail2.width + 'px';
-          _parentNode2.style.height = _distanceY + _parentNodeDetail2.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
+          width = _distanceX + _parentNodeDetail2.width + 'px';
+          height = _distanceY + _parentNodeDetail2.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
 
-          _parentNode2.style.top = _parentNodeDetail2.y - _distanceY - canvasDetail.y + 'px';
+          y = _parentNodeDetail2.y - _distanceY - canvasDetail.y + 'px';
         }
       }
 
       if (rightBottomDown == '1') {
-        var _parentNode3 = this.rightBottomIcon.parentNode;
+        activeElem = this.rightBottomIcon.parentNode;
 
         var _parentNodeDetail3 = JSON.parse(this.rightBottomIcon.dataset.parentdetail);
 
@@ -580,20 +620,20 @@ function () {
 
         if (_distanceX2 > _distanceY2) {
           _distanceY2 = _distanceX2 * _parentNodeDetail3.height / _parentNodeDetail3.width;
-          _parentNode3.style.width = _distanceX2 + _parentNodeDetail3.width + 'px';
-          _parentNode3.style.height = _distanceY2 + _parentNodeDetail3.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
+          width = _distanceX2 + _parentNodeDetail3.width + 'px';
+          height = _distanceY2 + _parentNodeDetail3.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
           // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
           // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
         } else {
           _distanceX2 = _distanceY2 * _parentNodeDetail3.width / _parentNodeDetail3.height;
-          _parentNode3.style.width = _distanceX2 + _parentNodeDetail3.width + 'px';
-          _parentNode3.style.height = _distanceY2 + _parentNodeDetail3.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
+          width = _distanceX2 + _parentNodeDetail3.width + 'px';
+          height = _distanceY2 + _parentNodeDetail3.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
           // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
         }
       }
 
       if (leftBottomDown == '1') {
-        var _parentNode4 = this.leftBottomIcon.parentNode;
+        activeElem = this.leftBottomIcon.parentNode;
 
         var _parentNodeDetail4 = JSON.parse(this.leftBottomIcon.dataset.parentdetail);
 
@@ -603,16 +643,28 @@ function () {
 
         if (_distanceX3 > _distanceY3) {
           _distanceY3 = _distanceX3 * _parentNodeDetail4.height / _parentNodeDetail4.width;
-          _parentNode4.style.width = _distanceX3 + _parentNodeDetail4.width + 'px';
-          _parentNode4.style.height = _distanceY3 + _parentNodeDetail4.height + 'px';
-          _parentNode4.style.left = _parentNodeDetail4.x - _distanceX3 - canvasDetail.x + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
+          width = _distanceX3 + _parentNodeDetail4.width + 'px';
+          height = _distanceY3 + _parentNodeDetail4.height + 'px';
+          x = _parentNodeDetail4.x - _distanceX3 - canvasDetail.x + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
           // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
         } else {
           _distanceX3 = _distanceY3 * _parentNodeDetail4.width / _parentNodeDetail4.height;
-          _parentNode4.style.width = _distanceX3 + _parentNodeDetail4.width + 'px';
-          _parentNode4.style.height = _distanceY3 + _parentNodeDetail4.height + 'px';
-          _parentNode4.style.left = _parentNodeDetail4.x - _distanceX3 - canvasDetail.x + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
+          width = _distanceX3 + _parentNodeDetail4.width + 'px';
+          height = _distanceY3 + _parentNodeDetail4.height + 'px';
+          x = _parentNodeDetail4.x - _distanceX3 - canvasDetail.x + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
         }
+      }
+
+      if (width) {
+        activeElem.style.width = width;
+      }
+
+      if (height) {
+        activeElem.style.height = height;
+      }
+
+      if (activeElem) {
+        activeElem.style.transform = "translateX(".concat(x, ") translateY(").concat(y, ") rotate(").concat(angle, "deg) "); // console.log(angle,"jjjjj",y)
       }
     }
   }, {
@@ -647,21 +699,44 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var drawEditer =
 /*#__PURE__*/
 function () {
-  function drawEditer(canvas) {
+  function drawEditer(canvas, params) {
     _classCallCheck(this, drawEditer);
 
     this.canvas = canvas;
     this.canvas.style.position = 'relative';
     this.elements = [];
     this.id = 0;
+    console.log(params, "kjjj");
 
-    _drop.default.init(canvas); // return this;
+    _drop.default.init(canvas, params); // return this;
 
   }
 
   _createClass(drawEditer, [{
     key: "create",
     value: function create() {}
+  }, {
+    key: "getData",
+    value: function getData() {
+      var arr = [];
+      var doms = this.canvas.querySelectorAll('.box');
+      console.log(doms, "kkkkk");
+
+      for (var key in doms) {
+        var style = doms[key].style;
+        console.log(style, "kkkk"); // arr.push({
+        // })
+      } // doms.map((item,index)=>{
+      //   let style = item.style;
+      //   console.log(style,"kkkk")
+      // })
+
+    }
+  }, {
+    key: "elemClick",
+    value: function elemClick(callback) {
+      _drop.default.elemClick(callback);
+    }
   }, {
     key: "add",
     value: function add(type) {
@@ -670,13 +745,11 @@ function () {
       this.canvas.appendChild(_drop.default.create({
         name: type + this.id,
         id: this.id,
-        text: '',
+        text: '是的发送到',
         url: '',
         style: {
           width: 80 + 'px',
           height: 100 + 'px',
-          left: '50%',
-          top: '40%',
           angle: 0,
           color: '#000',
           fontSize: 14
@@ -757,7 +830,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56024" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51719" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

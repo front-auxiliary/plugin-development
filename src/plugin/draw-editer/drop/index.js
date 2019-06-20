@@ -8,9 +8,14 @@ class drop {
     this.rightTopIcon = null;
     this.rightBottomIcon = null;
     this.leftBottomIcon = null;
+    this.elemClick = null;
+    this.canvasDetail = null;
   }
-  init(canvas) {
+  init(canvas,params) {
     this.canvas = canvas;
+    this.canvasDetail= this.canvas.getBoundingClientRect();
+    // console.log(this.canvasDetail)
+    this.elemClick = params.elemClick;
     this.canvas.onmouseup = (event) => {
       this.onmouseup(event, this.canvas)
     }
@@ -30,7 +35,11 @@ class drop {
       position: 'absolute',
       border: '1px solid #fff',
       cursor: 'move',
+      transformOrigin:'50% 50%',
+      transform:'translateX(0px) translateY(0px) rotate(0deg)'
     }, elem.style);
+    dropDom.innerText = elem.text;
+    dropDom.className = 'box';
     // 添加旋转图标
     dropDom.appendChild(angleDom);
     // 添加缩放图标
@@ -44,9 +53,15 @@ class drop {
     dropDom.onmousedown = (event) => {
       event.stopPropagation();
       this.onmousedown(event, dropDom, canvas)
+      if(this.elemClick){
+        this.elemClick(event)
+      }
+     
+
     }
     return dropDom;
   }
+  
   // 生成
   createZoom() {
     // let zoomDoms = [];
@@ -236,125 +251,172 @@ class drop {
       rigthTopDown = null,
       rightBottomDown = null,
       leftBottomDown = null,
-      canvasDetail= this.canvas.getBoundingClientRect();
+      activeElem = null,
+      // distanceX = null,
+      // distanceY = null,
+      x = 0,
+      y=0,
+      width = 0,
+      height = 0,
+      angle = 0,
+      canvasDetail= this.canvasDetail;
     if (this.dropDom) {
+      activeElem = this.dropDom;
       monusedown = this.dropDom.dataset.monusedown;
     }
     if (this.angleIcon) {
+      activeElem = this.angleIcon.parentNode;
       angleMonusedown = this.angleIcon.dataset.monusedown;
     }
     if(this.leftTopIcon){
+      activeElem = this.leftTopIcon.parentNode;
       leftTopDown = this.leftTopIcon.dataset.monusedown;
     }
     if(this.rightTopIcon){
+      activeElem = this.rightTopIcon.parentNode;
       rigthTopDown = this.rightTopIcon.dataset.monusedown;
     }
     if(this.rightBottomIcon){
+      activeElem = this.rightBottomIcon.parentNode;
       rightBottomDown = this.rightBottomIcon.dataset.monusedown;
     }
     if(this.leftBottomIcon){
+      activeElem = this.leftBottomIcon.parentNode;
       leftBottomDown = this.leftBottomIcon.dataset.monusedown;
     }
+    if(activeElem){
+      let transform =  activeElem.style.transform;
+      let transforms = transform.split(' ')
+      if(transform){
+        x = transforms[0].replace('translateX(','').replace('px)','') +'px';
+        y = transforms[1].replace('translateY(','').replace('px)','')+'px';
+       angle = transforms[2].replace('rotate(','').replace('deg)','');
+      //  console.log(transforms[0].replace('translateX('))
+      // console.log(transforms[2],"kk")
+      }
+      // console.log(activeElem.style)
+    }
+    
    
     if (monusedown === '1') {
-      let  monuseFromDomTop = +this.dropDom.dataset.mousetop,
-        monuseFromDomLeft = +this.dropDom.dataset.mouseleft,
+      let  monuseFromDomTop = +activeElem.dataset.mousetop,
+        monuseFromDomLeft = +activeElem.dataset.mouseleft,
         mousePageX = evt.pageX,
         mousePageY = evt.pageY;
-      this.dropDom.style.left = mousePageX - canvasDetail.left - monuseFromDomLeft + 'px';
-      this.dropDom.style.top = mousePageY - canvasDetail.top - monuseFromDomTop + 'px';
+        // this.dropDom.style.transform = `trs`
+        x = mousePageX - canvasDetail.left - monuseFromDomLeft   + 'px'
+        y = mousePageY - canvasDetail.top - monuseFromDomTop + 'px'
+
+      // this.dropDom.style.left = mousePageX - canvasDetail.left - monuseFromDomLeft + 'px';
+      // this.dropDom.style.top = mousePageY - canvasDetail.top - monuseFromDomTop + 'px';
     }
 
     if (angleMonusedown === '1') {
-      const parentNode = this.angleIcon.parentNode;
-      const parentNodeDetail = parentNode.getBoundingClientRect();
+     
+      const parentNodeDetail = activeElem.getBoundingClientRect();
       const centerPage = {
         x: parentNodeDetail.x + parentNodeDetail.width / 2,
         y: parentNodeDetail.y + parentNodeDetail.height / 2,
       }
-      const angle = this.getAngle(centerPage, { x: evt.pageX, y: evt.pageY });
-      parentNode.style.transform = `rotate(${angle}deg)`
+      angle = this.getAngle(centerPage, { x: evt.pageX, y: evt.pageY });
+      // parentNode.style.transform = `rotate(${angle}deg)`
     }
     if(leftTopDown === '1'){
-      const parentNode = this.leftTopIcon.parentNode;
+      activeElem = this.leftTopIcon.parentNode;
       const parentNodeDetail =JSON.parse(this.leftTopIcon.dataset.parentdetail);
       let distanceX = parentNodeDetail.x - evt.pageX; 
       let distanceY = parentNodeDetail.y - evt.pageY; 
       if(distanceX>distanceY){
         distanceY =  distanceX*parentNodeDetail.height/parentNodeDetail.width
-        parentNode.style.width = distanceX+parentNodeDetail.width+'px';
-        parentNode.style.height = distanceY+parentNodeDetail.height+'px'
-        parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
-        parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
+        
+        width = distanceX+parentNodeDetail.width+'px';
+        height = distanceY+parentNodeDetail.height+'px'
+        x = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
+        y = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
         // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
       }else{
         distanceX =  distanceY*parentNodeDetail.width/parentNodeDetail.height
-        parentNode.style.width = distanceX+parentNodeDetail.width+'px';
-        parentNode.style.height = distanceY+parentNodeDetail.height+'px'
-        parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
-        parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
+        width = distanceX+parentNodeDetail.width+'px';
+        height = distanceY+parentNodeDetail.height+'px'
+        x = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
+        y = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
       } 
     }
     if(rigthTopDown === '1'){
-      const parentNode = this.rightTopIcon.parentNode;
+      activeElem = this.rightTopIcon.parentNode;
       const parentNodeDetail =JSON.parse(this.rightTopIcon.dataset.parentdetail);
       let distanceX = evt.pageX - parentNodeDetail.right ; 
       let distanceY = parentNodeDetail.y - evt.pageY; 
       if(distanceX>distanceY){
         distanceY =  distanceX*parentNodeDetail.height/parentNodeDetail.width
-        parentNode.style.width = distanceX+parentNodeDetail.width+'px';
-        parentNode.style.height = distanceY+parentNodeDetail.height+'px'
+        width = distanceX+parentNodeDetail.width+'px';
+        height = distanceY+parentNodeDetail.height+'px'
         // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
-        parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
+        y = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
         // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
       }else{
         distanceX =  distanceY*parentNodeDetail.width/parentNodeDetail.height
-        parentNode.style.width = distanceX+parentNodeDetail.width+'px';
-        parentNode.style.height = distanceY+parentNodeDetail.height+'px'
+        width = distanceX+parentNodeDetail.width+'px';
+        height = distanceY+parentNodeDetail.height+'px'
         // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
-        parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
+        y = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
       } 
     }
     if(rightBottomDown == '1'){
-      const parentNode = this.rightBottomIcon.parentNode;
+      activeElem = this.rightBottomIcon.parentNode;
       const parentNodeDetail =JSON.parse(this.rightBottomIcon.dataset.parentdetail);
       let distanceX = evt.pageX - parentNodeDetail.right; 
       let distanceY = evt.pageY - parentNodeDetail.bottom; 
       if(distanceX>distanceY){
         distanceY =  distanceX*parentNodeDetail.height/parentNodeDetail.width;
-        parentNode.style.width = distanceX+parentNodeDetail.width+'px';
-        parentNode.style.height = distanceY+parentNodeDetail.height+'px'
+        width = distanceX+parentNodeDetail.width+'px';
+        height = distanceY+parentNodeDetail.height+'px'
         // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
         // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
         // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
       }else{
         distanceX =  distanceY*parentNodeDetail.width/parentNodeDetail.height;
-        parentNode.style.width = distanceX+parentNodeDetail.width+'px';
-        parentNode.style.height = distanceY+parentNodeDetail.height+'px'
+        width = distanceX+parentNodeDetail.width+'px';
+        height = distanceY+parentNodeDetail.height+'px'
         // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
         // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
       } 
     }
     if(leftBottomDown == '1'){
-      const parentNode = this.leftBottomIcon.parentNode;
+      activeElem = this.leftBottomIcon.parentNode;
       const parentNodeDetail =JSON.parse(this.leftBottomIcon.dataset.parentdetail);
       let distanceX =  parentNodeDetail.left - evt.pageX; 
       let distanceY = evt.pageY - parentNodeDetail.bottom; 
       if(distanceX>distanceY){
         distanceY =  distanceX*parentNodeDetail.height/parentNodeDetail.width;
-        parentNode.style.width = distanceX+parentNodeDetail.width+'px';
-        parentNode.style.height = distanceY+parentNodeDetail.height+'px'
-        parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
+        width = distanceX+parentNodeDetail.width+'px';
+        height = distanceY+parentNodeDetail.height+'px'
+        x = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
         // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
         // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
       }else{
         distanceX =  distanceY*parentNodeDetail.width/parentNodeDetail.height;
-        parentNode.style.width = distanceX+parentNodeDetail.width+'px';
-        parentNode.style.height = distanceY+parentNodeDetail.height+'px'
-        parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
+        width = distanceX+parentNodeDetail.width+'px';
+        height = distanceY+parentNodeDetail.height+'px'
+        x = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
         // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
       } 
     }
+    if(width){
+      activeElem.style.width = width;
+    }
+    if(height){
+      activeElem.style.height = height;
+    }
+    
+    if(activeElem){
+      
+      activeElem.style.transform = `translateX(${x}) translateY(${y}) rotate(${angle}deg) `;
+      // console.log(angle,"jjjjj",y)
+    }
+    
+
+
   }
   deleteDrop() {
 

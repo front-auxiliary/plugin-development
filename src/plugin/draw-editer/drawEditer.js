@@ -1,15 +1,37 @@
 import drop from './drop'
 export default class drawEditer {
-  constructor(canvas) {
+  constructor(canvas,params) {
+
     this.canvas = canvas;
     this.canvas.style.position = 'relative';
     this.elements = [];
     this.id = 0;
-    drop.init(canvas)
+    console.log(params,"kjjj")
+    drop.init(canvas,params)
     // return this;
   }
   create(){
 
+  }
+  getData(){
+    var arr = [];
+    var doms = this.canvas.querySelectorAll('.box')
+    console.log(doms,"kkkkk")
+    for(let key in doms){
+      let style = doms[key].style;
+      console.log(style,"kkkk")
+      // arr.push({
+
+      // })
+    }
+    // doms.map((item,index)=>{
+    //   let style = item.style;
+    //   console.log(style,"kkkk")
+    // })
+    
+  }
+  elemClick(callback){
+    drop.elemClick(callback)
   }
   add (type){
     this.id++;
@@ -17,13 +39,11 @@ export default class drawEditer {
     this.canvas.appendChild(drop.create({
       name:type+this.id,
       id:this.id,
-      text:'',
+      text:'是的发送到',
       url:'',
       style:{
         width:80+'px',
         height:100+'px',
-        left:'50%',
-        top:'40%',
         angle:0,
         color:'#000',
         fontSize:14,
