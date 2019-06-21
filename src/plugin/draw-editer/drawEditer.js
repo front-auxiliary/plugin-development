@@ -42,9 +42,11 @@ export default class drawEditer {
       text:'是的发送到',
       url:'',
       style:{
-        width:80+'px',
-        height:100+'px',
+        width:50+'px',
+        height:400+'px',
         angle:0,
+        top:0,
+        left:0,
         color:'#000',
         fontSize:14,
       }

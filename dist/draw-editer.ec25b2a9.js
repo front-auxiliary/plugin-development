@@ -201,11 +201,11 @@ function () {
 
       this.elemClick = params.elemClick;
 
-      this.canvas.onmouseup = function (event) {
+      document.onmouseup = function (event) {
         _this.onmouseup(event, _this.canvas);
       };
 
-      this.canvas.onmousemove = function (event) {
+      document.onmousemove = function (event) {
         _this.onmousemove(event, _this.canvas);
       };
     }
@@ -224,8 +224,8 @@ function () {
         position: 'absolute',
         border: '1px solid #fff',
         cursor: 'move',
-        transformOrigin: '50% 50%',
-        transform: 'translateX(0px) translateY(0px) rotate(0deg)'
+        transformOrigin: 'center',
+        transform: 'translateX(-50%) translateY(-50%) rotate(0deg)'
       }, elem.style);
       dropDom.innerText = elem.text;
       dropDom.className = 'box'; // 添加旋转图标
@@ -430,8 +430,10 @@ function () {
           mousePageX = evt.pageX,
           mousePageY = evt.pageY;
       dom.dataset.monusedown = 1;
-      dom.dataset.mouseleft = mousePageX - domDetail.x;
-      dom.dataset.mousetop = mousePageY - domDetail.y;
+      var top = dom.style.top.replace('px', '');
+      var left = dom.style.left.replace('px', '');
+      dom.dataset.mouseleft = mousePageX - left - this.canvasDetail.left;
+      dom.dataset.mousetop = mousePageY - top - this.canvasDetail.top;
       this.dropDom = dom;
     } // 获取角度
 
@@ -479,7 +481,7 @@ function () {
     }
   }, {
     key: "onmousemove",
-    value: function onmousemove(evt, canvas) {
+    value: function onmousemove(evt) {
       var monusedown = null,
           angleMonusedown = null,
           leftTopDown = null,
@@ -487,9 +489,7 @@ function () {
           rightBottomDown = null,
           leftBottomDown = null,
           activeElem = null,
-          // distanceX = null,
-      // distanceY = null,
-      x = 0,
+          x = 0,
           y = 0,
           width = 0,
           height = 0,
@@ -531,23 +531,21 @@ function () {
         var transforms = transform.split(' ');
 
         if (transform) {
-          x = transforms[0].replace('translateX(', '').replace('px)', '') + 'px';
-          y = transforms[1].replace('translateY(', '').replace('px)', '') + 'px';
-          angle = transforms[2].replace('rotate(', '').replace('deg)', ''); //  console.log(transforms[0].replace('translateX('))
-          // console.log(transforms[2],"kk")
-        } // console.log(activeElem.style)
-
+          width = activeElem.style.width;
+          height = activeElem.style.height;
+          x = transforms[0].replace('translateX(', '').replace('px)', '');
+          y = transforms[1].replace('translateY(', '').replace('px)', '');
+          angle = transforms[2].replace('rotate(', '').replace('deg)', '');
+        }
       }
 
       if (monusedown === '1') {
         var monuseFromDomTop = +activeElem.dataset.mousetop,
             monuseFromDomLeft = +activeElem.dataset.mouseleft,
             mousePageX = evt.pageX,
-            mousePageY = evt.pageY; // this.dropDom.style.transform = `trs`
-
-        x = mousePageX - canvasDetail.left - monuseFromDomLeft + 'px';
-        y = mousePageY - canvasDetail.top - monuseFromDomTop + 'px'; // this.dropDom.style.left = mousePageX - canvasDetail.left - monuseFromDomLeft + 'px';
-        // this.dropDom.style.top = mousePageY - canvasDetail.top - monuseFromDomTop + 'px';
+            mousePageY = evt.pageY;
+        x = mousePageX - canvasDetail.left - monuseFromDomLeft;
+        y = mousePageY - canvasDetail.top - monuseFromDomTop;
       }
 
       if (angleMonusedown === '1') {
@@ -559,11 +557,17 @@ function () {
         angle = this.getAngle(centerPage, {
           x: evt.pageX,
           y: evt.pageY
-        }); // parentNode.style.transform = `rotate(${angle}deg)`
+        });
       }
 
       if (leftTopDown === '1') {
         activeElem = this.leftTopIcon.parentNode;
+        var left = activeElem.style.left.replace('px', '');
+        var top = activeElem.style.top.replace('px', '');
+        var orgin = {
+          x: this.canvasDetail + left,
+          y: this.canvasDetail.top
+        };
 
         var _parentNodeDetail = JSON.parse(this.leftTopIcon.dataset.parentdetail);
 
@@ -572,17 +576,14 @@ function () {
 
         if (distanceX > distanceY) {
           distanceY = distanceX * _parentNodeDetail.height / _parentNodeDetail.width;
-          width = distanceX + _parentNodeDetail.width + 'px';
-          height = distanceY + _parentNodeDetail.height + 'px';
-          x = _parentNodeDetail.x - distanceX - canvasDetail.x + 'px';
-          y = _parentNodeDetail.y - distanceY - canvasDetail.y + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
         } else {
           distanceX = distanceY * _parentNodeDetail.width / _parentNodeDetail.height;
-          width = distanceX + _parentNodeDetail.width + 'px';
-          height = distanceY + _parentNodeDetail.height + 'px';
-          x = _parentNodeDetail.x - distanceX - canvasDetail.x + 'px';
-          y = _parentNodeDetail.y - distanceY - canvasDetail.y + 'px';
         }
+
+        width = distanceX + _parentNodeDetail.width + 'px';
+        height = distanceY + _parentNodeDetail.height + 'px';
+        x = _parentNodeDetail.x - distanceX - canvasDetail.x;
+        y = _parentNodeDetail.y - distanceY - canvasDetail.y;
       }
 
       if (rigthTopDown === '1') {
@@ -596,17 +597,13 @@ function () {
 
         if (_distanceX > _distanceY) {
           _distanceY = _distanceX * _parentNodeDetail2.height / _parentNodeDetail2.width;
-          width = _distanceX + _parentNodeDetail2.width + 'px';
-          height = _distanceY + _parentNodeDetail2.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
-
-          y = _parentNodeDetail2.y - _distanceY - canvasDetail.y + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
         } else {
           _distanceX = _distanceY * _parentNodeDetail2.width / _parentNodeDetail2.height;
-          width = _distanceX + _parentNodeDetail2.width + 'px';
-          height = _distanceY + _parentNodeDetail2.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
-
-          y = _parentNodeDetail2.y - _distanceY - canvasDetail.y + 'px';
         }
+
+        width = _distanceX + _parentNodeDetail2.width + 'px';
+        height = _distanceY + _parentNodeDetail2.height + 'px';
+        y = _parentNodeDetail2.y - _distanceY - canvasDetail.y;
       }
 
       if (rightBottomDown == '1') {
@@ -620,16 +617,12 @@ function () {
 
         if (_distanceX2 > _distanceY2) {
           _distanceY2 = _distanceX2 * _parentNodeDetail3.height / _parentNodeDetail3.width;
-          width = _distanceX2 + _parentNodeDetail3.width + 'px';
-          height = _distanceY2 + _parentNodeDetail3.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
-          // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
-          // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
         } else {
           _distanceX2 = _distanceY2 * _parentNodeDetail3.width / _parentNodeDetail3.height;
-          width = _distanceX2 + _parentNodeDetail3.width + 'px';
-          height = _distanceY2 + _parentNodeDetail3.height + 'px'; // parentNode.style.left = parentNodeDetail.x - distanceX -canvasDetail.x + 'px';
-          // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
         }
+
+        width = _distanceX2 + _parentNodeDetail3.width + 'px';
+        height = _distanceY2 + _parentNodeDetail3.height + 'px';
       }
 
       if (leftBottomDown == '1') {
@@ -643,28 +636,21 @@ function () {
 
         if (_distanceX3 > _distanceY3) {
           _distanceY3 = _distanceX3 * _parentNodeDetail4.height / _parentNodeDetail4.width;
-          width = _distanceX3 + _parentNodeDetail4.width + 'px';
-          height = _distanceY3 + _parentNodeDetail4.height + 'px';
-          x = _parentNodeDetail4.x - _distanceX3 - canvasDetail.x + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
-          // parentNode.style.top = parentNodeDetail.y - distanceY + 'px';
         } else {
           _distanceX3 = _distanceY3 * _parentNodeDetail4.width / _parentNodeDetail4.height;
-          width = _distanceX3 + _parentNodeDetail4.width + 'px';
-          height = _distanceY3 + _parentNodeDetail4.height + 'px';
-          x = _parentNodeDetail4.x - _distanceX3 - canvasDetail.x + 'px'; // parentNode.style.top = parentNodeDetail.y - distanceY -canvasDetail.y + 'px';
         }
-      }
 
-      if (width) {
-        activeElem.style.width = width;
-      }
-
-      if (height) {
-        activeElem.style.height = height;
+        width = _distanceX3 + _parentNodeDetail4.width + 'px';
+        height = _distanceY3 + _parentNodeDetail4.height + 'px';
+        x = _parentNodeDetail4.x - _distanceX3 - canvasDetail.x;
       }
 
       if (activeElem) {
-        activeElem.style.transform = "translateX(".concat(x, ") translateY(").concat(y, ") rotate(").concat(angle, "deg) "); // console.log(angle,"jjjjj",y)
+        activeElem.style.transform = "translateX(-50%) translateY(-50%) rotate(".concat(angle, "deg) ");
+        activeElem.style.top = y + 'px';
+        activeElem.style.left = x + 'px';
+        activeElem.style.width = width;
+        activeElem.style.height = height;
       }
     }
   }, {
@@ -748,9 +734,11 @@ function () {
         text: '是的发送到',
         url: '',
         style: {
-          width: 80 + 'px',
-          height: 100 + 'px',
+          width: 50 + 'px',
+          height: 400 + 'px',
           angle: 0,
+          top: 0,
+          left: 0,
           color: '#000',
           fontSize: 14
         }
@@ -830,7 +818,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51719" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64797" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
