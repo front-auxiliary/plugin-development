@@ -8,6 +8,7 @@
     <title>Document</title>
 </head>
 <script src="./plugin/draw-editer/index.js"></script>
+<script src="./plugin/image-slicer/index.js"></script>
 <style>
     body,
     html {
@@ -30,6 +31,10 @@
         -ms-user-select: none;
         user-select: none;
     }
+    #img{
+        width: 200px;
+        height: 200px;
+    }
 </style>
 
 <body>
@@ -37,6 +42,7 @@
     <div id="canvas" class="canvas">
 
     </div>
+    <img id= 'img' src="./img/a.png" alt="">
 </body>
 <script>
     // document.execCommand("print",false,null)
