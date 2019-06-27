@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.1/cropper.js"></script>
+ 
+    <title>Document</title>
+</head>
+<script src="./plugin/image-slicer/index.js"></script>
+<style>
+    body,
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .canvas {
+        width: 730px;
+        height: 1142px;
+        background: rgba(0, 0, 0, 0.5);
+        margin: auto;
+        /* transform: scale(0.7); */
+        transform-origin: left top;
+        moz-user-select: -moz-none;
+        -moz-user-select: none;
+        -o-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    #img{
+        width: 200px;
+        height: 200px;
+    }
+</style>
+
+<body>
+    <button id="button">点击</button>
+    <div id="canvas" class="canvas">
+
+    </div>
+    <img id= 'img' src="./public/a.png" alt="">
+</body>
+<script>
+    // document.execCommand("print",false,null)
+    window.onload = function () {
+        var canvas = document.getElementById('canvas');
+        var btn = document.getElementById('button');
+        var img = document.getElementById('img');
+        //  console.log(drawEditer1,"kkkkkk")
+        var slicer2 = new slicer(canvas)
+        btn.onclick = function () {
+            slicer2.add(img);
+        }
+        // 
+    }
+</script>
+
+</html>
