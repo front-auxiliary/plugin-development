@@ -1,164 +1,3 @@
-// modules are defined as an array
-// [ module function, map of requires ]
-//
-// map of requires is short require name -> numeric require
-//
-// anything defined in a previous bundle is accessed via the
-// orig method which is the require for previous bundles
-parcelRequire = (function (modules, cache, entry, globalName) {
-  // Save the require from previous bundle to this closure if any
-  var previousRequire = typeof parcelRequire === 'function' && parcelRequire;
-  var nodeRequire = typeof require === 'function' && require;
-
-  function newRequire(name, jumped) {
-    if (!cache[name]) {
-      if (!modules[name]) {
-        // if we cannot find the module within our internal map or
-        // cache jump to the current global require ie. the last bundle
-        // that was added to the page.
-        var currentRequire = typeof parcelRequire === 'function' && parcelRequire;
-        if (!jumped && currentRequire) {
-          return currentRequire(name, true);
-        }
-
-        // If there are other bundles on this page the require from the
-        // previous one is saved to 'previousRequire'. Repeat this as
-        // many times as there are bundles until the module is found or
-        // we exhaust the require chain.
-        if (previousRequire) {
-          return previousRequire(name, true);
-        }
-
-        // Try the node require function if it exists.
-        if (nodeRequire && typeof name === 'string') {
-          return nodeRequire(name);
-        }
-
-        var err = new Error('Cannot find module \'' + name + '\'');
-        err.code = 'MODULE_NOT_FOUND';
-        throw err;
-      }
-
-      localRequire.resolve = resolve;
-      localRequire.cache = {};
-
-      var module = cache[name] = new newRequire.Module(name);
-
-      modules[name][0].call(module.exports, localRequire, module, module.exports, this);
-    }
-
-    return cache[name].exports;
-
-    function localRequire(x){
-      return newRequire(localRequire.resolve(x));
-    }
-
-    function resolve(x){
-      return modules[name][1][x] || x;
-    }
-  }
-
-  function Module(moduleName) {
-    this.id = moduleName;
-    this.bundle = newRequire;
-    this.exports = {};
-  }
-
-  newRequire.isParcelRequire = true;
-  newRequire.Module = Module;
-  newRequire.modules = modules;
-  newRequire.cache = cache;
-  newRequire.parent = previousRequire;
-  newRequire.register = function (id, exports) {
-    modules[id] = [function (require, module) {
-      module.exports = exports;
-    }, {}];
-  };
-
-  var error;
-  for (var i = 0; i < entry.length; i++) {
-    try {
-      newRequire(entry[i]);
-    } catch (e) {
-      // Save first error but execute all entries
-      if (!error) {
-        error = e;
-      }
-    }
-  }
-
-  if (entry.length) {
-    // Expose entry point to Node, AMD or browser globals
-    // Based on https://github.com/ForbesLindesay/umd/blob/master/template.js
-    var mainExports = newRequire(entry[entry.length - 1]);
-
-    // CommonJS
-    if (typeof exports === "object" && typeof module !== "undefined") {
-      module.exports = mainExports;
-
-    // RequireJS
-    } else if (typeof define === "function" && define.amd) {
-     define(function () {
-       return mainExports;
-     });
-
-    // <script>
-    } else if (globalName) {
-      this[globalName] = mainExports;
-    }
-  }
-
-  // Override the current require with this new one
-  parcelRequire = newRequire;
-
-  if (error) {
-    // throw error from earlier, _after updating parcelRequire_
-    throw error;
-  }
-
-  return newRequire;
-})({"utils/dom/setStyle.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _default(dom, styles) {
-  var newDom = _objectSpread({}, dom);
-
-  if (_typeof(styles) == 'object') {
-    for (var key in styles) {
-      newDom[key] = styles[key];
-    }
-  }
-
-  return newDom;
-}
-},{}],"utils/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "setStyle", {
-  enumerable: true,
-  get: function () {
-    return _setStyle.default;
-  }
-});
-
-var _setStyle = _interopRequireDefault(require("./dom/setStyle"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./dom/setStyle":"utils/dom/setStyle.js"}],"plugin/image-slicer/slicer/cropper.common.js":[function(require,module,exports) {
 /*!
  * Cropper.js v1.5.1
  * https://fengyuanchen.github.io/cropperjs
@@ -168,18 +7,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  *
  * Date: 2019-03-10T09:55:53.729Z
  */
+
 'use strict';
 
-function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
 function _typeof(obj) {
-  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
-    _typeof = function _typeof(obj) {
-      return _typeof2(obj);
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
     };
   } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
   }
 
@@ -214,9 +52,7 @@ function _toConsumableArray(arr) {
 
 function _arrayWithoutHoles(arr) {
   if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
 
     return arr2;
   }
@@ -289,6 +125,7 @@ var REGEXP_TAG_NAME = /^img|canvas$/i; // Misc
 
 var MIN_CONTAINER_WIDTH = 200;
 var MIN_CONTAINER_HEIGHT = 100;
+
 var DEFAULTS = {
   // Define the view mode of the cropper
   viewMode: 0,
@@ -361,7 +198,9 @@ var DEFAULTS = {
   crop: null,
   zoom: null
 };
+
 var TEMPLATE = '<div class="cropper-container" touch-action="none">' + '<div class="cropper-wrap-box">' + '<div class="cropper-canvas"></div>' + '</div>' + '<div class="cropper-drag-box"></div>' + '<div class="cropper-crop-box">' + '<span class="cropper-view-box"></span>' + '<span class="cropper-dashed dashed-h"></span>' + '<span class="cropper-dashed dashed-v"></span>' + '<span class="cropper-center"></span>' + '<span class="cropper-face"></span>' + '<span class="cropper-line line-e" data-cropper-action="e"></span>' + '<span class="cropper-line line-n" data-cropper-action="n"></span>' + '<span class="cropper-line line-w" data-cropper-action="w"></span>' + '<span class="cropper-line line-s" data-cropper-action="s"></span>' + '<span class="cropper-point point-e" data-cropper-action="e"></span>' + '<span class="cropper-point point-n" data-cropper-action="n"></span>' + '<span class="cropper-point point-w" data-cropper-action="w"></span>' + '<span class="cropper-point point-s" data-cropper-action="s"></span>' + '<span class="cropper-point point-ne" data-cropper-action="ne"></span>' + '<span class="cropper-point point-nw" data-cropper-action="nw"></span>' + '<span class="cropper-point point-sw" data-cropper-action="sw"></span>' + '<span class="cropper-point point-se" data-cropper-action="se"></span>' + '</div>' + '</div>';
+
 /**
  * Check if the given value is not a number.
  */
@@ -382,7 +221,6 @@ function isNumber(value) {
  * @returns {boolean} Returns `true` if the given value is a positive number, else `false`.
  */
 
-
 var isPositiveNumber = function isPositiveNumber(value) {
   return value > 0 && value < Infinity;
 };
@@ -391,7 +229,6 @@ var isPositiveNumber = function isPositiveNumber(value) {
  * @param {*} value - The value to check.
  * @returns {boolean} Returns `true` if the given value is undefined, else `false`.
  */
-
 
 function isUndefined(value) {
   return typeof value === 'undefined';
@@ -402,11 +239,9 @@ function isUndefined(value) {
  * @returns {boolean} Returns `true` if the given value is an object, else `false`.
  */
 
-
 function isObject(value) {
   return _typeof(value) === 'object' && value !== null;
 }
-
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 /**
  * Check if the given value is a plain object.
@@ -433,11 +268,9 @@ function isPlainObject(value) {
  * @returns {boolean} Returns `true` if the given value is a function, else `false`.
  */
 
-
 function isFunction(value) {
   return typeof value === 'function';
 }
-
 var slice = Array.prototype.slice;
 /**
  * Convert array-like or iterable object to an array.
@@ -454,7 +287,6 @@ function toArray(value) {
  * @param {Function} callback - The process function for each element.
  * @returns {*} The original data.
  */
-
 
 function forEach(data, callback) {
   if (data && isFunction(callback)) {
@@ -480,7 +312,6 @@ function forEach(data, callback) {
  * @returns {Object} The extended object.
  */
 
-
 var assign = Object.assign || function assign(target) {
   for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     args[_key - 1] = arguments[_key];
@@ -498,7 +329,6 @@ var assign = Object.assign || function assign(target) {
 
   return target;
 };
-
 var REGEXP_DECIMALS = /\.\d*(?:0|9){12}\d*$/;
 /**
  * Normalize decimal number.
@@ -512,7 +342,6 @@ function normalizeDecimalNumber(value) {
   var times = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100000000000;
   return REGEXP_DECIMALS.test(value) ? Math.round(value * times) / times : value;
 }
-
 var REGEXP_SUFFIX = /^width|height|left|top|marginLeft|marginTop$/;
 /**
  * Apply styles to the given element.
@@ -537,7 +366,6 @@ function setStyle(element, styles) {
  * @returns {boolean} Returns `true` if the special class was found.
  */
 
-
 function hasClass(element, value) {
   return element.classList ? element.classList.contains(value) : element.className.indexOf(value) > -1;
 }
@@ -546,7 +374,6 @@ function hasClass(element, value) {
  * @param {Element} element - The target element.
  * @param {string} value - The classes to be added.
  */
-
 
 function addClass(element, value) {
   if (!value) {
@@ -579,7 +406,6 @@ function addClass(element, value) {
  * @param {string} value - The classes to be removed.
  */
 
-
 function removeClass(element, value) {
   if (!value) {
     return;
@@ -608,7 +434,6 @@ function removeClass(element, value) {
  * @param {boolean} added - Add only.
  */
 
-
 function toggleClass(element, value, added) {
   if (!value) {
     return;
@@ -628,7 +453,6 @@ function toggleClass(element, value, added) {
     removeClass(element, value);
   }
 }
-
 var REGEXP_CAMEL_CASE = /([a-z\d])([A-Z])/g;
 /**
  * Transform the given string from camelCase to kebab-case
@@ -645,7 +469,6 @@ function toParamCase(value) {
  * @param {string} name - The data key to get.
  * @returns {string} The data value.
  */
-
 
 function getData(element, name) {
   if (isObject(element[name])) {
@@ -665,7 +488,6 @@ function getData(element, name) {
  * @param {string} data - The data value.
  */
 
-
 function setData(element, name, data) {
   if (isObject(data)) {
     element[name] = data;
@@ -680,7 +502,6 @@ function setData(element, name, data) {
  * @param {Element} element - The target element.
  * @param {string} name - The data key to remove.
  */
-
 
 function removeData(element, name) {
   if (isObject(element[name])) {
@@ -700,7 +521,6 @@ function removeData(element, name) {
     element.removeAttribute("data-".concat(toParamCase(name)));
   }
 }
-
 var REGEXP_SPACES = /\s\s*/;
 
 var onceSupported = function () {
@@ -773,7 +593,6 @@ function removeListener(element, type, listener) {
  * @param {Object} options - The event options.
  */
 
-
 function addListener(element, type, listener) {
   var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
   var _handler = listener;
@@ -816,7 +635,6 @@ function addListener(element, type, listener) {
  * @returns {boolean} Indicate if the event is default prevented or not.
  */
 
-
 function dispatchEvent(element, type, data) {
   var event; // Event and CustomEvent on IE9-11 are global objects, not constructors
 
@@ -839,7 +657,6 @@ function dispatchEvent(element, type, data) {
  * @returns {Object} The offset data.
  */
 
-
 function getOffset(element) {
   var box = element.getBoundingClientRect();
   return {
@@ -847,7 +664,6 @@ function getOffset(element) {
     top: box.top + (window.pageYOffset - document.documentElement.clientTop)
   };
 }
-
 var location = WINDOW.location;
 var REGEXP_ORIGINS = /^(\w+:)\/\/([^:/?#]*):?(\d*)/i;
 /**
@@ -866,7 +682,6 @@ function isCrossOriginURL(url) {
  * @returns {string} The result URL.
  */
 
-
 function addTimestamp(url) {
   var timestamp = "timestamp=".concat(new Date().getTime());
   return url + (url.indexOf('?') === -1 ? '?' : '&') + timestamp;
@@ -876,7 +691,6 @@ function addTimestamp(url) {
  * @param {Object} obj - The target object.
  * @returns {string} A string contains transform values.
  */
-
 
 function getTransforms(_ref) {
   var rotate = _ref.rotate,
@@ -920,7 +734,6 @@ function getTransforms(_ref) {
  * @returns {number} The result ratio.
  */
 
-
 function getMaxZoomRatio(pointers) {
   var pointers2 = assign({}, pointers);
   var ratios = [];
@@ -949,7 +762,6 @@ function getMaxZoomRatio(pointers) {
  * @returns {Object} The result pointer contains start and/or end point coordinates.
  */
 
-
 function getPointer(_ref2, endOnly) {
   var pageX = _ref2.pageX,
       pageY = _ref2.pageY;
@@ -967,7 +779,6 @@ function getPointer(_ref2, endOnly) {
  * @param {Object} pointers - The target pointers.
  * @returns {Object} The center point coordinate.
  */
-
 
 function getPointersCenter(pointers) {
   var pageX = 0;
@@ -993,7 +804,6 @@ function getPointersCenter(pointers) {
  * @param {string} [type='contain'] - The adjust type.
  * @returns {Object} The result sizes.
  */
-
 
 function getAdjustedSizes(_ref4) // or 'cover'
 {
@@ -1029,7 +839,6 @@ function getAdjustedSizes(_ref4) // or 'cover'
  * @returns {Object} The result sizes.
  */
 
-
 function getRotatedSizes(_ref5) {
   var width = _ref5.width,
       height = _ref5.height,
@@ -1064,7 +873,6 @@ function getRotatedSizes(_ref5) {
  * @param {Object} options - The options.
  * @returns {HTMLCanvasElement} The result canvas.
  */
-
 
 function getSourceCanvas(image, _ref6, _ref7, _ref8) {
   var imageAspectRatio = _ref6.aspectRatio,
@@ -1138,7 +946,6 @@ function getSourceCanvas(image, _ref6, _ref7, _ref8) {
   context.restore();
   return canvas;
 }
-
 var fromCharCode = String.fromCharCode;
 /**
  * Get string from char code in data view.
@@ -1158,7 +965,6 @@ function getStringFromCharCode(dataView, start, length) {
 
   return str;
 }
-
 var REGEXP_DATA_URL_HEAD = /^data:.*,/;
 /**
  * Transform Data URL to array buffer.
@@ -1183,7 +989,6 @@ function dataURLToArrayBuffer(dataURL) {
  * @returns {string} The result Data URL.
  */
 
-
 function arrayBufferToDataURL(arrayBuffer, mimeType) {
   var chunks = []; // Chunk Typed Array for better performance (#435)
 
@@ -1204,7 +1009,6 @@ function arrayBufferToDataURL(arrayBuffer, mimeType) {
  * @param {ArrayBuffer} arrayBuffer - The array buffer to read.
  * @returns {number} The read orientation value.
  */
-
 
 function resetAndGetOrientation(arrayBuffer) {
   var dataView = new DataView(arrayBuffer);
@@ -1285,7 +1089,6 @@ function resetAndGetOrientation(arrayBuffer) {
  * @param {number} orientation - The orientation to parse.
  * @returns {Object} The parsed result.
  */
-
 
 function parseOrientation(orientation) {
   var rotate = 0;
@@ -1714,6 +1517,7 @@ var render = {
     dispatchEvent(this.element, EVENT_CROP, this.getData());
   }
 };
+
 var preview = {
   initPreview: function initPreview() {
     var crossOrigin = this.crossOrigin;
@@ -1834,6 +1638,7 @@ var preview = {
     });
   }
 };
+
 var events = {
   bind: function bind() {
     var element = this.element,
@@ -1926,6 +1731,7 @@ var events = {
     }
   }
 };
+
 var handlers = {
   resize: function resize() {
     var options = this.options,
@@ -2116,6 +1922,7 @@ var handlers = {
     });
   }
 };
+
 var change = {
   change: function change(event) {
     var options = this.options,
@@ -2570,6 +2377,7 @@ var change = {
     });
   }
 };
+
 var methods = {
   // Show the crop box manually
   crop: function crop() {
@@ -3329,6 +3137,7 @@ var methods = {
     return this;
   }
 };
+
 var AnotherCropper = WINDOW.Cropper;
 
 var Cropper =
@@ -3731,294 +3540,5 @@ function () {
 }();
 
 assign(Cropper.prototype, render, preview, events, handlers, change, methods);
+
 module.exports = Cropper;
-},{}],"plugin/image-slicer/slicer/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../../utils");
-
-var _cropperCommon = _interopRequireDefault(require("./cropper.common.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var slicer =
-/*#__PURE__*/
-function () {
-  function slicer(canvas) {
-    _classCallCheck(this, slicer);
-
-    this.canvas = canvas;
-  }
-
-  _createClass(slicer, [{
-    key: "add",
-    value: function add(img) {
-      img.style.maxWidth = 50 % this.canvas.appendChild(img);
-      var cropper = new _cropperCommon.default(img, {
-        aspectRatio: 16 / 9,
-        crop: function crop(event) {
-          console.log(event.detail.x, 'x');
-          console.log(event.detail.y, 'y');
-          console.log(event.detail.width, 'width');
-          console.log(event.detail.height, 'height');
-          console.log(event.detail.rotate, 'rotate');
-          console.log(event.detail.scaleX, 'scaleX');
-          console.log(event.detail.scaleY, 'scaleY');
-        },
-        ready: function ready() {
-          // Allows chain composition
-          console.log(cropper, 'cropperready');
-          this.cropper.rotateTo(45);
-        }
-      });
-    }
-  }]);
-
-  return slicer;
-}();
-
-exports.default = slicer;
-},{"../../../utils":"utils/index.js","./cropper.common.js":"plugin/image-slicer/slicer/cropper.common.js"}],"plugin/image-slicer/index.js":[function(require,module,exports) {
-var global = arguments[3];
-"use strict";
-
-var _slicer = _interopRequireDefault(require("./slicer"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-(function (global, factory) {
-  "use strict";
-
-  if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === "object" && _typeof(module.exports) === "object") {
-    module.exports = global.document ? factory(global, true) : function (w) {
-      if (!w.document) {
-        throw new Error("draw-editer requires a window with a document");
-      }
-
-      return factory(w);
-    };
-  } else {
-    factory(global);
-  }
-})(typeof window !== "undefined" ? window : void 0, function (window, noGlobal) {
-  var version = "0.0.1";
-  window.slicer = _slicer.default;
-});
-},{"./slicer":"plugin/image-slicer/slicer/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
-var global = arguments[3];
-var OVERLAY_ID = '__parcel__error__overlay__';
-var OldModule = module.bundle.Module;
-
-function Module(moduleName) {
-  OldModule.call(this, moduleName);
-  this.hot = {
-    data: module.bundle.hotData,
-    _acceptCallbacks: [],
-    _disposeCallbacks: [],
-    accept: function (fn) {
-      this._acceptCallbacks.push(fn || function () {});
-    },
-    dispose: function (fn) {
-      this._disposeCallbacks.push(fn);
-    }
-  };
-  module.bundle.hotData = null;
-}
-
-module.bundle.Module = Module;
-var checkedAssets, assetsToAccept;
-var parent = module.bundle.parent;
-
-if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
-  var hostname = "" || location.hostname;
-  var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56424" + '/');
-
-  ws.onmessage = function (event) {
-    checkedAssets = {};
-    assetsToAccept = [];
-    var data = JSON.parse(event.data);
-
-    if (data.type === 'update') {
-      var handled = false;
-      data.assets.forEach(function (asset) {
-        if (!asset.isNew) {
-          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
-
-          if (didAccept) {
-            handled = true;
-          }
-        }
-      }); // Enable HMR for CSS by default.
-
-      handled = handled || data.assets.every(function (asset) {
-        return asset.type === 'css' && asset.generated.js;
-      });
-
-      if (handled) {
-        console.clear();
-        data.assets.forEach(function (asset) {
-          hmrApply(global.parcelRequire, asset);
-        });
-        assetsToAccept.forEach(function (v) {
-          hmrAcceptRun(v[0], v[1]);
-        });
-      } else {
-        window.location.reload();
-      }
-    }
-
-    if (data.type === 'reload') {
-      ws.close();
-
-      ws.onclose = function () {
-        location.reload();
-      };
-    }
-
-    if (data.type === 'error-resolved') {
-      console.log('[parcel] ✨ Error resolved');
-      removeErrorOverlay();
-    }
-
-    if (data.type === 'error') {
-      console.error('[parcel] 🚨  ' + data.error.message + '\n' + data.error.stack);
-      removeErrorOverlay();
-      var overlay = createErrorOverlay(data);
-      document.body.appendChild(overlay);
-    }
-  };
-}
-
-function removeErrorOverlay() {
-  var overlay = document.getElementById(OVERLAY_ID);
-
-  if (overlay) {
-    overlay.remove();
-  }
-}
-
-function createErrorOverlay(data) {
-  var overlay = document.createElement('div');
-  overlay.id = OVERLAY_ID; // html encode message and stack trace
-
-  var message = document.createElement('div');
-  var stackTrace = document.createElement('pre');
-  message.innerText = data.error.message;
-  stackTrace.innerText = data.error.stack;
-  overlay.innerHTML = '<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;">' + '<span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span>' + '<span style="top: 2px; margin-left: 5px; position: relative;">🚨</span>' + '<div style="font-size: 18px; font-weight: bold; margin-top: 20px;">' + message.innerHTML + '</div>' + '<pre>' + stackTrace.innerHTML + '</pre>' + '</div>';
-  return overlay;
-}
-
-function getParents(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return [];
-  }
-
-  var parents = [];
-  var k, d, dep;
-
-  for (k in modules) {
-    for (d in modules[k][1]) {
-      dep = modules[k][1][d];
-
-      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
-        parents.push(k);
-      }
-    }
-  }
-
-  if (bundle.parent) {
-    parents = parents.concat(getParents(bundle.parent, id));
-  }
-
-  return parents;
-}
-
-function hmrApply(bundle, asset) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (modules[asset.id] || !bundle.parent) {
-    var fn = new Function('require', 'module', 'exports', asset.generated.js);
-    asset.isNew = !modules[asset.id];
-    modules[asset.id] = [fn, asset.deps];
-  } else if (bundle.parent) {
-    hmrApply(bundle.parent, asset);
-  }
-}
-
-function hmrAcceptCheck(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (!modules[id] && bundle.parent) {
-    return hmrAcceptCheck(bundle.parent, id);
-  }
-
-  if (checkedAssets[id]) {
-    return;
-  }
-
-  checkedAssets[id] = true;
-  var cached = bundle.cache[id];
-  assetsToAccept.push([bundle, id]);
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    return true;
-  }
-
-  return getParents(global.parcelRequire, id).some(function (id) {
-    return hmrAcceptCheck(global.parcelRequire, id);
-  });
-}
-
-function hmrAcceptRun(bundle, id) {
-  var cached = bundle.cache[id];
-  bundle.hotData = {};
-
-  if (cached) {
-    cached.hot.data = bundle.hotData;
-  }
-
-  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
-    cached.hot._disposeCallbacks.forEach(function (cb) {
-      cb(bundle.hotData);
-    });
-  }
-
-  delete bundle.cache[id];
-  bundle(id);
-  cached = bundle.cache[id];
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    cached.hot._acceptCallbacks.forEach(function (cb) {
-      cb();
-    });
-
-    return true;
-  }
-}
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","plugin/image-slicer/index.js"], null)
-//# sourceMappingURL=/image-slicer.d4be8c95.js.map

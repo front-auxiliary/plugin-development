@@ -5,8 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.1/cropper.js"></script>
+ 
     <title>Document</title>
 </head>
+
 <script src="/draw-editer.ec25b2a9.js"></script>
 <script src="/image-slicer.d4be8c95.js"></script>
 <style>body,
@@ -46,10 +50,13 @@
 window.onload = function () {
   var canvas = document.getElementById('canvas');
   var btn = document.getElementById('button');
+  var img = document.getElementById('img');
   var drawEditer1 = new drawEditer(canvas); //  console.log(drawEditer1,"kkkkkk")
 
+  var slicer2 = new slicer(canvas);
+
   btn.onclick = function () {
-    drawEditer1.add('text');
+    slicer2.add(img);
   }; // 
 
 };</script>
