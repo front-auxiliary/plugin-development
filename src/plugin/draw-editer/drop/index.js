@@ -36,7 +36,7 @@ class drop {
       border: '1px solid #fff',
       cursor: 'move',
       transformOrigin: 'center',
-      transform: 'translateX(-50%) translateY(-50%) rotate(0deg)'
+      transform: 'rotate(0deg)'
     }, elem.style);
     dropDom.innerText = elem.text;
     dropDom.className = 'box';
@@ -110,6 +110,9 @@ class drop {
       this.rightBottomIcon = rightBottomIcon;
       const parentNode = this.rightBottomIcon.parentNode;
       const parentNodeDetail = parentNode.getBoundingClientRect();
+      parentNodeDetail.height = parentNode.style.height.replace('px','')
+      parentNodeDetail.width = parentNode.style.width.replace('px','')
+      // console.log(parentNodeDetail.height,'------',parentNode.style.height)
       this.rightBottomIcon.dataset.monusedown = 1;
       this.rightBottomIcon.dataset.parentdetail = JSON.stringify(parentNodeDetail);
       evt.stopPropagation()
@@ -259,6 +262,7 @@ class drop {
       width = 0,
       height = 0,
       angle = 0,
+      isAngle= true,
       canvasDetail = this.canvasDetail;
     if (this.dropDom) {
       activeElem = this.dropDom;
@@ -290,9 +294,9 @@ class drop {
       if (transform) {
         width = activeElem.style.width;
         height = activeElem.style.height;
-        x = transforms[0].replace('translateX(', '').replace('px)', '');
-        y = transforms[1].replace('translateY(', '').replace('px)', '');
-        angle = transforms[2].replace('rotate(', '').replace('deg)', '');
+        // x = transforms[0].replace('translateX(', '').replace('px)', '');
+        // y = transforms[1].replace('translateY(', '').replace('px)', '');
+        angle = transform.replace('rotate(', '').replace('deg)', '');
       }
     }
     if (monusedown === '1') {
@@ -313,12 +317,7 @@ class drop {
     }
     if (leftTopDown === '1') {
       activeElem = this.leftTopIcon.parentNode;
-      let left = (activeElem.style.left).replace('px','');
-      let top = (activeElem.style.top).replace('px','');
-      let orgin = {
-        x:this.canvasDetail+left,
-        y:this.canvasDetail.top
-      }
+      
       const parentNodeDetail = JSON.parse(this.leftTopIcon.dataset.parentdetail);
       let distanceX = parentNodeDetail.x - evt.pageX;
       let distanceY = parentNodeDetail.y - evt.pageY;
@@ -347,17 +346,24 @@ class drop {
       y = parentNodeDetail.y - distanceY - canvasDetail.y;
     }
     if (rightBottomDown == '1') {
+      // console.log(angle,"jjjj")
+
       activeElem = this.rightBottomIcon.parentNode;
       const parentNodeDetail = JSON.parse(this.rightBottomIcon.dataset.parentdetail);
       let distanceX = evt.pageX - parentNodeDetail.right;
       let distanceY = evt.pageY - parentNodeDetail.bottom;
-      if (distanceX > distanceY) {
-        distanceY = distanceX * parentNodeDetail.height / parentNodeDetail.width;
-      } else {
-        distanceX = distanceY * parentNodeDetail.width / parentNodeDetail.height;
-      }
-      width = distanceX + parentNodeDetail.width + 'px';
-      height = distanceY + parentNodeDetail.height + 'px'
+      // if (distanceX > distanceY) {
+      //   distanceY = distanceX * parentNodeDetail.height / parentNodeDetail.width;
+      // } else {
+      //   distanceX = distanceY * parentNodeDetail.width / parentNodeDetail.height;
+      // }
+      let aa = Math.abs(Math.cos(angle))
+      console.log(aa,"mmmm")
+      // isAngle
+      // console.log(Math.cos(angle))
+      activeElem.style.transformOrigin = 'left top';
+      width = distanceX * aa + parentNodeDetail.width  + 'px';
+      height = distanceY *aa + parentNodeDetail.height  + 'px'
     }
     if (leftBottomDown == '1') {
       activeElem = this.leftBottomIcon.parentNode;
@@ -374,9 +380,12 @@ class drop {
       x = parentNodeDetail.x - distanceX - canvasDetail.x;
     }
     if (activeElem) {
-      activeElem.style.transform = `translateX(-50%) translateY(-50%) rotate(${angle}deg) `;
-      activeElem.style.top = y + 'px';
-      activeElem.style.left = x + 'px'
+      activeElem.style.transform = `rotate(${angle}deg) `;
+      if(y){
+        activeElem.style.top = y + 'px';
+        activeElem.style.left = x + 'px'
+      }
+      
       activeElem.style.width = width;
       activeElem.style.height = height;
     }

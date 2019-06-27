@@ -225,7 +225,7 @@ function () {
         border: '1px solid #fff',
         cursor: 'move',
         transformOrigin: 'center',
-        transform: 'translateX(-50%) translateY(-50%) rotate(0deg)'
+        transform: 'rotate(0deg)'
       }, elem.style);
       dropDom.innerText = elem.text;
       dropDom.className = 'box'; // 添加旋转图标
@@ -324,6 +324,9 @@ function () {
         _this3.rightBottomIcon = rightBottomIcon;
         var parentNode = _this3.rightBottomIcon.parentNode;
         var parentNodeDetail = parentNode.getBoundingClientRect();
+        parentNodeDetail.height = parentNode.style.height.replace('px', '');
+        parentNodeDetail.width = parentNode.style.width.replace('px', ''); // console.log(parentNodeDetail.height,'------',parentNode.style.height)
+
         _this3.rightBottomIcon.dataset.monusedown = 1;
         _this3.rightBottomIcon.dataset.parentdetail = JSON.stringify(parentNodeDetail);
         evt.stopPropagation();
@@ -494,6 +497,7 @@ function () {
           width = 0,
           height = 0,
           angle = 0,
+          isAngle = true,
           canvasDetail = this.canvasDetail;
 
       if (this.dropDom) {
@@ -532,10 +536,10 @@ function () {
 
         if (transform) {
           width = activeElem.style.width;
-          height = activeElem.style.height;
-          x = transforms[0].replace('translateX(', '').replace('px)', '');
-          y = transforms[1].replace('translateY(', '').replace('px)', '');
-          angle = transforms[2].replace('rotate(', '').replace('deg)', '');
+          height = activeElem.style.height; // x = transforms[0].replace('translateX(', '').replace('px)', '');
+          // y = transforms[1].replace('translateY(', '').replace('px)', '');
+
+          angle = transform.replace('rotate(', '').replace('deg)', '');
         }
       }
 
@@ -562,12 +566,6 @@ function () {
 
       if (leftTopDown === '1') {
         activeElem = this.leftTopIcon.parentNode;
-        var left = activeElem.style.left.replace('px', '');
-        var top = activeElem.style.top.replace('px', '');
-        var orgin = {
-          x: this.canvasDetail + left,
-          y: this.canvasDetail.top
-        };
 
         var _parentNodeDetail = JSON.parse(this.leftTopIcon.dataset.parentdetail);
 
@@ -607,22 +605,27 @@ function () {
       }
 
       if (rightBottomDown == '1') {
+        // console.log(angle,"jjjj")
         activeElem = this.rightBottomIcon.parentNode;
 
         var _parentNodeDetail3 = JSON.parse(this.rightBottomIcon.dataset.parentdetail);
 
         var _distanceX2 = evt.pageX - _parentNodeDetail3.right;
 
-        var _distanceY2 = evt.pageY - _parentNodeDetail3.bottom;
+        var _distanceY2 = evt.pageY - _parentNodeDetail3.bottom; // if (distanceX > distanceY) {
+        //   distanceY = distanceX * parentNodeDetail.height / parentNodeDetail.width;
+        // } else {
+        //   distanceX = distanceY * parentNodeDetail.width / parentNodeDetail.height;
+        // }
 
-        if (_distanceX2 > _distanceY2) {
-          _distanceY2 = _distanceX2 * _parentNodeDetail3.height / _parentNodeDetail3.width;
-        } else {
-          _distanceX2 = _distanceY2 * _parentNodeDetail3.width / _parentNodeDetail3.height;
-        }
 
-        width = _distanceX2 + _parentNodeDetail3.width + 'px';
-        height = _distanceY2 + _parentNodeDetail3.height + 'px';
+        var aa = Math.abs(Math.cos(angle));
+        console.log(aa, "mmmm"); // isAngle
+        // console.log(Math.cos(angle))
+
+        activeElem.style.transformOrigin = 'left top';
+        width = _distanceX2 * aa + _parentNodeDetail3.width + 'px';
+        height = _distanceY2 * aa + _parentNodeDetail3.height + 'px';
       }
 
       if (leftBottomDown == '1') {
@@ -646,9 +649,13 @@ function () {
       }
 
       if (activeElem) {
-        activeElem.style.transform = "translateX(-50%) translateY(-50%) rotate(".concat(angle, "deg) ");
-        activeElem.style.top = y + 'px';
-        activeElem.style.left = x + 'px';
+        activeElem.style.transform = "rotate(".concat(angle, "deg) ");
+
+        if (y) {
+          activeElem.style.top = y + 'px';
+          activeElem.style.left = x + 'px';
+        }
+
         activeElem.style.width = width;
         activeElem.style.height = height;
       }
@@ -818,7 +825,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51219" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51797" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
