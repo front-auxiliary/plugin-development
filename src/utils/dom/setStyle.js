@@ -1,10 +1,7 @@
-export default function(dom,styles){
-    let newDom = {...dom};
-    if(typeof styles == 'object'){
-        for(let key in styles){
-            newDom[key] = styles[key]
-        }
-
+export default function (dom, styles) {
+  if (typeof styles == 'object') {
+    for (let key in styles) {
+      dom.style[key] = styles[key]
     }
-    return newDom;
+  }
 }
