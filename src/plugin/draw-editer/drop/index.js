@@ -1,15 +1,10 @@
 import { setStyle } from '../../../utils';
 class drop {
   constructor() {
-    this.dropDom = null;
-    this.angleIcon = null;
     this.canvas = null;
-    this.leftTopIcon = null;
-    this.rightTopIcon = null;
-    this.rightBottomIcon = null;
-    this.leftBottomIcon = null;
     this.elemClick = null;
     this.canvasDetail = null;
+    this.activeDom = null;
   }
   init(canvas, params) {
     this.canvas = canvas;
@@ -47,17 +42,13 @@ class drop {
       dropDom.appendChild(childs[key])
     }
     setStyle(dropDom, dropStyle)
-
     dropDom.id = elem.name;
-
     dropDom.onmousedown = (event) => {
       event.stopPropagation();
       this.onmousedown(event, dropDom, canvas)
       if (this.elemClick) {
         this.elemClick(event)
       }
-
-
     }
     return dropDom;
   }
@@ -89,48 +80,28 @@ class drop {
     setStyle(leftBottomIcon, leftBottomIconStyle);
 
     leftTopIcon.onmousedown = (evt) => {
-      this.leftTopIcon = leftTopIcon;
-      this.leftTopIcon.dataset.monusedown = 1;
-      const parentNode = this.leftTopIcon.parentNode;
-      const parentNodeDetail = parentNode.getBoundingClientRect();
-      this.leftTopIcon.dataset.parentdetail = JSON.stringify(parentNodeDetail);
-      // console.log( JSON.stringify(parentNodeDetail),"kkkkkk")
-      evt.stopPropagation()
+      this.activeDom = leftTopIcon;
+      this.domSetTag(evt,'leftTop')
+    
     }
     rightTopIcon.onmousedown = (evt) => {
-      this.rightTopIcon = rightTopIcon;
-      const parentNode = this.rightTopIcon.parentNode;
-      const parentNodeDetail = parentNode.getBoundingClientRect();
-      this.rightTopIcon.dataset.monusedown = 1;
-      this.rightTopIcon.dataset.parentdetail = JSON.stringify(parentNodeDetail);
-
-      evt.stopPropagation()
+      this.activeDom = rightTopIcon;
+      this.domSetTag(evt,'rightTop')
     }
     rightBottomIcon.onmousedown = (evt) => {
-      this.rightBottomIcon = rightBottomIcon;
-      const parentNode = this.rightBottomIcon.parentNode;
-      const parentNodeDetail = parentNode.getBoundingClientRect();
-      parentNodeDetail.height = parentNode.style.height.replace('px','')
-      parentNodeDetail.width = parentNode.style.width.replace('px','')
-      // console.log(parentNodeDetail.height,'------',parentNode.style.height)
-      this.rightBottomIcon.dataset.monusedown = 1;
-      this.rightBottomIcon.dataset.parentdetail = JSON.stringify(parentNodeDetail);
-      evt.stopPropagation()
+      this.activeDom = rightBottomIcon;
+      this.domSetTag(evt,'rightBottom')
     }
     leftBottomIcon.onmousedown = (evt) => {
-      this.leftBottomIcon = leftBottomIcon;
-      const parentNode = this.leftBottomIcon.parentNode;
-      const parentNodeDetail = parentNode.getBoundingClientRect();
-      this.leftBottomIcon.dataset.monusedown = 1;
-      this.leftBottomIcon.dataset.parentdetail = JSON.stringify(parentNodeDetail);
-      evt.stopPropagation()
+      this.activeDom = leftBottomIcon;
+      this.domSetTag(evt,'leftBottom')
     }
     return [leftTopIcon, rightTopIcon, rightBottomIcon, leftBottomIcon]
 
   }
+ 
   // 修改大小图标
   createSize() {
-
     const style = {
       position: 'absolute',
       backgroundColor: '#fff',
@@ -141,41 +112,30 @@ class drop {
     const rightIcon = document.createElement('div');
     const bottomIcon = document.createElement('div');
     const leftIcon = document.createElement('div');
-    const topIconStyle = Object.assign({}, style, {
-      width: '16px',
-      height: '5px',
-      top: '-3px',
-      left: '50%',
-      marginLeft: '-8px'
-    })
-    const rightIconStyle = Object.assign({}, style, {
-      width: '5px',
-      height: '16px',
-      top: '50%',
-      left: '100%',
-      marginLeft: '-2px',
-      marginTop: '-8px'
-    })
-    const bottomIconStyle = Object.assign({}, style, {
-      width: '16px',
-      height: '5px',
-      top: '100%',
-      left: '50%',
-      marginLeft: '-8px',
-      marginTop: '-2px'
-    })
-    const leftIconStyle = Object.assign({}, style, {
-      width: '5px',
-      height: '16px',
-      top: '50%',
-      left: '0%',
-      marginLeft: '-3px',
-      marginTop: '-8px'
-    })
+    const topIconStyle = Object.assign({}, style, {width: '16px',height: '5px',top: '-3px',left: '50%',marginLeft: '-8px'})
+    const rightIconStyle = Object.assign({}, style, { width: '5px',height: '16px',top: '50%',left: '100%', marginLeft: '-2px',marginTop: '-8px'})
+    const bottomIconStyle = Object.assign({}, style, { width: '16px',height: '5px', top: '100%',left: '50%',marginLeft: '-8px',marginTop: '-2px'})
+    const leftIconStyle = Object.assign({}, style, {width: '5px',height: '16px',top: '50%',left: '0%',marginLeft: '-3px', marginTop: '-8px' })
     setStyle(topIcon, topIconStyle);
     setStyle(rightIcon, rightIconStyle);
     setStyle(bottomIcon, bottomIconStyle);
     setStyle(leftIcon, leftIconStyle);
+    topIcon.onmousedown = (evt) =>{
+      this.activeDom = topIcon;
+      this.domSetTag(evt,'top')
+    }
+    rightIcon.onmousedown = (evt) =>{
+      this.activeDom = rightIcon;
+      this.domSetTag(evt,'right')
+    }
+    bottomIcon.onmousedown = (evt) =>{
+      this.activeDom = bottomIcon;
+      this.domSetTag(evt,'bottom')
+    }
+    leftIcon.onmousedown = (evt) =>{
+      this.activeDom = leftIcon;
+      this.domSetTag(evt,'left')
+    }
     return [topIcon, rightIcon, bottomIcon, leftIcon]
   }
   // 生成旋转icon
@@ -198,22 +158,14 @@ class drop {
     }
     setStyle(angleIcon, style)
     angleIcon.onmousedown = (evt) => {
-      this.angleIcon = angleIcon;
-      this.angleIcon.dataset.monusedown = 1;
-      evt.stopPropagation();
+      this.activeDom = angleIcon;
+      this.domSetTag(evt,'angle')
     }
     return angleIcon;
   }
-  onmousedown(evt, dom, canvas) {
-    let domDetail = dom.getBoundingClientRect(),
-      mousePageX = evt.pageX,
-      mousePageY = evt.pageY;
-    dom.dataset.monusedown = 1;
-    let top = dom.style.top.replace('px', '');
-    let left = dom.style.left.replace('px', '');
-    dom.dataset.mouseleft = mousePageX - left - this.canvasDetail.left;
-    dom.dataset.mousetop = mousePageY - top - this.canvasDetail.top;
-    this.dropDom = dom;
+  onmousedown(evt, dom) {
+    this.activeDom = dom;
+    this.domSetTag(evt,'elem')
   }
   // 获取角度
   getAngle(start, end) {
@@ -222,176 +174,113 @@ class drop {
     //返回角度,不是弧度
     return 360 * Math.atan2(diffY, diffX) / (2 * Math.PI) - 90;
   }
+  domSetTag(event,type){
+    this.activeDom.dataset.monusedown = 1;
+    const parentNode = type=='elem'?  this.activeDom:this.activeDom.parentNode;
+    const detail = parentNode.getBoundingClientRect()
+    let width = parentNode.style.width;
+    let height = parentNode.style.height;
+    let transform =parentNode.style.transform;
+    let top = parentNode.style.top.replace('px', '');
+    let left = parentNode.style.left.replace('px', '');
+    let elemDetail = {
+      width:width.replace('px',''),
+      height:height.replace('px',''),
+      centerX:detail.left + detail.width/2,
+      centerY:detail.top +  detail.height/2,
+      mouseX:event.pageX - left - this.canvasDetail.left,
+      mouseY:event.pageY - top - this.canvasDetail.top,
+      pageX:event.pageX,
+      pageY:event.pageY,
+      angle:transform.replace('rotate(', '').replace('deg)', ''),
+      x:left,
+      y:top
+    }
+    console.log(elemDetail,"jj")
+    this.activeDom.dataset.activeDetail = JSON.stringify(elemDetail);
+    this.activeDom.dataset.type = type;
+    event.stopPropagation()
+  }
   onmouseup(evt) {
-    if (this.dropDom) {
-      this.dropDom.dataset.monusedown = 0;
-    }
-    if (this.angleIcon) {
-      this.angleIcon.dataset.monusedown = 0;
-    }
-    if (this.leftTopIcon) {
-      this.leftTopIcon.dataset.monusedown = 0;
-    }
-    if (this.rightTopIcon) {
-      this.rightTopIcon.dataset.monusedown = 0;
-    }
-    if (this.rightBottomIcon) {
-      this.rightBottomIcon.dataset.monusedown = 0;
-    }
-    if (this.leftBottomIcon) {
-      this.leftBottomIcon.dataset.monusedown = 0;
-    }
-    this.dropDom = null;
-    this.angleIcon = null;
-    this.leftTopIcon = null;
-    this.rightTopIcon = null;
-    this.rightBottomIcon = null;
-    this.leftBottomIcon = null;
+    
+    this.activeDom = null;
 
   }
   onmousemove(evt) {
-    let monusedown = null,
-      angleMonusedown = null,
-      leftTopDown = null,
-      rigthTopDown = null,
-      rightBottomDown = null,
-      leftBottomDown = null,
-      activeElem = null,
-      x = 0,
-      y = 0,
-      width = 0,
-      height = 0,
-      angle = 0,
-      isAngle= true,
-      canvasDetail = this.canvasDetail;
-    if (this.dropDom) {
-      activeElem = this.dropDom;
-      monusedown = this.dropDom.dataset.monusedown;
-    }
-    if (this.angleIcon) {
-      activeElem = this.angleIcon.parentNode;
-      angleMonusedown = this.angleIcon.dataset.monusedown;
-    }
-    if (this.leftTopIcon) {
-      activeElem = this.leftTopIcon.parentNode;
-      leftTopDown = this.leftTopIcon.dataset.monusedown;
-    }
-    if (this.rightTopIcon) {
-      activeElem = this.rightTopIcon.parentNode;
-      rigthTopDown = this.rightTopIcon.dataset.monusedown;
-    }
-    if (this.rightBottomIcon) {
-      activeElem = this.rightBottomIcon.parentNode;
-      rightBottomDown = this.rightBottomIcon.dataset.monusedown;
-    }
-    if (this.leftBottomIcon) {
-      activeElem = this.leftBottomIcon.parentNode;
-      leftBottomDown = this.leftBottomIcon.dataset.monusedown;
-    }
-    if (activeElem) {
-      let transform = activeElem.style.transform;
-      let transforms = transform.split(' ')
-      if (transform) {
-        width = activeElem.style.width;
-        height = activeElem.style.height;
-        // x = transforms[0].replace('translateX(', '').replace('px)', '');
-        // y = transforms[1].replace('translateY(', '').replace('px)', '');
-        angle = transform.replace('rotate(', '').replace('deg)', '');
+    let activeElem = null,
+      type=null,
+      activeDetail=null,
+      centerPos=null,
+      mouseToPagePos  = null,
+      activePos=null,
+      mousePos = null;
+    if(this.activeDom){
+      type = this.activeDom.dataset.type;
+      activeElem = this.activeDom.parentNode;
+      activeDetail = JSON.parse(this.activeDom.dataset.activeDetail)
+      centerPos = {
+        x:activeDetail.centerX,
+        y:activeDetail.centerY
+      };
+      mouseToPagePos = {
+        x:activeDetail.pageX,
+        y:activeDetail.pageY
       }
+      activePos =  this.getRotatedPoint(mouseToPagePos,centerPos,-activeDetail.angle)
+      mousePos = this.getRotatedPoint({
+        x:evt.pageX,
+        y:evt.pageY
+      },centerPos,-activeDetail.angle)
     }
-    if (monusedown === '1') {
-      let monuseFromDomTop = +activeElem.dataset.mousetop,
-        monuseFromDomLeft = +activeElem.dataset.mouseleft,
-        mousePageX = evt.pageX,
-        mousePageY = evt.pageY;
-      x = mousePageX - canvasDetail.left - monuseFromDomLeft
-      y = mousePageY - canvasDetail.top - monuseFromDomTop
+ 
+    if (type === 'elem') {
+      activeElem = this.activeDom;
+      activeDetail.x = evt.pageX - this.canvasDetail.left -  activeDetail.mouseX
+      activeDetail.y = evt.pageY - this.canvasDetail.top -  activeDetail.mouseY
     }
-    if (angleMonusedown === '1') {
-      const parentNodeDetail = activeElem.getBoundingClientRect();
-      const centerPage = {
-        x: parentNodeDetail.x + parentNodeDetail.width / 2,
-        y: parentNodeDetail.y + parentNodeDetail.height / 2,
-      }
-      angle = this.getAngle(centerPage, { x: evt.pageX, y: evt.pageY });
+    if (type === 'angle') {
+      activeDetail.angle = this.getAngle(centerPos, { x: evt.pageX, y: evt.pageY });
     }
-    if (leftTopDown === '1') {
-      activeElem = this.leftTopIcon.parentNode;
-      
-      const parentNodeDetail = JSON.parse(this.leftTopIcon.dataset.parentdetail);
-      let distanceX = parentNodeDetail.x - evt.pageX;
-      let distanceY = parentNodeDetail.y - evt.pageY;
-      if (distanceX > distanceY) {
-        distanceY = distanceX * parentNodeDetail.height / parentNodeDetail.width
-      } else {
-        distanceX = distanceY * parentNodeDetail.width / parentNodeDetail.height
-      }
-      width = distanceX + parentNodeDetail.width + 'px';
-      height = distanceY + parentNodeDetail.height + 'px'
-      x = parentNodeDetail.x - distanceX - canvasDetail.x;
-      y = parentNodeDetail.y - distanceY - canvasDetail.y;
+    if(type == 'top' ){
+      activeDetail.height = activePos.y - mousePos.y + (+activeDetail.height) ;
     }
-    if (rigthTopDown === '1') {
-      activeElem = this.rightTopIcon.parentNode;
-      const parentNodeDetail = JSON.parse(this.rightTopIcon.dataset.parentdetail);
-      let distanceX = evt.pageX - parentNodeDetail.right;
-      let distanceY = parentNodeDetail.y - evt.pageY;
-      if (distanceX > distanceY) {
-        distanceY = distanceX * parentNodeDetail.height / parentNodeDetail.width
-      } else {
-        distanceX = distanceY * parentNodeDetail.width / parentNodeDetail.height
-      }
-      width = distanceX + parentNodeDetail.width + 'px';
-      height = distanceY + parentNodeDetail.height + 'px'
-      y = parentNodeDetail.y - distanceY - canvasDetail.y;
-    }
-    if (rightBottomDown == '1') {
-      // console.log(angle,"jjjj")
 
-      activeElem = this.rightBottomIcon.parentNode;
-      const parentNodeDetail = JSON.parse(this.rightBottomIcon.dataset.parentdetail);
-      let distanceX = evt.pageX - parentNodeDetail.right;
-      let distanceY = evt.pageY - parentNodeDetail.bottom;
-      // if (distanceX > distanceY) {
-      //   distanceY = distanceX * parentNodeDetail.height / parentNodeDetail.width;
-      // } else {
-      //   distanceX = distanceY * parentNodeDetail.width / parentNodeDetail.height;
-      // }
-      let aa = Math.abs(Math.cos(angle))
-      console.log(aa,"mmmm")
-      // isAngle
-      // console.log(Math.cos(angle))
-      activeElem.style.transformOrigin = 'left top';
-      width = distanceX * aa + parentNodeDetail.width  + 'px';
-      height = distanceY *aa + parentNodeDetail.height  + 'px'
+    if (type === 'leftTop') {
+      activeDetail.width = activePos.x - mousePos.x   + (+activeDetail.width) ;
+      activeDetail.height = activePos.y - mousePos.y + (+activeDetail.height) ;
+      activeDetail.x = activeDetail.x - (activePos.x - mousePos.x) ;
+      activeDetail.y = activeDetail.y - (activePos.y - mousePos.y) ;
     }
-    if (leftBottomDown == '1') {
-      activeElem = this.leftBottomIcon.parentNode;
-      const parentNodeDetail = JSON.parse(this.leftBottomIcon.dataset.parentdetail);
-      let distanceX = parentNodeDetail.left - evt.pageX;
-      let distanceY = evt.pageY - parentNodeDetail.bottom;
-      if (distanceX > distanceY) {
-        distanceY = distanceX * parentNodeDetail.height / parentNodeDetail.width;
-      } else {
-        distanceX = distanceY * parentNodeDetail.width / parentNodeDetail.height;
-      }
-      width = distanceX + parentNodeDetail.width + 'px';
-      height = distanceY + parentNodeDetail.height + 'px'
-      x = parentNodeDetail.x - distanceX - canvasDetail.x;
+    if (type === 'rightTop') {
+      activeDetail.width = mousePos.x - activePos.x  + (+activeDetail.width) ;
+      activeDetail.height = activePos.y - mousePos.y + (+activeDetail.height) ;
+      activeDetail.y = activeDetail.y - (activePos.y - mousePos.y) ;
+    }
+    if (type === 'rightBottom') {
+      activeDetail.width = mousePos.x - activePos.x  + (+activeDetail.width) ;
+      activeDetail.height = mousePos.y - activePos.y + (+activeDetail.height) ;
+    }
+    if (type === 'leftBottom') {
+      activeDetail.width = activePos.x - mousePos.x   + (+activeDetail.width) ;
+      activeDetail.height =  mousePos.y - activePos.y  + (+activeDetail.height) ;
+      activeDetail.x = activeDetail.x - (activePos.x - mousePos.x) ;
     }
     if (activeElem) {
-      activeElem.style.transform = `rotate(${angle}deg) `;
-      if(y){
-        activeElem.style.top = y + 'px';
-        activeElem.style.left = x + 'px'
-      }
-      
-      activeElem.style.width = width;
-      activeElem.style.height = height;
+      activeElem.style.transform = `rotate(${activeDetail.angle}deg) `;
+      activeElem.style.left = `${activeDetail.x}px`;
+      activeElem.style.top = `${activeDetail.y}px`;
+      activeElem.style.width = `${activeDetail.width}px`;
+      activeElem.style.height = `${activeDetail.height}px`;
     }
   }
   deleteDrop() {
 
+  }
+  getRotatedPoint (curPos, centerPos, angle) {
+    return {
+      x: Math.floor((curPos.x - centerPos.x) * Math.cos(Math.PI / 180 * angle) - (curPos.y - centerPos.y) * Math.sin(Math.PI / 180 * angle) + centerPos.x),
+      y: Math.floor((curPos.x - centerPos.x) * Math.sin(Math.PI / 180 * angle) + (curPos.y - centerPos.y) * Math.cos(Math.PI / 180 * angle) + centerPos.y)                   
+    }
   }
 
 }
