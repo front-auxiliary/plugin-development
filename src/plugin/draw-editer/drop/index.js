@@ -243,6 +243,7 @@ class drop {
     }
     if(type == 'top' ){
       activeDetail.height = activePos.y - mousePos.y + (+activeDetail.height) ;
+      activeDetail.y = activeDetail.y - (activePos.y - mousePos.y) ;
     }
 
     if (type === 'leftTop') {
