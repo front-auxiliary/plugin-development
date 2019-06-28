@@ -302,45 +302,46 @@
                x: Math.floor((e.clientX + this.rightBottomPoint.x) / 2),
                y: Math.floor((e.clientY + this.rightMiddlePoint.y) / 2)
              }
-             // 计算旋转为水平角度的两点坐标
+             // div旋转位水平角的位置
              newLeftTopPoint = this.getRotatedPoint({
                x: e.clientX,
                y: e.clientY
              }, this.centerPos, -this.initAngle)
+            // 左上角旋转为水平的角度
              newRightBottomPoint = this.getRotatedPoint(this.rightBottomPoint, this.centerPos, -this.initAngle)
              newWidth = newRightBottomPoint.x - newLeftTopPoint.x
              newHeight = newRightBottomPoint.y - newLeftTopPoint.y
-             if (this.isScale) {
-               if (newWidth / newHeight > this.scale) {
-                 newLeftTopPoint.x = newLeftTopPoint.x + Math.abs(newWidth - newHeight * this.scale)
-                 newWidth = newHeight * this.scale
-               } else {
-                 newLeftTopPoint.y = newLeftTopPoint.y + Math.abs(newHeight - newWidth / this.scale)
-                 newHeight = newWidth / this.scale
-               }
-               // 计算出左上角等比角度变换后水平坐标后，再计算旋转后的角度
-               var rotateLeftTopPoint = this.getRotatedPoint(newLeftTopPoint, this.centerPos, this.initAngle)
-               this.centerPos = {
-                 x: Math.floor((rotateLeftTopPoint.x + this.rightBottomPoint.x) / 2),
-                 y: Math.floor((rotateLeftTopPoint.y + this.rightBottomPoint.y) / 2)
-               }
-               newLeftTopPoint = this.getRotatedPoint(rotateLeftTopPoint, this.centerPos, -this.initAngle)
-               newRightBottomPoint = this.getRotatedPoint(this.rightBottomPoint, this.centerPos, -this.initAngle)
-               newWidth = newRightBottomPoint.x - newLeftTopPoint.x
-               newHeight = newRightBottomPoint.y - newLeftTopPoint.y
-             }
-             if (newWidth <= 12) {
-               newWidth = 12
-               newHeight = Math.floor(newWidth / this.scale)
-               newLeftTopPoint.x = newRightBottomPoint.x - newWidth
-               newLeftTopPoint.y = newRightBottomPoint.y - newHeight
-             }
-             if (newHeight <= 12) {
-               newHeight = 12
-               newWidth = Math.floor(newHeight * this.scale)
-               newLeftTopPoint.y = newRightBottomPoint.y - newHeight
-               newLeftTopPoint.x = newRightBottomPoint.x - newWidth
-             }
+            //  if (this.isScale) {
+            //    if (newWidth / newHeight > this.scale) {
+            //      newLeftTopPoint.x = newLeftTopPoint.x + Math.abs(newWidth - newHeight * this.scale)
+            //      newWidth = newHeight * this.scale
+            //    } else {
+            //      newLeftTopPoint.y = newLeftTopPoint.y + Math.abs(newHeight - newWidth / this.scale)
+            //      newHeight = newWidth / this.scale
+            //    }
+            //    // 计算出左上角等比角度变换后水平坐标后，再计算旋转后的角度
+            //    var rotateLeftTopPoint = this.getRotatedPoint(newLeftTopPoint, this.centerPos, this.initAngle)
+            //    this.centerPos = {
+            //      x: Math.floor((rotateLeftTopPoint.x + this.rightBottomPoint.x) / 2),
+            //      y: Math.floor((rotateLeftTopPoint.y + this.rightBottomPoint.y) / 2)
+            //    }
+            //    newLeftTopPoint = this.getRotatedPoint(rotateLeftTopPoint, this.centerPos, -this.initAngle)
+            //    newRightBottomPoint = this.getRotatedPoint(this.rightBottomPoint, this.centerPos, -this.initAngle)
+            //    newWidth = newRightBottomPoint.x - newLeftTopPoint.x
+            //    newHeight = newRightBottomPoint.y - newLeftTopPoint.y
+            //  }
+            //  if (newWidth <= 12) {
+            //    newWidth = 12
+            //    newHeight = Math.floor(newWidth / this.scale)
+            //    newLeftTopPoint.x = newRightBottomPoint.x - newWidth
+            //    newLeftTopPoint.y = newRightBottomPoint.y - newHeight
+            //  }
+            //  if (newHeight <= 12) {
+            //    newHeight = 12
+            //    newWidth = Math.floor(newHeight * this.scale)
+            //    newLeftTopPoint.y = newRightBottomPoint.y - newHeight
+            //    newLeftTopPoint.x = newRightBottomPoint.x - newWidth
+            //  }
              if (newHeight > 12 && newWidth > 12) {
                this.left = newLeftTopPoint.x
                this.top = newLeftTopPoint.y

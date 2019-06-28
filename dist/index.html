@@ -12,12 +12,8 @@
 </head>
 
 <script src="/draw-editer.ec25b2a9.js"></script>
-<<<<<<< HEAD
-<script src="/image-slicer.d4be8c95.js"></script>
-=======
 <!-- <script src="./pdf/pdf.js"></script> -->
 <!-- <script src="./plugin/go/index.js"></script> -->
->>>>>>> master
 <style>body,
     html {
         margin: 0;
@@ -39,17 +35,14 @@
         -webkit-user-select: none;
         -ms-user-select: none;
         user-select: none;
-<<<<<<< HEAD
-    }
-    #img{
-        width: 200px;
-        height: 200px;
-=======
         /* background: url(./public/1.emf); */
         background-size: 100%;
         background-repeat: no-repeat;
 
->>>>>>> master
+    }
+    #img{
+        width: 200px;
+        height: 200px;
     }</style>
 
 <body>
@@ -60,16 +53,12 @@
         <!-- <img src="./public/2.svg" alt="" srcset=""> -->
 
     </div>
-<<<<<<< HEAD
-    <img id="img" src="https://tse3-mm.cn.bing.net/th?id=OIP.rJNHO8sYJpEhccdXGlN27gHaFj&w=288&h=213&c=7&o=5&pid=1.7" alt="">
-=======
     <!-- <button id="button">点击</button>
     <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1>
     <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1>
     <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1>
     <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1>
     <h1>dfafsdfasdfadfadfasdasdfasdfasdfasdfasdfasdfasdasdfasdfa</h1> -->
->>>>>>> master
 </body>
 <script>// setTimeout()
 var dom = null;
@@ -80,10 +69,6 @@ window.onload = function () {
   // PDFJS.getDocument(url);
 
   var btn = document.getElementById('button');
-<<<<<<< HEAD
-  var img = document.getElementById('img');
-  var drawEditer1 = new drawEditer(canvas); //  console.log(drawEditer1,"kkkkkk")
-=======
   var btnSave = document.getElementById('buttonsave');
   var drawEditer1 = new drawEditer(canvas, {
     elemClick: function elemClick(event) {
@@ -98,16 +83,9 @@ window.onload = function () {
     console.log(data, "kkkkk");
   }; // //  console.log(drawEditer1,"kkkkkk")
 
->>>>>>> master
-
-  var slicer2 = new slicer(canvas);
 
   btn.onclick = function () {
-<<<<<<< HEAD
-    slicer2.add(img);
-=======
     drawEditer1.add('text'); // document.execCommand("print",false,null)
->>>>>>> master
   }; // 
   //绘制
 

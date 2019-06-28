@@ -591,6 +591,14 @@ function () {
 
         var _parentNodeDetail2 = JSON.parse(this.rightTopIcon.dataset.parentdetail);
 
+        console.log(this.getRotatedPoint({
+          x: evt.pageX,
+          y: evt.pageY
+        }, {
+          x: _parentNodeDetail2.x - _parentNodeDetail2.width / 2,
+          y: _parentNodeDetail2.y - _parentNodeDetail2.height / 2
+        }, -angle));
+
         var _distanceX = evt.pageX - _parentNodeDetail2.right;
 
         var _distanceY = _parentNodeDetail2.y - evt.pageY;
@@ -656,6 +664,14 @@ function () {
   }, {
     key: "deleteDrop",
     value: function deleteDrop() {}
+  }, {
+    key: "getRotatedPoint",
+    value: function getRotatedPoint(curPos, centerPos, angle) {
+      return {
+        x: Math.floor((curPos.x - centerPos.x) * Math.cos(Math.PI / 180 * angle) - (curPos.y - centerPos.y) * Math.sin(Math.PI / 180 * angle) + centerPos.x),
+        y: Math.floor((curPos.x - centerPos.x) * Math.sin(Math.PI / 180 * angle) + (curPos.y - centerPos.y) * Math.cos(Math.PI / 180 * angle) + centerPos.y)
+      };
+    }
   }]);
 
   return drop;
@@ -818,11 +834,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-<<<<<<< HEAD
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56424" + '/');
-=======
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55304" + '/');
->>>>>>> master
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55450" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
