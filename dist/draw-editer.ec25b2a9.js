@@ -155,7 +155,44 @@ function setAttr(dom, attrs) {
     }
   }
 }
-},{}],"utils/dom/creatDom.js":[function(require,module,exports) {
+},{}],"utils/dom/onListener.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = onListener;
+
+var _setStyle = _interopRequireDefault(require("./setStyle"));
+
+var _setAttr = _interopRequireDefault(require("./setAttr"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function onListener(dom, onBar, params) {
+  if (_typeof(onBar) == 'object') {
+    for (var key in onBar) {
+      if (onBar[key]) {
+        if (key == 'hover') {
+          dom.removeEventListener('mousemove', onBar[key].bind(this));
+          dom.removeEventListener('mouseleave', onBar[key].bind(this));
+          dom.addEventListener('mousemove', onBar[key].bind(this));
+          dom.addEventListener('mouseleave', function () {
+            (0, _setStyle.default)(dom, params.style);
+            (0, _setAttr.default)(dom, params.attr);
+          });
+        } else {
+          // dom[`on`+key] = params.on[key].bind(this,dom);
+          dom.removeEventListener(key, onBar[key].bind(this, dom));
+          dom.addEventListener(key, onBar[key].bind(this, dom));
+        }
+      }
+    }
+  }
+}
+},{"./setStyle":"utils/dom/setStyle.js","./setAttr":"utils/dom/setAttr.js"}],"utils/dom/creatDom.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -167,6 +204,8 @@ var _setStyle = _interopRequireDefault(require("./setStyle"));
 
 var _setAttr = _interopRequireDefault(require("./setAttr"));
 
+var _onListener = _interopRequireDefault(require("./onListener"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function creatDom(params) {
@@ -176,29 +215,11 @@ function creatDom(params) {
   (0, _setStyle.default)(dom, params.style);
   (0, _setAttr.default)(dom, params.attr);
 
-  if (params.on) {
-    for (var key in params.on) {
-      if (params.on[key]) {
-        if (key == 'hover') {
-          dom.removeEventListener('mousemove', params.on[key].bind(this));
-          dom.removeEventListener('mouseleave', params.on[key].bind(this));
-          dom.addEventListener('mousemove', params.on[key].bind(this));
-          dom.addEventListener('mouseleave', function () {
-            (0, _setStyle.default)(dom, params.style);
-            (0, _setAttr.default)(dom, params.attr);
-          });
-        } else {
-          // dom[`on`+key] = params.on[key].bind(this,dom);
-          dom.removeEventListener(key, params.on[key].bind(this, dom));
-          dom.addEventListener(key, params.on[key].bind(this, dom));
-        }
-      }
-    }
-  }
+  _onListener.default.call(this, dom, params.on, params);
 
   return dom;
 }
-},{"./setStyle":"utils/dom/setStyle.js","./setAttr":"utils/dom/setAttr.js"}],"utils/index.js":[function(require,module,exports) {
+},{"./setStyle":"utils/dom/setStyle.js","./setAttr":"utils/dom/setAttr.js","./onListener":"utils/dom/onListener.js"}],"utils/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -690,6 +711,8 @@ exports.default = void 0;
 
 var _data = _interopRequireDefault(require("./data"));
 
+var _utils = require("../../../utils");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -715,32 +738,37 @@ function () {
       var _this = this;
 
       this.data.map(function (item) {
-        var dombox = _this.creatDom({
+        var style = {
+          display: 'inline-block',
+          margin: '5px',
+          minWidth: '50px',
+          minHeight: '50px',
+          padding: '5px',
+          textAlign: 'center',
+          fontSize: '12px',
+          cursor: 'pointer',
+          verticalAlign: 'middle',
+          boxSizing: 'border-box',
+          borderRadius: '4px',
+          backgroundColor: '#fff'
+        };
+        var dombox = (0, _utils.creatDom)({
           tag: 'div',
-          style: {
-            display: 'inline-block',
-            margin: '5px',
-            minWidth: '50px',
-            minHeight: '50px',
-            padding: '5px',
-            textAlign: 'center',
-            fontSize: '12px',
-            cursor: 'pointer',
-            verticalAlign: 'middle',
-            boxSizing: 'border-box',
-            borderRadius: '4px'
+          style: style,
+          on: {
+            hover: function hover(event) {
+              event.currentTarget.style.backgroundColor = 'rgba(14,19,24,.15)';
+            }
           }
         });
-
-        var domText = _this.creatDom({
+        var domText = (0, _utils.creatDom)({
           tag: 'span',
           child: item.text,
           style: {
             display: 'block'
           }
         });
-
-        var domImg = _this.creatDom({
+        var domImg = (0, _utils.creatDom)({
           tag: 'img',
           attr: {
             src: item.img
@@ -760,56 +788,9 @@ function () {
         dombox.appendChild(domImg);
         dombox.appendChild(domText);
 
-        dombox.onmousemove = function () {
-          dombox.style.background = 'rgba(14,19,24,.15)';
-        };
-
-        dombox.onmouseleave = function () {
-          dombox.style.background = '#fff';
-        };
-
         _this.dom.appendChild(dombox);
       });
     }
-  }, {
-    key: "creatDom",
-    value: function creatDom(params) {
-      var dom = document.createElement(params.tag); // dom.style = Object.assign({},dom.style,params.style||{});
-
-      dom.innerHTML = params.child || '';
-
-      if (params.style) {
-        for (var key in params.style) {
-          if (params.style[key]) {
-            dom.style[key] = params.style[key];
-          }
-        }
-      }
-
-      if (params.on) {
-        for (var _key in params.on) {
-          if (params.on[_key]) {
-            dom["on" + _key] = params.on[_key].bind(this, dom);
-          }
-        }
-      }
-
-      if (params.attr) {
-        for (var _key2 in params.attr) {
-          if (params.attr[_key2]) {
-            dom[_key2] = params.attr[_key2];
-          }
-        }
-      }
-
-      return dom;
-    }
-  }, {
-    key: "creatImg",
-    value: function creatImg() {}
-  }, {
-    key: "add",
-    value: function add() {}
   }]);
 
   return bar;
@@ -817,7 +798,7 @@ function () {
 
 var _default = bar;
 exports.default = _default;
-},{"./data":"plugin/draw-editer/draw-bar/data.js"}],"plugin/draw-editer/draw-detail/data.js":[function(require,module,exports) {
+},{"./data":"plugin/draw-editer/draw-bar/data.js","../../../utils":"utils/index.js"}],"plugin/draw-editer/draw-detail/data.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -837,7 +818,7 @@ var publicStyle = {
 };
 
 var hover = function hover(event) {
-  event.target.style.backgroundColor = 'rgba(14,19,24,.15)';
+  event.currentTarget.style.backgroundColor = 'rgba(14,19,24,.15)';
 };
 
 var _default = [{
@@ -905,10 +886,7 @@ var _default = [{
       click: function click() {
         console.log("ppppppp");
       },
-      hover: function hover(event) {
-        // console.log(event,"kkk")
-        event.target.style.backgroundColor = 'rgba(14,19,24,.15)';
-      }
+      hover: hover
     }
   }, {
     tag: 'div',
@@ -1010,7 +988,6 @@ function () {
         style: {
           position: 'absolute',
           width: '300px',
-          // height:'400px',
           background: '#FFF',
           margin: '0 -300px 0 0',
           right: '0px',
@@ -1026,9 +1003,6 @@ function () {
 
       this.canvas.appendChild(detailBox);
     }
-  }, {
-    key: "textContent",
-    value: function textContent() {}
   }, {
     key: "divList",
     value: function divList(params) {
@@ -1082,9 +1056,6 @@ function () {
       domBox.appendChild(itemDom);
       return domBox;
     }
-  }, {
-    key: "selsect",
-    value: function selsect() {}
   }]);
 
   return drawDetail;
@@ -1242,7 +1213,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50861" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57691" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

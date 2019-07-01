@@ -10,7 +10,7 @@ const publicStyle = {
   borderRadius:'4px'
 }
 const hover = (event) => {
-  event.target.style.backgroundColor = 'rgba(14,19,24,.15)'
+  event.currentTarget.style.backgroundColor = 'rgba(14,19,24,.15)'
 }
 export default [
   {
@@ -82,10 +82,7 @@ export default [
         click: () => {
           console.log("ppppppp")
         },
-        hover: (event) => {
-          // console.log(event,"kkk")
-          event.target.style.backgroundColor = 'rgba(14,19,24,.15)'
-        }
+        hover:hover
 
       }
     }, {

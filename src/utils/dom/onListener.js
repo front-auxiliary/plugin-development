@@ -1,6 +1,6 @@
 import setStyle from './setStyle'
 import setAttr from './setAttr'
-export default function onListener(dom,onBar){
+export default function onListener(dom,onBar,params){
     if(typeof onBar == 'object'){
         for(let key in onBar){
             if(onBar[key]){
