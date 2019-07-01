@@ -1,28 +1,32 @@
+ import setStyle from './setStyle'
+ import setAttr from './setAttr'
  export default function creatDom (params){
-    let dom =  document.createElement(params.tag);
+    let dom =  document.createElement(params.tag||'div');
     // dom.style = Object.assign({},dom.style,params.style||{});
     dom.innerHTML= params.child||'';
-    if(params.style){
-        for(let key in params.style){
-            if(params.style[key]){
-                dom.style[key] = params.style[key];
-            }
-        }
-    }
+    setStyle(dom,params.style);
+    setAttr(dom,params.attr)
     if(params.on){
         for(let key in params.on){
             if(params.on[key]){
-                dom[`on`+key] = params.on[key].bind(this,dom);
+                if(key == 'hover'){
+                    dom.removeEventListener('mousemove',params.on[key].bind(this));
+                    dom.removeEventListener('mouseleave',params.on[key].bind(this));
+                    dom.addEventListener('mousemove',params.on[key].bind(this));
+                    dom.addEventListener('mouseleave',()=>{
+                        setStyle(dom,params.style);
+                        setAttr(dom,params.attr)
+                    });
+
+                }else{
+                    // dom[`on`+key] = params.on[key].bind(this,dom);
+                    dom.removeEventListener(key,params.on[key].bind(this,dom));
+                    dom.addEventListener(key,params.on[key].bind(this,dom));
+                }
+                
             }
         }
     }
 
-    if(params.attr){
-        for(let key in params.attr){
-            if(params.attr[key]){
-                dom[key] = params.attr[key]
-            }
-        }
-    }
     return dom;
 }

@@ -37,11 +37,19 @@ class drawDetail {
             itemDom = creatDom.call(this,{tag:'textarea'});
         }
         if(params.type == 'select'){
-            itemDom = creatDom.call(this,{tag:'select'})
+            itemDom = creatDom.call(this,{tag:'select',on:params.on})
             let optionData = params.options;
             optionData.map((item)=>{
                 itemDom.appendChild(creatDom.call(this,{tag:'option',child:item.label}))
             })
+        }
+        if(params.type == 'tab'){
+            itemDom = creatDom.call(this,{tag:'div',style:{margin:'5px'}})
+            let optionData = params.options;
+            optionData.map((item)=>{
+                itemDom.appendChild(creatDom.call(this,item))
+            })
+
         }
         domBox.appendChild(titleDom);
         domBox.appendChild(itemDom)

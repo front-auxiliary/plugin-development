@@ -28,7 +28,7 @@ class bar {
             }});
             if(item.on){
                 for(let key in item.on){
-                    dombox.removeEventListener(key,item.on[key].bind(this));
+                    dombox.removeEventListener(key,item.on[key].bind(this,this.drawObj));
                     dombox.addEventListener(key,item.on[key].bind(this,this.drawObj));
                 }
             }
