@@ -134,6 +134,45 @@ function _default(dom, styles) {
     }
   }
 }
+},{}],"utils/dom/creatDom.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = creatDom;
+
+function creatDom(params) {
+  var dom = document.createElement(params.tag); // dom.style = Object.assign({},dom.style,params.style||{});
+
+  dom.innerHTML = params.child || '';
+
+  if (params.style) {
+    for (var key in params.style) {
+      if (params.style[key]) {
+        dom.style[key] = params.style[key];
+      }
+    }
+  }
+
+  if (params.on) {
+    for (var _key in params.on) {
+      if (params.on[_key]) {
+        dom["on" + _key] = params.on[_key].bind(this, dom);
+      }
+    }
+  }
+
+  if (params.attr) {
+    for (var _key2 in params.attr) {
+      if (params.attr[_key2]) {
+        dom[_key2] = params.attr[_key2];
+      }
+    }
+  }
+
+  return dom;
+}
 },{}],"utils/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -146,11 +185,19 @@ Object.defineProperty(exports, "setStyle", {
     return _setStyle.default;
   }
 });
+Object.defineProperty(exports, "creatDom", {
+  enumerable: true,
+  get: function () {
+    return _creatDom.default;
+  }
+});
 
 var _setStyle = _interopRequireDefault(require("./dom/setStyle"));
 
+var _creatDom = _interopRequireDefault(require("./dom/creatDom"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./dom/setStyle":"utils/dom/setStyle.js"}],"plugin/draw-editer/drop/index.js":[function(require,module,exports) {
+},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js"}],"plugin/draw-editer/drop/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -180,8 +227,8 @@ function () {
   function drop() {
     _classCallCheck(this, drop);
 
-    this.canvas = null;
-    this.elemClick = null;
+    this.canvas = null; // this.elemClick = null;
+
     this.canvasDetail = null;
     this.activeDom = null;
   }
@@ -194,7 +241,7 @@ function () {
       this.canvas = canvas;
       this.canvasDetail = this.canvas.getBoundingClientRect(); // console.log(this.canvasDetail)
 
-      this.elemClick = params.elemClick;
+      this.elemClick = params.canvas.on.elemClick;
 
       document.onmouseup = function (event) {
         _this.onmouseup(event, _this.canvas);
@@ -238,6 +285,8 @@ function () {
         event.stopPropagation();
 
         _this2.onmousedown(event, dropDom, canvas);
+
+        console.log(_this2, "kkkkk");
 
         if (_this2.elemClick) {
           _this2.elemClick(event);
@@ -471,7 +520,6 @@ function () {
         x: left,
         y: top
       };
-      console.log(elemDetail, "jj");
       this.activeDom.dataset.activeDetail = JSON.stringify(elemDetail);
       this.activeDom.dataset.type = type;
       event.stopPropagation();
@@ -526,6 +574,7 @@ function () {
 
       if (type == 'top') {
         activeDetail.height = activePos.y - mousePos.y + +activeDetail.height;
+        activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
       }
 
       if (type === 'leftTop') {
@@ -579,7 +628,323 @@ function () {
 var _default = new drop();
 
 exports.default = _default;
-},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/drawEditer.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/draw-bar/data.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = [{
+  text: '字体',
+  img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY1NTE5NzQyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5OTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTU2My45NTY2MjcgMjc1Ljc0MjYzNSA4MDAuODk5MTYxIDI3NS43NDI2MzVDODI5LjgzNDQgMjc1Ljc0MjYzNSA4NTMuMzMzMzMzIDI1Mi4yMjA1NzggODUzLjMzMzMzMyAyMjMuMjA0NjUxIDg1My4zMzMzMzMgMTkzLjk4NjQzIDgyOS44NTc3NTQgMTcwLjY2NjY2NyA4MDAuODk5MTYxIDE3MC42NjY2NjdMMjIzLjEwMDg0IDE3MC42NjY2NjdDMTk0LjE2NTU5OSAxNzAuNjY2NjY3IDE3MC42NjY2NjcgMTk0LjE4ODcyMyAxNzAuNjY2NjY3IDIyMy4yMDQ2NTEgMTcwLjY2NjY2NyAyNTIuNDIyODcyIDE5NC4xNDIyNDYgMjc1Ljc0MjYzNSAyMjMuMTAwODQgMjc1Ljc0MjYzNUw0NjAuMDQyNzIxIDI3NS43NDI2MzVDNDU5LjY2MDEzMSAyNzguMzAwNzM0IDQ1OS40NjIwMTggMjgwLjkxOTQxNCA0NTkuNDYyMDE4IDI4My41ODQ2MDdMNDU5LjQ2MjAxOCA3OTIuOTUzMzc4QzQ1OS40NjIwMTggODIxLjk4Njc0MSA0ODIuOTg0MDczIDg0NS4zMDk1OTQgNTEyIDg0NS4zMDk1OTQgNTQxLjIxODIyMiA4NDUuMzA5NTk0IDU2NC41Mzc5ODIgODIxLjg2ODkxOSA1NjQuNTM3OTgyIDc5Mi45NTMzNzhMNTY0LjUzNzk4MiAyODMuNTg0NjA3QzU2NC41Mzc5ODIgMjgwLjkxNzg5MSA1NjQuMzM5NTQxIDI3OC4yOTkzNTEgNTYzLjk1NjYyNyAyNzUuNzQyNjM1WiIgcC1pZD0iMTk5MyI+PC9wYXRoPjwvc3ZnPg==',
+  class: '',
+  on: {
+    click: function click(draw, evt) {
+      draw.add('text');
+    }
+  }
+}, {
+  text: '图片',
+  img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY1NTYxODQyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI3NjgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTEwNy4wMDggMTA3LjI2NGg4MDkuODU2YzIzLjIzMiAwIDQxLjkyIDE4LjY4OCA0MS45MiA0MS45MnYzMzAuMzY4Yy00MS45Mi0zMi42NC0xMjAuOTYtODMuNzc2LTE4MS41NjgtODMuNzc2LTg4LjQ0OCAwLTE2Ny41NTIgMjA0LjgtMjY1LjI4IDIwNC44QzQzNy40NCA1OTUuODQgMzM1LjEwNCA1MTIgMjE4LjY4OCA1MjYuMDE2Yy00Ni41MjggOS4yOC0xMTEuNjggODMuODQtMTUzLjYgMTM5LjY0OHYtNTE2LjQ4YzAtMjMuMzYgMTguNjg4LTQxLjkyIDQxLjkyLTQxLjkyeiBtMTk1LjUyIDMzNS4xMDRjLTM3LjI0OCAwLTY5LjgyNC0xMy45NTItOTMuMDU2LTM3LjE4NHMtMzcuMjQ4LTYwLjU0NC0zNy4yNDgtOTMuMDU2YzAtMzIuNjQgMTQuMDE2LTY5Ljc2IDM3LjI0OC05My4wNTZhMTI5Ljk4NCAxMjkuOTg0IDAgMCAxIDkzLjA1Ni0zNy4xODRjMzIuNjQgMCA2NS4wODggMTMuOTUyIDkyLjk5MiAzNy4xODQgMjMuMjMyIDIzLjIzMiAzNy4yNDggNjAuNTQ0IDM3LjI0OCA5My4wNTYgMCAzMi42NC0xNC4wMTYgNjkuODI0LTM3LjI0OCA5My4wNTYtMjcuOTA0IDIzLjIzMi02MC40MTYgMzcuMTg0LTkyLjk5MiAzNy4xODR6TTk0MC4wOTYgNDYuNzJIODMuODRDMzcuMTg0IDQ2LjcyIDAgODMuOTA0IDAgMTMwLjQ5NnY3NjMuMjY0YzAgNDYuNTkyIDM3LjE4NCA4My44NCA4My43NzYgODMuODRoODU2LjQ0OGM0Ni41OTIgMCA4My43NzYtMzcuMjQ4IDgzLjc3Ni04My44NFYxMzAuNTZBODMuNTIgODMuNTIgMCAwIDAgOTQwLjE2IDQ2LjcyeiIgcC1pZD0iMjc2OSI+PC9wYXRoPjwvc3ZnPg==',
+  class: '',
+  on: {
+    click: function click(draw, evt) {
+      draw.add('text');
+    }
+  }
+}];
+exports.default = _default;
+},{}],"plugin/draw-editer/draw-bar/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _data = _interopRequireDefault(require("./data"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var bar =
+/*#__PURE__*/
+function () {
+  function bar(params, draw) {
+    _classCallCheck(this, bar);
+
+    this.dom = params.dom;
+    this.data = _data.default.concat(params.data || []);
+    this.drawObj = draw;
+  }
+
+  _createClass(bar, [{
+    key: "init",
+    value: function init() {
+      var _this = this;
+
+      this.data.map(function (item) {
+        var dombox = _this.creatDom({
+          tag: 'div',
+          style: {
+            display: 'inline-block',
+            margin: '5px',
+            minWidth: '50px',
+            minHeight: '50px',
+            padding: '5px',
+            textAlign: 'center',
+            fontSize: '12px',
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+            boxSizing: 'border-box',
+            borderRadius: '4px'
+          }
+        });
+
+        var domText = _this.creatDom({
+          tag: 'span',
+          child: item.text,
+          style: {
+            display: 'block'
+          }
+        });
+
+        var domImg = _this.creatDom({
+          tag: 'img',
+          attr: {
+            src: item.img
+          },
+          style: {
+            height: '20px'
+          }
+        });
+
+        if (item.on) {
+          for (var key in item.on) {
+            dombox.removeEventListener(key, item.on[key].bind(_this));
+            dombox.addEventListener(key, item.on[key].bind(_this, _this.drawObj));
+          }
+        }
+
+        dombox.appendChild(domImg);
+        dombox.appendChild(domText);
+
+        dombox.onmousemove = function () {
+          dombox.style.background = 'rgba(14,19,24,.15)';
+        };
+
+        dombox.onmouseleave = function () {
+          dombox.style.background = '#fff';
+        };
+
+        _this.dom.appendChild(dombox);
+      });
+    }
+  }, {
+    key: "creatDom",
+    value: function creatDom(params) {
+      var dom = document.createElement(params.tag); // dom.style = Object.assign({},dom.style,params.style||{});
+
+      dom.innerHTML = params.child || '';
+
+      if (params.style) {
+        for (var key in params.style) {
+          if (params.style[key]) {
+            dom.style[key] = params.style[key];
+          }
+        }
+      }
+
+      if (params.on) {
+        for (var _key in params.on) {
+          if (params.on[_key]) {
+            dom["on" + _key] = params.on[_key].bind(this, dom);
+          }
+        }
+      }
+
+      if (params.attr) {
+        for (var _key2 in params.attr) {
+          if (params.attr[_key2]) {
+            dom[_key2] = params.attr[_key2];
+          }
+        }
+      }
+
+      return dom;
+    }
+  }, {
+    key: "creatImg",
+    value: function creatImg() {}
+  }, {
+    key: "add",
+    value: function add() {}
+  }]);
+
+  return bar;
+}();
+
+var _default = bar;
+exports.default = _default;
+},{"./data":"plugin/draw-editer/draw-bar/data.js"}],"plugin/draw-editer/draw-detail/data.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = [{
+  title: "文字内容",
+  name: 'text',
+  type: 'textarea'
+}, {
+  title: "字体",
+  name: 'text',
+  type: 'select',
+  options: [{
+    label: 'Apple',
+    value: 'Apple'
+  }, {
+    label: 'Orange',
+    value: 'Orange'
+  }]
+}, {
+  title: "字号",
+  name: 'text',
+  type: 'select',
+  options: [{
+    label: '14',
+    value: '14'
+  }, {
+    label: '16',
+    value: '16'
+  }]
+}, {
+  title: "行高",
+  name: 'text',
+  type: 'select',
+  options: [{
+    label: '14',
+    value: '14'
+  }, {
+    label: '16',
+    value: '16'
+  }]
+}];
+exports.default = _default;
+},{}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+var _data = _interopRequireDefault(require("./data"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var drawDetail =
+/*#__PURE__*/
+function () {
+  function drawDetail(canvas) {
+    _classCallCheck(this, drawDetail);
+
+    this.canvas = canvas;
+  }
+
+  _createClass(drawDetail, [{
+    key: "init",
+    value: function init() {
+      var _this = this;
+
+      var detailBox = _utils.creatDom.call(this, {
+        tag: 'form',
+        style: {
+          position: 'absolute',
+          width: '300px',
+          // height:'400px',
+          background: '#FFF',
+          margin: '0 -300px 0 0',
+          right: '0px',
+          bottom: '0px',
+          top: '0px',
+          boxShadow: '1px 1px 1px 1px rgba(14,19,24,.15)'
+        }
+      });
+
+      _data.default.map(function (item, index) {
+        detailBox.appendChild(_this.divList(item));
+      });
+
+      this.canvas.appendChild(detailBox);
+    }
+  }, {
+    key: "textContent",
+    value: function textContent() {}
+  }, {
+    key: "divList",
+    value: function divList(params) {
+      var _this2 = this;
+
+      var domBox = _utils.creatDom.call(this, {});
+
+      var titleDom = _utils.creatDom.call(this, {
+        tag: 'div',
+        child: params.title
+      }); // let formDom = 
+
+
+      var itemDom = null;
+
+      if (params.type == 'textarea') {
+        itemDom = _utils.creatDom.call(this, {
+          tag: 'textarea'
+        });
+      }
+
+      if (params.type == 'select') {
+        itemDom = _utils.creatDom.call(this, {
+          tag: 'select'
+        });
+        var optionData = params.options;
+        optionData.map(function (item) {
+          itemDom.appendChild(_utils.creatDom.call(_this2, {
+            tag: 'option',
+            child: item.label
+          }));
+        });
+      }
+
+      domBox.appendChild(titleDom);
+      domBox.appendChild(itemDom);
+      return domBox;
+    }
+  }, {
+    key: "selsect",
+    value: function selsect() {}
+  }]);
+
+  return drawDetail;
+}();
+
+var _default = drawDetail;
+exports.default = _default;
+},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-detail/data.js"}],"plugin/draw-editer/drawEditer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -588,6 +953,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _drop = _interopRequireDefault(require("./drop"));
+
+var _drawBar = _interopRequireDefault(require("./draw-bar"));
+
+var _drawDetail = _interopRequireDefault(require("./draw-detail"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -600,17 +969,21 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var drawEditer =
 /*#__PURE__*/
 function () {
-  function drawEditer(canvas, params) {
+  function drawEditer(params) {
     _classCallCheck(this, drawEditer);
 
-    this.canvas = canvas;
+    this.canvas = params.canvas.dom;
     this.canvas.style.position = 'relative';
     this.elements = [];
-    this.id = 0;
-    console.log(params, "kjjj");
+    this.id = 0; // console.log(params,"kjjj")
 
-    _drop.default.init(canvas, params); // return this;
+    _drop.default.init(this.canvas, params);
 
+    this.bar = new _drawBar.default(params.bar, this);
+    this.detail = new _drawDetail.default(canvas);
+    this.bar.init();
+    this.detail.init(); // return this;
+    // console.log((new bar()).init(),"kkkk")
   }
 
   _createClass(drawEditer, [{
@@ -659,25 +1032,13 @@ function () {
         }
       }, this.canvas)); // this.render();
     }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this = this;
-
-      var elements = this.elements;
-      this.canvas.innerHTML = '';
-      var htmls = elements.map(function (item, index) {
-        _this.canvas.appendChild(_drop.default.create(item, _this.canvas));
-      }); // this.canvas.appendChild(htmls);
-      // let 
-    }
   }]);
 
   return drawEditer;
 }();
 
 exports.default = drawEditer;
-},{"./drop":"plugin/draw-editer/drop/index.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
+},{"./drop":"plugin/draw-editer/drop/index.js","./draw-bar":"plugin/draw-editer/draw-bar/index.js","./draw-detail":"plugin/draw-editer/draw-detail/index.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
 var global = arguments[3];
 "use strict";
 
@@ -733,7 +1094,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58299" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49997" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

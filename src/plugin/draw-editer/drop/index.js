@@ -1,8 +1,8 @@
 import { setStyle } from '../../../utils';
-class drop {
+class drop {           
   constructor() {
     this.canvas = null;
-    this.elemClick = null;
+    // this.elemClick = null;
     this.canvasDetail = null;
     this.activeDom = null;
   }
@@ -10,7 +10,7 @@ class drop {
     this.canvas = canvas;
     this.canvasDetail = this.canvas.getBoundingClientRect();
     // console.log(this.canvasDetail)
-    this.elemClick = params.elemClick;
+    this.elemClick = params.canvas.on.elemClick;
     document.onmouseup = (event) => {
       this.onmouseup(event, this.canvas)
     }
@@ -46,6 +46,7 @@ class drop {
     dropDom.onmousedown = (event) => {
       event.stopPropagation();
       this.onmousedown(event, dropDom, canvas)
+      console.log(this,"kkkkk")
       if (this.elemClick) {
         this.elemClick(event)
       }
@@ -196,7 +197,6 @@ class drop {
       x:left,
       y:top
     }
-    console.log(elemDetail,"jj")
     this.activeDom.dataset.activeDetail = JSON.stringify(elemDetail);
     this.activeDom.dataset.type = type;
     event.stopPropagation()
