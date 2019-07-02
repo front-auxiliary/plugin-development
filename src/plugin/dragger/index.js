@@ -307,7 +307,7 @@
                x: e.clientX,
                y: e.clientY
              }, this.centerPos, -this.initAngle)
-            // 左上角旋转为水平的角度
+            // 左上角旋转为水平的位置
              newRightBottomPoint = this.getRotatedPoint(this.rightBottomPoint, this.centerPos, -this.initAngle)
              newWidth = newRightBottomPoint.x - newLeftTopPoint.x
              newHeight = newRightBottomPoint.y - newLeftTopPoint.y

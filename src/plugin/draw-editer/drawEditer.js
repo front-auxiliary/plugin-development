@@ -1,14 +1,22 @@
 import drop from './drop'
-export default class drawEditer {
-  constructor(canvas,params) {
+import bar from './draw-bar';
+import detail from './draw-detail';
 
-    this.canvas = canvas;
+export default class drawEditer {
+  constructor(params) {
+
+    this.canvas = params.canvas.dom;
     this.canvas.style.position = 'relative';
     this.elements = [];
     this.id = 0;
-    console.log(params,"kjjj")
-    drop.init(canvas,params)
+    // console.log(params,"kjjj")
+    drop.init(this.canvas,params)
+    this.bar = new bar(params.bar,this);
+    this.detail = new detail(canvas);
+    this.bar.init();
+    this.detail.init()
     // return this;
+    // console.log((new bar()).init(),"kkkk")
   }
   create(){
 
@@ -52,15 +60,5 @@ export default class drawEditer {
       }
     },this.canvas));
     // this.render();
-  }
-  
-  render(){
-    const elements =  this.elements;
-    this.canvas.innerHTML = '';
-    const htmls = elements.map((item,index)=>{
-     this.canvas.appendChild(drop.create(item,this.canvas));
-    })
-    // this.canvas.appendChild(htmls);
-    // let 
   }
 }
