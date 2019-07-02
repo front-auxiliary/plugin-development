@@ -50,10 +50,23 @@ window.onload = function () {
   var btn = document.getElementById('button');
   var img = document.getElementById('img'); //  console.log(drawEditer1,"kkkkkk")
 
-  var slicer2 = new slicer(canvas);
+  var slicer2 = new slicer(canvas, {
+    data: {
+      x: 1000,
+      y: 543,
+      width: 356,
+      height: 780,
+      rotate: 0,
+      scaleX: 1,
+      scaleY: 1
+    }
+  });
 
   btn.onclick = function () {
     slicer2.add(img);
+    setTimeout(function () {
+      console.log(slicer2.cropend(), 'end');
+    }, 1000);
   }; // 
 
 };</script>

@@ -127,29 +127,12 @@ exports.default = _default;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-<<<<<<< HEAD
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _default(dom, styles) {
-  var newDom = _objectSpread({}, dom);
-
-  if (_typeof(styles) == 'object') {
-    for (var key in styles) {
-      newDom[key] = styles[key];
-    }
-  }
-
-  return newDom;
-=======
 function _default(dom, styles) {
   if (_typeof(styles) == 'object') {
     for (var key in styles) {
       dom.style[key] = styles[key];
     }
   }
->>>>>>> master
 }
 },{}],"utils/index.js":[function(require,module,exports) {
 "use strict";
@@ -3764,18 +3747,24 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var slicer =
 /*#__PURE__*/
 function () {
-  function slicer(canvas) {
+  function slicer(canvas, param) {
     _classCallCheck(this, slicer);
 
     this.canvas = canvas;
+    this.cropData = {};
+    this.param = param;
   }
 
   _createClass(slicer, [{
     key: "add",
     value: function add(img) {
-      img.style.maxWidth = 50 % this.canvas.appendChild(img);
+      this.canvas.appendChild(img);
+
+      var _that = this;
+
       var cropper = new _cropperCommon.default(img, {
-        aspectRatio: 16 / 9,
+        zoomOnTouch: false,
+        movable: true,
         crop: function crop(event) {
           console.log(event.detail.x, 'x');
           console.log(event.detail.y, 'y');
@@ -3784,13 +3773,25 @@ function () {
           console.log(event.detail.rotate, 'rotate');
           console.log(event.detail.scaleX, 'scaleX');
           console.log(event.detail.scaleY, 'scaleY');
+          _that.cropData.x = event.detail.x;
+          _that.cropData.y = event.detail.y;
+          _that.cropData.width = event.detail.width;
+          _that.cropData.height = event.detail.height;
+          _that.cropData.rotate = event.detail.rotate;
+          _that.cropData.scaleX = event.detail.scaleX;
+          _that.cropData.scaleY = event.detail.scaleY;
         },
         ready: function ready() {
-          // Allows chain composition
-          console.log(cropper, 'cropperready');
-          this.cropper.rotateTo(45);
+          if (_that.param.data) {
+            cropper.setData(_that.param.data);
+          }
         }
       });
+    }
+  }, {
+    key: "getData",
+    value: function getData() {
+      return this.cropData;
     }
   }]);
 
@@ -3854,11 +3855,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-<<<<<<< HEAD
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56424" + '/');
-=======
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55304" + '/');
->>>>>>> master
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52387" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
