@@ -1089,7 +1089,188 @@ function () {
 
 var _default = drawDetail;
 exports.default = _default;
-},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-detail/data.js"}],"plugin/draw-editer/drawEditer.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-detail/data.js"}],"plugin/draw-editer/draw-img/data.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var publicStyle = {
+  width: '30px',
+  height: '30px',
+  cursor: 'pointer',
+  display: 'inline-block',
+  backgroundSize: '25px',
+  backgroundColor: '#fff',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  borderRadius: '4px',
+  verticalAlign: 'middle',
+  margin: '2px'
+};
+
+var hover = function hover(event) {
+  event.currentTarget.style.backgroundColor = 'rgba(14,19,24,.15)';
+};
+
+var setActive = function setActive(event) {
+  var active = +event.dataset.active;
+
+  if (!active) {
+    event.dataset.active = 1;
+    event.style.backgroundColor = 'rgba(14,19,24,0.15)';
+  } else {
+    event.dataset.active = 0;
+    event.style.backgroundColor = '#fff';
+  }
+};
+
+var _default = [{
+  title: "图片",
+  name: 'img',
+  type: 'img',
+  style: {},
+  img: 'https://tse3-mm.cn.bing.net/th?id=OIP.rJNHO8sYJpEhccdXGlN27gHaFj&w=277&h=207&c=7&o=5&dpr=2&pid=1.7'
+}, {
+  title: "更换图片",
+  name: 'text',
+  type: 'div',
+  style: {},
+  img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY1NTYxODQyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI3NjgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTEwNy4wMDggMTA3LjI2NGg4MDkuODU2YzIzLjIzMiAwIDQxLjkyIDE4LjY4OCA0MS45MiA0MS45MnYzMzAuMzY4Yy00MS45Mi0zMi42NC0xMjAuOTYtODMuNzc2LTE4MS41NjgtODMuNzc2LTg4LjQ0OCAwLTE2Ny41NTIgMjA0LjgtMjY1LjI4IDIwNC44QzQzNy40NCA1OTUuODQgMzM1LjEwNCA1MTIgMjE4LjY4OCA1MjYuMDE2Yy00Ni41MjggOS4yOC0xMTEuNjggODMuODQtMTUzLjYgMTM5LjY0OHYtNTE2LjQ4YzAtMjMuMzYgMTguNjg4LTQxLjkyIDQxLjkyLTQxLjkyeiBtMTk1LjUyIDMzNS4xMDRjLTM3LjI0OCAwLTY5LjgyNC0xMy45NTItOTMuMDU2LTM3LjE4NHMtMzcuMjQ4LTYwLjU0NC0zNy4yNDgtOTMuMDU2YzAtMzIuNjQgMTQuMDE2LTY5Ljc2IDM3LjI0OC05My4wNTZhMTI5Ljk4NCAxMjkuOTg0IDAgMCAxIDkzLjA1Ni0zNy4xODRjMzIuNjQgMCA2NS4wODggMTMuOTUyIDkyLjk5MiAzNy4xODQgMjMuMjMyIDIzLjIzMiAzNy4yNDggNjAuNTQ0IDM3LjI0OCA5My4wNTYgMCAzMi42NC0xNC4wMTYgNjkuODI0LTM3LjI0OCA5My4wNTYtMjcuOTA0IDIzLjIzMi02MC40MTYgMzcuMTg0LTkyLjk5MiAzNy4xODR6TTk0MC4wOTYgNDYuNzJIODMuODRDMzcuMTg0IDQ2LjcyIDAgODMuOTA0IDAgMTMwLjQ5NnY3NjMuMjY0YzAgNDYuNTkyIDM3LjE4NCA4My44NCA4My43NzYgODMuODRoODU2LjQ0OGM0Ni41OTIgMCA4My43NzYtMzcuMjQ4IDgzLjc3Ni04My44NFYxMzAuNTZBODMuNTIgODMuNTIgMCAwIDAgOTQwLjE2IDQ2LjcyeiIgcC1pZD0iMjc2OSI+PC9wYXRoPjwvc3ZnPg==',
+  on: {
+    click: function click(evt) {
+      console.log('更换图片', evt);
+    }
+  }
+}, {
+  title: "裁剪图片",
+  name: 'text',
+  type: 'div',
+  img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY1NTYxODQyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI3NjgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTEwNy4wMDggMTA3LjI2NGg4MDkuODU2YzIzLjIzMiAwIDQxLjkyIDE4LjY4OCA0MS45MiA0MS45MnYzMzAuMzY4Yy00MS45Mi0zMi42NC0xMjAuOTYtODMuNzc2LTE4MS41NjgtODMuNzc2LTg4LjQ0OCAwLTE2Ny41NTIgMjA0LjgtMjY1LjI4IDIwNC44QzQzNy40NCA1OTUuODQgMzM1LjEwNCA1MTIgMjE4LjY4OCA1MjYuMDE2Yy00Ni41MjggOS4yOC0xMTEuNjggODMuODQtMTUzLjYgMTM5LjY0OHYtNTE2LjQ4YzAtMjMuMzYgMTguNjg4LTQxLjkyIDQxLjkyLTQxLjkyeiBtMTk1LjUyIDMzNS4xMDRjLTM3LjI0OCAwLTY5LjgyNC0xMy45NTItOTMuMDU2LTM3LjE4NHMtMzcuMjQ4LTYwLjU0NC0zNy4yNDgtOTMuMDU2YzAtMzIuNjQgMTQuMDE2LTY5Ljc2IDM3LjI0OC05My4wNTZhMTI5Ljk4NCAxMjkuOTg0IDAgMCAxIDkzLjA1Ni0zNy4xODRjMzIuNjQgMCA2NS4wODggMTMuOTUyIDkyLjk5MiAzNy4xODQgMjMuMjMyIDIzLjIzMiAzNy4yNDggNjAuNTQ0IDM3LjI0OCA5My4wNTYgMCAzMi42NC0xNC4wMTYgNjkuODI0LTM3LjI0OCA5My4wNTYtMjcuOTA0IDIzLjIzMi02MC40MTYgMzcuMTg0LTkyLjk5MiAzNy4xODR6TTk0MC4wOTYgNDYuNzJIODMuODRDMzcuMTg0IDQ2LjcyIDAgODMuOTA0IDAgMTMwLjQ5NnY3NjMuMjY0YzAgNDYuNTkyIDM3LjE4NCA4My44NCA4My43NzYgODMuODRoODU2LjQ0OGM0Ni41OTIgMCA4My43NzYtMzcuMjQ4IDgzLjc3Ni04My44NFYxMzAuNTZBODMuNTIgODMuNTIgMCAwIDAgOTQwLjE2IDQ2LjcyeiIgcC1pZD0iMjc2OSI+PC9wYXRoPjwvc3ZnPg==',
+  style: {},
+  on: {
+    click: function click(evt) {
+      console.log('裁剪图片', evt);
+    }
+  }
+}];
+exports.default = _default;
+},{}],"plugin/draw-editer/draw-img/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+var _data = _interopRequireDefault(require("./data"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var drawImg =
+/*#__PURE__*/
+function () {
+  function drawImg(canvas) {
+    _classCallCheck(this, drawImg);
+
+    this.canvas = canvas;
+  }
+
+  _createClass(drawImg, [{
+    key: "init",
+    value: function init() {
+      var _this = this;
+
+      var detailBox = _utils.creatDom.call(this, {
+        tag: 'form',
+        style: {
+          position: 'absolute',
+          width: '300px',
+          background: '#FFF',
+          margin: '0 -300px 0 0',
+          right: '0px',
+          bottom: '0px',
+          top: '0px',
+          boxShadow: '1px 1px 1px 1px rgba(14,19,24,.15)'
+        }
+      });
+
+      _data.default.map(function (item, index) {
+        detailBox.appendChild(_this.divList(item));
+      });
+
+      this.canvas.appendChild(detailBox);
+    }
+  }, {
+    key: "divList",
+    value: function divList(params) {
+      var domBox = _utils.creatDom.call(this, {});
+
+      var titleDom = null; // let formDom = 
+
+      var itemDom = null;
+
+      if (params.type == 'img') {
+        titleDom = _utils.creatDom.call(this, {
+          tag: 'div',
+          child: params.title,
+          style: {
+            'lineHeight': '60px',
+            paddingLeft: '34px'
+          }
+        });
+        itemDom = _utils.creatDom.call(this, {
+          tag: 'img',
+          attr: {
+            src: params.img
+          },
+          on: params.on,
+          style: {
+            width: '50%',
+            height: '100px',
+            float: 'left'
+          }
+        });
+      } else {
+        titleDom = _utils.creatDom.call(this, {
+          tag: 'span'
+        });
+        itemDom = _utils.creatDom.call(this, {
+          tag: 'span',
+          style: {
+            display: 'inline-block',
+            width: '49%',
+            height: '35px',
+            float: 'right',
+            border: '1px solid #eee',
+            margin: '5px 0 10px 0'
+          },
+          on: params.on,
+          child: params.title
+        });
+      }
+
+      domBox.appendChild(titleDom);
+      domBox.appendChild(itemDom);
+      return domBox;
+    }
+  }]);
+
+  return drawImg;
+}();
+
+var _default = drawImg;
+exports.default = _default;
+},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-img/data.js"}],"plugin/draw-editer/drawEditer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1102,6 +1283,8 @@ var _drop = _interopRequireDefault(require("./drop"));
 var _drawBar = _interopRequireDefault(require("./draw-bar"));
 
 var _drawDetail = _interopRequireDefault(require("./draw-detail"));
+
+var _drawImg = _interopRequireDefault(require("./draw-img"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1126,8 +1309,10 @@ function () {
 
     this.bar = new _drawBar.default(params.bar, this);
     this.detail = new _drawDetail.default(canvas);
+    this.imgDetail = new _drawImg.default(canvas);
     this.bar.init();
-    this.detail.init(); // return this;
+    this.detail.init();
+    this.imgDetail.init(); // return this;
     // console.log((new bar()).init(),"kkkk")
   }
 
@@ -1183,7 +1368,7 @@ function () {
 }();
 
 exports.default = drawEditer;
-},{"./drop":"plugin/draw-editer/drop/index.js","./draw-bar":"plugin/draw-editer/draw-bar/index.js","./draw-detail":"plugin/draw-editer/draw-detail/index.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
+},{"./drop":"plugin/draw-editer/drop/index.js","./draw-bar":"plugin/draw-editer/draw-bar/index.js","./draw-detail":"plugin/draw-editer/draw-detail/index.js","./draw-img":"plugin/draw-editer/draw-img/index.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
 var global = arguments[3];
 "use strict";
 
@@ -1239,11 +1424,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-<<<<<<< HEAD
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51980" + '/');
-=======
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59663" + '/');
->>>>>>> f6f49d6b8de36e6c72a6d3d6bd15bbe5303e6d67
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49928" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

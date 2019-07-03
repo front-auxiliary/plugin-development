@@ -1,6 +1,7 @@
 import drop from './drop'
 import bar from './draw-bar';
 import detail from './draw-detail';
+import imgDetail from './draw-img';
 
 export default class drawEditer {
   constructor(params) {
@@ -13,8 +14,10 @@ export default class drawEditer {
     drop.init(this.canvas,params)
     this.bar = new bar(params.bar,this);
     this.detail = new detail(canvas);
+    this.imgDetail = new imgDetail(canvas);
     this.bar.init();
-    this.detail.init()
+    this.detail.init();
+    this.imgDetail.init();
     // return this;
     // console.log((new bar()).init(),"kkkk")
   }
