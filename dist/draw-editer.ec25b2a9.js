@@ -403,12 +403,14 @@ function () {
           border: '1px solid #fff',
           cursor: 'move',
           transformOrigin: 'center',
-          transform: 'rotate(0deg)'
+          transform: 'rotate(0deg)',
+          boxSizing: 'border-box'
         }, this.styleFramt(elem.style, elem)),
         child: elem.text || '',
         attr: {
           id: elem.name,
-          tabindex: elem.id
+          tabindex: elem.id,
+          class: 'draw-editor-elem'
         },
         on: {
           mousedown: function mousedown(event) {
@@ -448,8 +450,13 @@ function () {
       var zoomDoms = this.createZoom();
       var angleDom = this.createAngle();
       var sizes = this.createSize();
-      var childs = [angleDom].concat(_toConsumableArray(sizes), _toConsumableArray(zoomDoms)); // dropDom.innerText = elem.text;
+      var childs = [angleDom].concat(_toConsumableArray(zoomDoms));
+
+      if (elem.type == 'img') {
+        childs = [].concat(_toConsumableArray(childs), _toConsumableArray(sizes));
+      } // dropDom.innerText = elem.text;
       // 添加旋转图标
+
 
       dropDom.appendChild(angleDom); // dropDom.appendChild("<h1>8888</h1>")
       // 添加缩放图标

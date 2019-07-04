@@ -84,12 +84,14 @@ class drop {
         border: '1px solid #fff',
         cursor: 'move',
         transformOrigin: 'center',
-        transform: 'rotate(0deg)'
+        transform: 'rotate(0deg)',
+        boxSizing:'border-box'
       },this.styleFramt(elem.style,elem)),
       child: elem.text||'',
       attr: {
         id: elem.name,
-        tabindex:elem.id
+        tabindex:elem.id,
+        class:'draw-editor-elem'
       },
       on: {
         mousedown: (event) => {
@@ -128,8 +130,10 @@ class drop {
     const angleDom = this.createAngle();
     const sizes = this.createSize();
     
-    const childs = [angleDom, ...sizes, ...zoomDoms]
-
+    let childs = [angleDom, ...zoomDoms]
+    if(elem.type == 'img'){
+      childs = [...childs,...sizes]
+    }
     // dropDom.innerText = elem.text;
     // 添加旋转图标
     dropDom.appendChild(angleDom);
