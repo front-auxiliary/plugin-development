@@ -1,4 +1,4 @@
-import drawEditer from './drawEditer'
+import main from './main'
   ; (function (global, factory) {
     "use strict";
 
@@ -16,6 +16,6 @@ import drawEditer from './drawEditer'
     }
   }(typeof window !== "undefined" ? window : this, function (window, noGlobal) {
     const version = "0.0.1";
-    window.drawEditer = drawEditer;
+    window.drawEditer = main;
 
   }))

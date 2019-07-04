@@ -21,9 +21,11 @@
     }
 
     .canvas {
-        width: 413px;
-        height: 600px;
+        /* 210 * 297    2.83464567*/
+        width: 595.275591pt;
+        height: 841.889764pt;
         background: rgba(0, 0, 0, 0.5);
+        overflow: hidden;
         /* background: #000; */
         margin: auto;
         /* transform: scale(0.7); */
@@ -65,7 +67,7 @@
     <button id="buttonsave">save</button>
     <!-- <button id="buttonImg">图片</button> -->
     <div id="bar"></div>
-    <div id="canvas" class="canvas">
+    <div id="canvas" class="canvas ">
    
         <!-- <img src="./public/2.svg" alt="" srcset=""> -->
 
@@ -119,8 +121,9 @@ window.onload = function () {
 
   drawEditer1.elemClick = function (event) {
     console.log(event, "kkkkkk");
-  }; // //  console.log(drawEditer1,"kkkkkk")
+  };
 
+  drawEditer1.render(); // //  console.log(drawEditer1,"kkkkkk")
 
   btn.onclick = function () {
     drawEditer1.add('text'); // document.execCommand("print",false,null)

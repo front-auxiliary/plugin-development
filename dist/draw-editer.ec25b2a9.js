@@ -150,7 +150,7 @@ function setAttr(dom, attrs) {
   if (_typeof(attrs) == 'object') {
     for (var key in attrs) {
       if (attrs[key]) {
-        dom[key] = attrs[key];
+        dom.setAttribute(key, attrs[key]);
       }
     }
   }
@@ -173,22 +173,27 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 function onListener(dom, onBar, params) {
   if (_typeof(onBar) == 'object') {
-    for (var key in onBar) {
+    var _loop = function _loop(key) {
       if (onBar[key]) {
         if (key == 'hover') {
-          dom.removeEventListener('mousemove', onBar[key].bind(this));
-          dom.removeEventListener('mouseleave', onBar[key].bind(this));
-          dom.addEventListener('mousemove', onBar[key].bind(this));
-          dom.addEventListener('mouseleave', function () {
+          dom.onmousemove = function (event) {
+            params.on[key](event, dom);
+          };
+
+          dom.onmouseleave = function (event) {
             (0, _setStyle.default)(dom, params.style);
             (0, _setAttr.default)(dom, params.attr);
-          });
+          };
         } else {
-          // dom[`on`+key] = params.on[key].bind(this,dom);
-          dom.removeEventListener(key, onBar[key].bind(this, dom));
-          dom.addEventListener(key, onBar[key].bind(this, dom));
+          dom["on" + key] = function (event) {
+            params.on[key](event, dom);
+          };
         }
       }
+    };
+
+    for (var key in onBar) {
+      _loop(key);
     }
   }
 }
@@ -243,7 +248,23 @@ var _setStyle = _interopRequireDefault(require("./dom/setStyle"));
 var _creatDom = _interopRequireDefault(require("./dom/creatDom"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js"}],"plugin/draw-editer/drop/index.js":[function(require,module,exports) {
+},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  vertical: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAAXNSR0IArs4c6QAAAXRQTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9vb23t7e39/f8/Pz7+/v7Ozs8/Pz6Ojo8PDw6enp7Ozs4eHh4uLi1dXV1tbW8fHx9fX19fX17u7u8vLy6+vr7+/vxcXFyMjI6Ojo7OzsxsbG4uLi5ubm6enp4+Pj5ubmvLy80tLS09PTtLS0urq6u7u7xMTErKystLS0xcXFqKios7Oztra2u7u7tLS0t7e3vLy8paWltbW1pqamtbW1uLi4/v7+/f39/v7+/f39/v7+/////f39/v7+/////v7+AAAAAQEBBwcHCAgICQkJCgoKCwsLkJCQkZGRkpKSk5OTlJSUlZWVlpaWl5eXmJiYmZmZm5ubwMDAwcHBwsLCw8PD/Pz8////bUJzpwAAAGR0Uk5TAAECAwQFBgcICQoLDA0ODxARExQVFhcYGRobHB0eHyEiJCUoOD4/QEFCQkNDRERFRklKS0tMTU1OTk9PT09QUFBQUVFUVVdYWVpaXFxcXl5eXl9fX2BgYWFh9fb29/f3+Pj4+RPQ1HsAAAIkSURBVEjH3ZVpV9NAFIbJJJMOk5SkpEkBU0DBfa+7iLigqCjuuFIzkSguCAoq9P55J2liW80yfPIc75fk5DzPyZy5897p6/tHJfHaIb4TRZKQfPqMjEQNjuOzvn8Bc0WQV8/7AP60KmSE/BUfVj+Bf13ESPjlZTGjw4sZ3byI0csXG3/yRcbffL4hSbJ6yYfWz7Dec/gHf261wL+qyqk9l5AS9qtdH7mQvPvTCkoX8N7G1Ozc/MJTFgvPFubnZqca+3DaseIrwtSoDtfHdk+8ioWJPWP14apBsZwqIEx0c9AecscTYdwdsgdNnaT+IdokQvWBir0rEVy7MqBToqaf9DAFClaJZtZexkLN1IiKlYxk8IQhXkqpbCeCXS4p4bes8EWxRFizXsOHSKjqKirMao+gYVQYoP9FaAoKybZWm7AisK1Su3Nh4xIhv3Ecn9x/4ODh4ycvvo2Fy40TR48dOTSZcTSQfO53gFa6AvTmVGpGo+N9jUd0e4vXOy6Ez+0WsBmSE6CbDD53D4FVYDcyAhRGlJr2PQZfOvwasDu2SXFGphVStkaeMFiL8WAd2MMRq0wyhgAfM9R06i8YrAcR/w28x3XHzFhRO6NapTb6nMFXbgQb4C2O1ipa/uiLDA82gmATvEf5fMdY9GDzuwDfY8DS/WK+YzxoLt0V4RPDcW/fch0Rvm1Qw3Icy6Di12i/bhh6vyp+UeMSISXRiz0emlkD8hfSgcq4TGZ29wAAAABJRU5ErkJggg==',
+  level: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAAXNSR0IArs4c6QAAAWtQTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9vb27+/v8PDwzs7O6Ojo6enp3t7e39/f1dXV5+fn1tbW4ODg5+fn+Pj4z8/P+Pj40NDQ5OTk8vLy5eXlx8fH5eXl6Ojo6+vryMjI6OjowsLC5ubmw8PD4+Pjy8vLvLy809PTtLS01NTU0dHRu7u7rKysxcXFtra2xsbGtLS0vLy8paWltbW1wsLCpqamtbW1uLi4wMDAvLy8urq6/////v7+/////v7+/v7+/////f39/v7+/////v7+AAAAAQEBBwcHCAgICgoKCwsLkJCQkZGRkpKSk5OTlJSUlZWVlpaWl5eXmJiYmZmZm5ubwMDAwcHBwsLCw8PD/Pz8////EaSl3gAAAGJ0Uk5TAAECAwQFBgcICQoLDA0ODxARFBUWFxgZGxwdHh8gIiQoKSorOEFCQ0NERkdJSUpKSkpLS0xMTE1OTk5OT09QUFFSU1RWWFhZWlxcXl5fX2BgYGFhYWFjZPT19fb39/j4+PnG87QpAAACIElEQVRIx+2UaVfTQBSGyTKTkKRNWhPQUkAWxX1FXEBBERX33WprkwbXuivF+/O9M502zQbH40d5v2XyPGcyd27u0NBu/stImO2eM/BBJPmc5mX57Kw8KMizp2U5z5BkRV0IDih9AHnlYLCg4koOTxYDOET773GFHoZgkWQa7O2l1wBHdDUSVP0oQHCZZhiMv+jDbzhmkEggxglcCpbThuA/bsEZi0YCteZhs51hMP68D5/CDlwo4jeJqHpxCTbDtCH4zyEKV0qmRkQ0s7SCQspg/DkfvoRMaDXq9VeYWq32EuMzIWFwvgHfNriQChNihiQp9FQDvjM+fPOO5/1A3oaRwa8Ui3e8AT84v03a7AbZFriBdrIOP3cSPkDrqsa2kCRVt6/Vd9oC+Zu2rvYE75Y4RMahfwn+kdcTFM0qV+404etGbpWQf14pF/gnsUMP2171XpNdRAcezExP7ReZmp55zATkX1Q9Z7jbZaysRmmk+rDJW2N9cmK8KjI+MbmOAudHSqYoK784kxk+tLdgrTLq7hFxRytr0In4watmxhPW3quuU7BMHqvguKu4lOQj46kPsILNR7u9R3nz4XmTfN8Yu+/DUrK9W8/GUnzP8Pbe9ucTP1Dr7j4vzQvDKbvX5+K/6NwNt+yYeT+1UXBsKz4ELNspGjRvbBDdMPR49dgKyR9MKtYmPsgIJXmDrDsqFTk+KuML/zqM/37c7yYnfwAObMapoePDiwAAAABJRU5ErkJggg==',
+  tilt: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IArs4c6QAAAOpQTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8PDwAAAAAAAA4uLiAAAA3Nzc3d3dxMTExcXFp6enra2tlZWVjIyMjo6OfHx86Ojo6Ojo0dHRyMjIx8fHwcHB/v7+/f39+vr6/f39/Pz8/Pz8+fn5/Pz8+vr6+vr6/f39////7e3t/v7+7Ozs/v7+////////6Ojo6enpAAAAAwMDBAQEBQUFBgYGBwcHDQ0NKysrLCwsMDAwYGBgYWFhYmJiampqa2trbGxsRsyhyQAAAD50Uk5TAAECAwQFBggKCw0ODxESFxgZGhwhISIjIyQkJissMTI6PD1GWVpjb3F03t/i4+Tl5+nq7PP4+vr7+/v8/f0FqgrYAAAA4ElEQVQoz73Ry0LCMBAF0M6kpQ0pioDyVgEFAVHepQViQEF5/f/vGKIUChtW3O3Z3LmjaZcJABIVBAiC0fNUaqkgIB1+CiHWbw8mBoTYww/Ol+1CJITaKXwPypTACfzMpDzpW4BDWHVGUvpSAG/9bhKapeq/kGzN8IG9FmPxFyXPuYZn7SqgdR+h4WhlK4PWxmPEP9AMEZ1eK1kK1yb7SeQYOo1WxnPOJ3v4awh6+LGz4HzqHIBCkn/fiMn06xgwU3dd13GcLgsAoHkVv0um04kbikfjW8yWYdSA8951bn4B+/Ud1D7TL4MAAAAASUVORK5CYII=',
+  reverseTilt: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IArs4c6QAAAOdQTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8PDwAAAAAAAA4uLiAAAA3Nzc3d3dxMTExcXFp6enra2tlZWVjo6OfHx86Ojo6Ojo0dHRyMjIx8fHwcHB/v7+/f39+vr6/f39+/v7/Pz8+fn5/Pz8+vr6+vr6/f39////7Ozs7e3t/v7+7Ozs/v7+////////6Ojo6enpAAAAAwMDBAQEBQUFBgYGBwcHDQ0NKysrLCwsMDAwYGBgYWFhYmJiampqa2trbGxsSXP2QwAAAD10Uk5TAAECAwQFBggKCw0ODxESFxgZGhwhIiMjJCQmKywxMjo9RllaY29xdN7f4uPk5efp6+z0+Pr6+vv7+/z9/fVNPNwAAADnSURBVCjPvZHZWsIwFIQ5OSltSFEWQVZZy6agbKUFSlBxAXz/5zEFKoQrvGEu5/8y32ROKHRNARDciQCo4L7l7jTUFABEf3jaCiHepowoL0g4Wn5Ze95iaqIahaw++TwDfijQqvRXXycA4E42odWx9Gf9zQnQWjk8+M1K7wiI4T7mayPfbyQT5Q4PAHJ3++znz6xYhEWLRlAXTUespT+3bhnFsP73QQmWnvcxt2KMymGOk+zBd78UoXDoHgD7/XUpfroFVOdDPrBt23GcdvZsJRZPZTLpVPJGJ+qwGuOmFDc0uOxE/9MvTK0dPSS3AqMAAAAASUVORK5CYII=',
+  angle: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYwODQ5OTkzNTAyIiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5ODQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTUxMS44NzIgODU5LjQ3NzMzM2MtMTg2LjExMiAwLTMzOC4zNDY2NjctMTU1LjY5MDY2Ny0zMzguMzQ2NjY3LTM0NS45ODQgMC0xNi4xMjggMTIuMzczMzMzLTI4Ljg0MjY2NyAyOC4xNi0yOC44NDI2NjYgMTUuNzg2NjY3IDAgMjguMjAyNjY3IDEyLjcxNDY2NyAyOC4yMDI2NjcgMjguODQyNjY2IDAgMTU5LjE0NjY2NyAxMjYuMzM2IDI4OC4zNDEzMzMgMjgyLjAyNjY2NyAyODguMzQxMzM0YTI3OC45MTIgMjc4LjkxMiAwIDAgMCAyMDYuMzc4NjY2LTkyLjI4OCAyNi44OCAyNi44OCAwIDAgMSAzOS40NjY2NjctMS4xNTJjMTEuMjY0IDExLjUyIDEyLjM3MzMzMyAyOC44NDI2NjcgMS4xMDkzMzMgNDAuMzYyNjY2YTMzMi45NzA2NjcgMzMyLjk3MDY2NyAwIDAgMS0yNDYuOTk3MzMzIDExMC43MnogbTMxMC4xODY2NjctMzE3LjE0MTMzM2EyOC4yNDUzMzMgMjguMjQ1MzMzIDAgMCAxLTI4LjIwMjY2Ny0yOC44NDI2NjdjMC0xNTkuMTQ2NjY3LTEyNi4yOTMzMzMtMjg4LjM0MTMzMy0yODEuOTg0LTI4OC4zNDEzMzNhMjc2LjA1MzMzMyAyNzYuMDUzMzMzIDAgMCAwLTIwNC4xNiA4OS45ODQgMjcuODE4NjY3IDI3LjgxODY2NyAwIDAgMS0zOS40NjY2NjcgMS4xNTIgMjkuMzk3MzMzIDI5LjM5NzMzMyAwIDAgMS0xLjEwOTMzMy00MC4zNjI2NjcgMzMxLjQzNDY2NyAzMzEuNDM0NjY3IDAgMCAxIDI0NS44ODgtMTA3LjI2NGMxODYuMDY5MzMzIDAgMzM4LjM0NjY2NyAxNTUuNjkwNjY3IDMzOC4zNDY2NjcgMzQ2LjAyNjY2N2EyOS43ODEzMzMgMjkuNzgxMzMzIDAgMCAxLTI5LjMxMiAyNy42NDh6IiBmaWxsPSIjNDI0QjU0IiBwLWlkPSIxOTg1Ij48L3BhdGg+PHBhdGggZD0iTTEwNi45NjUzMzMgNTEzLjQ5MzMzM2w5NC43Mi0xMjkuMTUyIDk0Ljc2MjY2NyAxMjkuMTUyaC0xODkuNDR6IG04MDkuODEzMzM0IDBsLTk0LjcyIDEyOS4xOTQ2NjctOTQuNzItMTI5LjE5NDY2N2gxODkuNDR6IiBmaWxsPSIjNDI0QjU0IiBwLWlkPSIxOTg2Ij48L3BhdGg+PC9zdmc+',
+  angleCursor: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABpklEQVR4AWIYWmAUjAIAY+SAW0EARdH8X9u24rqrKDcxG6htLGXidAm1bdu2+U7y7Z+czOu79747mWp0aO2gAVd9to67fXx8dL69vXXZQrSO1dXVGGB24OvklmUJzd5/8lNVdcSU6enpcfY3NzcV4vECZnZoln723OKmaQGNATrRQFpa2pm81dn29naj/B1KEJhl14SGxzTDj1vctCwIsiwoKipae319PXt5eRm/vLysPz8/LwNmdmh4bBQE2SoI1heEh4c/yPOX2c3N7VtRlLn+/v6xg4ODOWBmh4YHLxmTgmB7BXyWc3mzczm0npWVdUjIEXjwkiHrqCAIEePCwkLX0tJSz9fX1/XW1tZSW1vbdEFBwX50dPQtMLNDw4OXDFn7n0hXsLa21iJzvBCXk5OTMT09XXFxcdEr/9BNOXYDzOzQ8OAlI9lWRwX+R0dHtfKMFAIFP50xXIgREoVkYGaHhgcvGbJyo45blgVawUsn+AoeOoO7bs8OLRBMfGh48JLR+/7HjpIPYFkfphhHscCMhjGLD4SjmLAWF3BMPkCYMWjAKAAAxlBp/QKMhJEAAAAASUVORK5CYII='
+};
+exports.default = _default;
+},{}],"plugin/draw-editer/drop/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -252,6 +273,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _utils = require("../../../utils");
+
+var _icon = _interopRequireDefault(require("./icon"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -275,16 +300,20 @@ function () {
 
     this.canvas = null; // this.elemClick = null;
 
+    this.unit = null;
     this.canvasDetail = null;
     this.activeDom = null;
+    this.type == 'text';
+    this.isAngleClick = false;
   }
 
   _createClass(drop, [{
     key: "init",
-    value: function init(canvas, params) {
+    value: function init(canvas, params, unit) {
       var _this = this;
 
       this.canvas = canvas;
+      this.unit = unit;
       this.canvasDetail = this.canvas.getBoundingClientRect(); // console.log(this.canvasDetail)
 
       this.elemClick = params.canvas.on.elemClick;
@@ -298,46 +327,160 @@ function () {
       };
     }
   }, {
-    key: "create",
-    value: function create(elem, canvas) {
+    key: "styleFramt",
+    value: function styleFramt(style, elem) {
+      var judgeStr = 'width,height,left,top,fontSize';
+      var newStyle = {};
+
+      for (var key in style) {
+        if (key == 'angle' && style[key]) {
+          newStyle.transform = "rotate(".concat(style[key], "deg)");
+        } else if (elem.type == 'img' && (key == 'width' || key == 'height')) {
+          if (key == 'width') {
+            newStyle.minWidth = style.width + this.unit;
+          }
+
+          if (key == 'height') {
+            newStyle.minHeight = style.height + this.unit;
+          }
+        } else if (judgeStr.indexOf(key) != -1) {
+          newStyle[key] = style[key] + this.unit;
+        } else {
+          newStyle[key] = style[key];
+        }
+      }
+
+      return Object.assign({}, newStyle);
+    }
+  }, {
+    key: "creatImg",
+    value: function creatImg(elem, dropDom) {
       var _this2 = this;
 
-      var dropDom = document.createElement('div');
+      var dom = (0, _utils.creatDom)({
+        tag: 'div',
+        style: {
+          backgroundImage: "url(".concat(elem.src, ")"),
+          width: '100%',
+          height: '100%',
+          display: 'block'
+        }
+      });
+      var img = (0, _utils.creatDom)({
+        tag: 'img',
+        attr: {
+          src: elem.src
+        },
+        style: {
+          height: '100%',
+          width: '100%',
+          display: 'block',
+          userSelect: 'none' // pointerEvents:'none'
+
+        },
+        on: {
+          load: function load(event) {
+            dropDom.style.height = img.height + _this2.unit;
+            dropDom.style.width = img.width + _this2.unit;
+            console.log(img.width, "kkk");
+          }
+        }
+      });
+      return img;
+    }
+  }, {
+    key: "create",
+    value: function create(elem, canvas) {
+      var _this3 = this;
+
+      var that = this;
+
+      var dropDom = _utils.creatDom.call(this, {
+        tag: 'div',
+        style: Object.assign({
+          display: 'inline-block',
+          position: 'absolute',
+          border: '1px solid #fff',
+          cursor: 'move',
+          transformOrigin: 'center',
+          transform: 'rotate(0deg)'
+        }, this.styleFramt(elem.style, elem)),
+        child: elem.text || '',
+        attr: {
+          id: elem.name,
+          tabindex: elem.id
+        },
+        on: {
+          mousedown: function mousedown(event) {
+            event.stopPropagation();
+
+            _this3.onmousedown(event, dropDom, _this3.canvas);
+
+            if (_this3.elemClick) {
+              _this3.elemClick(event);
+            }
+          },
+          blur: function blur() {
+            console.log(that.isAngleClick); // if(that.isAngleClick){
+            //   return ;
+            // }
+
+            var zoomArr = dropDom.querySelectorAll('.zoom');
+            dropDom.style.borderWidth = 0;
+
+            for (var i = 0; i < zoomArr.length; i++) {
+              zoomArr[i].style.display = 'none';
+            }
+
+            console.log("kkkk1111");
+          },
+          focus: function focus() {
+            var zoomArr = dropDom.querySelectorAll('.zoom');
+
+            for (var i = 0; i < zoomArr.length; i++) {
+              zoomArr[i].style.display = 'block';
+            }
+          }
+        }
+      }); // const dropDom = document.createElement('div');
+
+
       var zoomDoms = this.createZoom();
       var angleDom = this.createAngle();
       var sizes = this.createSize();
-      var childs = [angleDom].concat(_toConsumableArray(sizes), _toConsumableArray(zoomDoms));
-      var dropStyle = Object.assign({
-        display: 'inline-block',
-        position: 'absolute',
-        border: '1px solid #fff',
-        cursor: 'move',
-        transformOrigin: 'center',
-        transform: 'rotate(0deg)'
-      }, elem.style);
-      dropDom.innerText = elem.text;
-      dropDom.className = 'box'; // 添加旋转图标
+      var childs = [angleDom].concat(_toConsumableArray(sizes), _toConsumableArray(zoomDoms)); // dropDom.innerText = elem.text;
+      // 添加旋转图标
 
-      dropDom.appendChild(angleDom); // 添加缩放图标
+      dropDom.appendChild(angleDom); // dropDom.appendChild("<h1>8888</h1>")
+      // 添加缩放图标
 
       for (var key in childs) {
         dropDom.appendChild(childs[key]);
+      } // setStyle(dropDom, dropStyle)
+      // dropDom.id = elem.name;
+      // dropDom.onmousedown = (event) => {
+      //   event.stopPropagation();
+      //   this.onmousedown(event, dropDom, canvas)
+      //   console.log(this,"kkkkk")
+      //   if (this.elemClick) {
+      //     this.elemClick(event)
+      //   }
+      // }
+
+
+      if (elem.type == 'img') {
+        dropDom.appendChild(this.creatImg(elem, dropDom));
+        dropDom.appendChild((0, _utils.creatDom)({
+          tag: 'div',
+          style: {
+            position: 'absolute',
+            top: '0px',
+            left: '0px',
+            right: '0px',
+            bottom: '0px'
+          }
+        }));
       }
-
-      (0, _utils.setStyle)(dropDom, dropStyle);
-      dropDom.id = elem.name;
-
-      dropDom.onmousedown = function (event) {
-        event.stopPropagation();
-
-        _this2.onmousedown(event, dropDom, canvas);
-
-        console.log(_this2, "kkkkk");
-
-        if (_this2.elemClick) {
-          _this2.elemClick(event);
-        }
-      };
 
       return dropDom;
     } // 生成
@@ -345,7 +488,7 @@ function () {
   }, {
     key: "createZoom",
     value: function createZoom() {
-      var _this3 = this;
+      var _this4 = this;
 
       // let zoomDoms = [];
       var style = {
@@ -354,10 +497,11 @@ function () {
         width: '10px',
         height: '10px',
         borderRadius: '50%',
+        zIndex: 10,
         boxShadow: '0 0 5px 1px rgba(14,19,24,.15), 0 0 0 1px rgba(14,19,24,.15)'
       };
-      var cursorIcon = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IArs4c6QAAAOpQTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8PDwAAAAAAAA4uLiAAAA3Nzc3d3dxMTExcXFp6enra2tlZWVjIyMjo6OfHx86Ojo6Ojo0dHRyMjIx8fHwcHB/v7+/f39+vr6/f39/Pz8/Pz8+fn5/Pz8+vr6+vr6/f39////7e3t/v7+7Ozs/v7+////////6Ojo6enpAAAAAwMDBAQEBQUFBgYGBwcHDQ0NKysrLCwsMDAwYGBgYWFhYmJiampqa2trbGxsRsyhyQAAAD50Uk5TAAECAwQFBggKCw0ODxESFxgZGhwhISIjIyQkJissMTI6PD1GWVpjb3F03t/i4+Tl5+nq7PP4+vr7+/v8/f0FqgrYAAAA4ElEQVQoz73Ry0LCMBAF0M6kpQ0pioDyVgEFAVHepQViQEF5/f/vGKIUChtW3O3Z3LmjaZcJABIVBAiC0fNUaqkgIB1+CiHWbw8mBoTYww/Ol+1CJITaKXwPypTACfzMpDzpW4BDWHVGUvpSAG/9bhKapeq/kGzN8IG9FmPxFyXPuYZn7SqgdR+h4WhlK4PWxmPEP9AMEZ1eK1kK1yb7SeQYOo1WxnPOJ3v4awh6+LGz4HzqHIBCkn/fiMn06xgwU3dd13GcLgsAoHkVv0um04kbikfjW8yWYdSA8951bn4B+/Ud1D7TL4MAAAAASUVORK5CYII=) 8 12, auto';
-      var flipCursorIcon = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IArs4c6QAAAOdQTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8PDwAAAAAAAA4uLiAAAA3Nzc3d3dxMTExcXFp6enra2tlZWVjo6OfHx86Ojo6Ojo0dHRyMjIx8fHwcHB/v7+/f39+vr6/f39+/v7/Pz8+fn5/Pz8+vr6+vr6/f39////7Ozs7e3t/v7+7Ozs/v7+////////6Ojo6enpAAAAAwMDBAQEBQUFBgYGBwcHDQ0NKysrLCwsMDAwYGBgYWFhYmJiampqa2trbGxsSXP2QwAAAD10Uk5TAAECAwQFBggKCw0ODxESFxgZGhwhIiMjJCQmKywxMjo9RllaY29xdN7f4uPk5efp6+z0+Pr6+vv7+/z9/fVNPNwAAADnSURBVCjPvZHZWsIwFIQ5OSltSFEWQVZZy6agbKUFSlBxAXz/5zEFKoQrvGEu5/8y32ROKHRNARDciQCo4L7l7jTUFABEf3jaCiHepowoL0g4Wn5Ze95iaqIahaw++TwDfijQqvRXXycA4E42odWx9Gf9zQnQWjk8+M1K7wiI4T7mayPfbyQT5Q4PAHJ3++znz6xYhEWLRlAXTUespT+3bhnFsP73QQmWnvcxt2KMymGOk+zBd78UoXDoHgD7/XUpfroFVOdDPrBt23GcdvZsJRZPZTLpVPJGJ+qwGuOmFDc0uOxE/9MvTK0dPSS3AqMAAAAASUVORK5CYII=) 8 12, auto';
+      var tilt = _icon.default.tilt,
+          reverseTilt = _icon.default.reverseTilt;
       var leftTopIcon = document.createElement('div');
       var rightTopIcon = document.createElement('div');
       var rightBottomIcon = document.createElement('div');
@@ -365,54 +509,58 @@ function () {
       var leftTopIconStyle = Object.assign({}, style, {
         top: '-5px',
         left: '-5px',
-        cursor: cursorIcon
+        cursor: "url(".concat(tilt, ") 8 12, auto")
       });
       var rightTopIconStyle = Object.assign({}, style, {
         top: '-5px',
         left: '100%',
         marginLeft: '-5px',
-        cursor: flipCursorIcon
+        cursor: "url(".concat(reverseTilt, ") 8 12, auto")
       });
       var rightBottomIconStyle = Object.assign({}, style, {
         top: '100%',
         left: '100%',
         marginLeft: '-5px',
         marginTop: '-5px',
-        cursor: cursorIcon
+        cursor: "url(".concat(tilt, ") 8 12, auto")
       });
       var leftBottomIconStyle = Object.assign({}, style, {
         top: '100%',
         left: '-5px',
         marginTop: '-5px',
-        cursor: flipCursorIcon
+        cursor: "url(".concat(reverseTilt, ") 8 12, auto")
       });
+      leftTopIcon.className = 'zoom';
+      rightBottomIcon.className = 'zoom';
+      leftBottomIcon.className = 'zoom';
+      rightTopIcon.className = 'zoom';
       (0, _utils.setStyle)(leftTopIcon, leftTopIconStyle);
       (0, _utils.setStyle)(rightTopIcon, rightTopIconStyle);
       (0, _utils.setStyle)(rightBottomIcon, rightBottomIconStyle);
       (0, _utils.setStyle)(leftBottomIcon, leftBottomIconStyle);
 
       leftTopIcon.onmousedown = function (evt) {
-        _this3.activeDom = leftTopIcon;
+        _this4.activeDom = leftTopIcon;
 
-        _this3.domSetTag(evt, 'leftTop');
+        _this4.domSetTag(evt, 'leftTop');
       };
 
       rightTopIcon.onmousedown = function (evt) {
-        _this3.activeDom = rightTopIcon;
+        _this4.activeDom = rightTopIcon;
 
-        _this3.domSetTag(evt, 'rightTop');
+        _this4.domSetTag(evt, 'rightTop');
       };
 
       rightBottomIcon.onmousedown = function (evt) {
-        _this3.activeDom = rightBottomIcon;
+        _this4.activeDom = rightBottomIcon;
 
-        _this3.domSetTag(evt, 'rightBottom');
+        _this4.domSetTag(evt, 'rightBottom');
       };
 
       leftBottomIcon.onmousedown = function (evt) {
-        _this3.activeDom = leftBottomIcon;
+        _this4.activeDom = leftBottomIcon;
 
-        _this3.domSetTag(evt, 'leftBottom');
+        _this4.domSetTag(evt, 'leftBottom');
       };
 
       return [leftTopIcon, rightTopIcon, rightBottomIcon, leftBottomIcon];
@@ -421,7 +569,7 @@ function () {
   }, {
     key: "createSize",
     value: function createSize() {
-      var _this4 = this;
+      var _this5 = this;
 
       var style = {
         position: 'absolute',
@@ -429,6 +577,8 @@ function () {
         boxShadow: '0 0 5px 1px rgba(14,19,24,.15), 0 0 0 1px rgba(14,19,24,.15)',
         borderRadius: '5px'
       };
+      var vertical = _icon.default.vertical,
+          level = _icon.default.level;
       var topIcon = document.createElement('div');
       var rightIcon = document.createElement('div');
       var bottomIcon = document.createElement('div');
@@ -438,7 +588,8 @@ function () {
         height: '5px',
         top: '-3px',
         left: '50%',
-        marginLeft: '-8px'
+        marginLeft: '-8px',
+        cursor: "url(".concat(vertical, ") 8 12, auto")
       });
       var rightIconStyle = Object.assign({}, style, {
         width: '5px',
@@ -446,7 +597,8 @@ function () {
         top: '50%',
         left: '100%',
         marginLeft: '-2px',
-        marginTop: '-8px'
+        marginTop: '-8px',
+        cursor: "url(".concat(level, ") 8 12, auto")
       });
       var bottomIconStyle = Object.assign({}, style, {
         width: '16px',
@@ -454,7 +606,8 @@ function () {
         top: '100%',
         left: '50%',
         marginLeft: '-8px',
-        marginTop: '-2px'
+        marginTop: '-2px',
+        cursor: "url(".concat(vertical, ") 8 12, auto")
       });
       var leftIconStyle = Object.assign({}, style, {
         width: '5px',
@@ -462,35 +615,40 @@ function () {
         top: '50%',
         left: '0%',
         marginLeft: '-3px',
-        marginTop: '-8px'
+        marginTop: '-8px',
+        cursor: "url(".concat(level, ") 8 12, auto")
       });
+      topIcon.className = 'zoom';
+      rightIcon.className = 'zoom';
+      bottomIcon.className = 'zoom';
+      leftIcon.className = 'zoom';
       (0, _utils.setStyle)(topIcon, topIconStyle);
       (0, _utils.setStyle)(rightIcon, rightIconStyle);
       (0, _utils.setStyle)(bottomIcon, bottomIconStyle);
       (0, _utils.setStyle)(leftIcon, leftIconStyle);
 
       topIcon.onmousedown = function (evt) {
-        _this4.activeDom = topIcon;
+        _this5.activeDom = topIcon;
 
-        _this4.domSetTag(evt, 'top');
+        _this5.domSetTag(evt, 'top');
       };
 
       rightIcon.onmousedown = function (evt) {
-        _this4.activeDom = rightIcon;
+        _this5.activeDom = rightIcon;
 
-        _this4.domSetTag(evt, 'right');
+        _this5.domSetTag(evt, 'right');
       };
 
       bottomIcon.onmousedown = function (evt) {
-        _this4.activeDom = bottomIcon;
+        _this5.activeDom = bottomIcon;
 
-        _this4.domSetTag(evt, 'bottom');
+        _this5.domSetTag(evt, 'bottom');
       };
 
       leftIcon.onmousedown = function (evt) {
-        _this4.activeDom = leftIcon;
+        _this5.activeDom = leftIcon;
 
-        _this4.domSetTag(evt, 'left');
+        _this5.domSetTag(evt, 'left');
       };
 
       return [topIcon, rightIcon, bottomIcon, leftIcon];
@@ -499,12 +657,14 @@ function () {
   }, {
     key: "createAngle",
     value: function createAngle() {
-      var _this5 = this;
+      var _this6 = this;
 
       var angleIcon = document.createElement('div');
+      var angle = _icon.default.angle,
+          angleCursor = _icon.default.angleCursor;
       var style = {
         position: 'absolute',
-        backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYwODQ5OTkzNTAyIiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5ODQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTUxMS44NzIgODU5LjQ3NzMzM2MtMTg2LjExMiAwLTMzOC4zNDY2NjctMTU1LjY5MDY2Ny0zMzguMzQ2NjY3LTM0NS45ODQgMC0xNi4xMjggMTIuMzczMzMzLTI4Ljg0MjY2NyAyOC4xNi0yOC44NDI2NjYgMTUuNzg2NjY3IDAgMjguMjAyNjY3IDEyLjcxNDY2NyAyOC4yMDI2NjcgMjguODQyNjY2IDAgMTU5LjE0NjY2NyAxMjYuMzM2IDI4OC4zNDEzMzMgMjgyLjAyNjY2NyAyODguMzQxMzM0YTI3OC45MTIgMjc4LjkxMiAwIDAgMCAyMDYuMzc4NjY2LTkyLjI4OCAyNi44OCAyNi44OCAwIDAgMSAzOS40NjY2NjctMS4xNTJjMTEuMjY0IDExLjUyIDEyLjM3MzMzMyAyOC44NDI2NjcgMS4xMDkzMzMgNDAuMzYyNjY2YTMzMi45NzA2NjcgMzMyLjk3MDY2NyAwIDAgMS0yNDYuOTk3MzMzIDExMC43MnogbTMxMC4xODY2NjctMzE3LjE0MTMzM2EyOC4yNDUzMzMgMjguMjQ1MzMzIDAgMCAxLTI4LjIwMjY2Ny0yOC44NDI2NjdjMC0xNTkuMTQ2NjY3LTEyNi4yOTMzMzMtMjg4LjM0MTMzMy0yODEuOTg0LTI4OC4zNDEzMzNhMjc2LjA1MzMzMyAyNzYuMDUzMzMzIDAgMCAwLTIwNC4xNiA4OS45ODQgMjcuODE4NjY3IDI3LjgxODY2NyAwIDAgMS0zOS40NjY2NjcgMS4xNTIgMjkuMzk3MzMzIDI5LjM5NzMzMyAwIDAgMS0xLjEwOTMzMy00MC4zNjI2NjcgMzMxLjQzNDY2NyAzMzEuNDM0NjY3IDAgMCAxIDI0NS44ODgtMTA3LjI2NGMxODYuMDY5MzMzIDAgMzM4LjM0NjY2NyAxNTUuNjkwNjY3IDMzOC4zNDY2NjcgMzQ2LjAyNjY2N2EyOS43ODEzMzMgMjkuNzgxMzMzIDAgMCAxLTI5LjMxMiAyNy42NDh6IiBmaWxsPSIjNDI0QjU0IiBwLWlkPSIxOTg1Ij48L3BhdGg+PHBhdGggZD0iTTEwNi45NjUzMzMgNTEzLjQ5MzMzM2w5NC43Mi0xMjkuMTUyIDk0Ljc2MjY2NyAxMjkuMTUyaC0xODkuNDR6IG04MDkuODEzMzM0IDBsLTk0LjcyIDEyOS4xOTQ2NjctOTQuNzItMTI5LjE5NDY2N2gxODkuNDR6IiBmaWxsPSIjNDI0QjU0IiBwLWlkPSIxOTg2Ij48L3BhdGg+PC9zdmc+)',
+        backgroundImage: "url(".concat(angle, ")"),
         backgroundSize: '100%',
         backgroundColor: '#fff',
         width: '20px',
@@ -515,14 +675,23 @@ function () {
         marginTop: '10px',
         borderRadius: '50%',
         boxShadow: '0 0 5px 1px rgba(14,19,24,.15), 0 0 0 1px rgba(14,19,24,.15)',
-        cursor: 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABpklEQVR4AWIYWmAUjAIAY+SAW0EARdH8X9u24rqrKDcxG6htLGXidAm1bdu2+U7y7Z+czOu79747mWp0aO2gAVd9to67fXx8dL69vXXZQrSO1dXVGGB24OvklmUJzd5/8lNVdcSU6enpcfY3NzcV4vECZnZoln723OKmaQGNATrRQFpa2pm81dn29naj/B1KEJhl14SGxzTDj1vctCwIsiwoKipae319PXt5eRm/vLysPz8/LwNmdmh4bBQE2SoI1heEh4c/yPOX2c3N7VtRlLn+/v6xg4ODOWBmh4YHLxmTgmB7BXyWc3mzczm0npWVdUjIEXjwkiHrqCAIEePCwkLX0tJSz9fX1/XW1tZSW1vbdEFBwX50dPQtMLNDw4OXDFn7n0hXsLa21iJzvBCXk5OTMT09XXFxcdEr/9BNOXYDzOzQ8OAlI9lWRwX+R0dHtfKMFAIFP50xXIgREoVkYGaHhgcvGbJyo45blgVawUsn+AoeOoO7bs8OLRBMfGh48JLR+/7HjpIPYFkfphhHscCMhjGLD4SjmLAWF3BMPkCYMWjAKAAAxlBp/QKMhJEAAAAASUVORK5CYII=) 4 12, auto'
+        cursor: "url(".concat(angleCursor, ") 4 12, auto")
       };
+      angleIcon.className = 'zoom'; // angleIcon. = 10;
+
+      angleIcon.tabIndex = 1;
       (0, _utils.setStyle)(angleIcon, style);
 
-      angleIcon.onmousedown = function (evt) {
-        _this5.activeDom = angleIcon;
+      angleIcon.onblur = function () {
+        _this6.isAngleClick = false;
+      };
 
-        _this5.domSetTag(evt, 'angle');
+      angleIcon.onmousedown = function (evt) {
+        _this6.activeDom = angleIcon;
+        _this6.isAngleClick = true;
+        console.log("kkkk222");
+
+        _this6.domSetTag(evt, 'angle');
       };
 
       return angleIcon;
@@ -623,6 +792,19 @@ function () {
         activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
       }
 
+      if (type == 'right') {
+        activeDetail.width = mousePos.x - activePos.x + +activeDetail.width; // activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
+      }
+
+      if (type == 'left') {
+        activeDetail.width = activePos.x - mousePos.x + +activeDetail.width;
+        activeDetail.x = activeDetail.x - (activePos.x - mousePos.x);
+      }
+
+      if (type == 'bottom') {
+        activeDetail.height = mousePos.y - activePos.y + +activeDetail.height;
+      }
+
       if (type === 'leftTop') {
         activeDetail.width = activePos.x - mousePos.x + +activeDetail.width;
         activeDetail.height = activePos.y - mousePos.y + +activeDetail.height;
@@ -674,7 +856,7 @@ function () {
 var _default = new drop();
 
 exports.default = _default;
-},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/draw-bar/data.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js","./icon":"plugin/draw-editer/drop/icon.js"}],"plugin/draw-editer/draw-bar/data.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1089,7 +1271,74 @@ function () {
 
 var _default = drawDetail;
 exports.default = _default;
-},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-detail/data.js"}],"plugin/draw-editer/drawEditer.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-detail/data.js"}],"plugin/draw-editer/draw-img/data.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var publicStyle = {
+  width: '30px',
+  height: '30px',
+  cursor: 'pointer',
+  display: 'inline-block',
+  backgroundSize: '25px',
+  backgroundColor: '#fff',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  borderRadius: '4px',
+  verticalAlign: 'middle',
+  margin: '2px'
+};
+
+var hover = function hover(event) {
+  event.currentTarget.style.backgroundColor = 'rgba(14,19,24,.15)';
+};
+
+var setActive = function setActive(event) {
+  var active = +event.dataset.active;
+
+  if (!active) {
+    event.dataset.active = 1;
+    event.style.backgroundColor = 'rgba(14,19,24,0.15)';
+  } else {
+    event.dataset.active = 0;
+    event.style.backgroundColor = '#fff';
+  }
+};
+
+var _default = [{
+  title: "图片",
+  name: 'img',
+  type: 'img',
+  style: {},
+  img: 'https://tse3-mm.cn.bing.net/th?id=OIP.rJNHO8sYJpEhccdXGlN27gHaFj&w=277&h=207&c=7&o=5&dpr=2&pid=1.7'
+}, {
+  title: "更换图片",
+  name: 'text',
+  type: 'div',
+  style: {},
+  img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY1NTYxODQyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI3NjgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTEwNy4wMDggMTA3LjI2NGg4MDkuODU2YzIzLjIzMiAwIDQxLjkyIDE4LjY4OCA0MS45MiA0MS45MnYzMzAuMzY4Yy00MS45Mi0zMi42NC0xMjAuOTYtODMuNzc2LTE4MS41NjgtODMuNzc2LTg4LjQ0OCAwLTE2Ny41NTIgMjA0LjgtMjY1LjI4IDIwNC44QzQzNy40NCA1OTUuODQgMzM1LjEwNCA1MTIgMjE4LjY4OCA1MjYuMDE2Yy00Ni41MjggOS4yOC0xMTEuNjggODMuODQtMTUzLjYgMTM5LjY0OHYtNTE2LjQ4YzAtMjMuMzYgMTguNjg4LTQxLjkyIDQxLjkyLTQxLjkyeiBtMTk1LjUyIDMzNS4xMDRjLTM3LjI0OCAwLTY5LjgyNC0xMy45NTItOTMuMDU2LTM3LjE4NHMtMzcuMjQ4LTYwLjU0NC0zNy4yNDgtOTMuMDU2YzAtMzIuNjQgMTQuMDE2LTY5Ljc2IDM3LjI0OC05My4wNTZhMTI5Ljk4NCAxMjkuOTg0IDAgMCAxIDkzLjA1Ni0zNy4xODRjMzIuNjQgMCA2NS4wODggMTMuOTUyIDkyLjk5MiAzNy4xODQgMjMuMjMyIDIzLjIzMiAzNy4yNDggNjAuNTQ0IDM3LjI0OCA5My4wNTYgMCAzMi42NC0xNC4wMTYgNjkuODI0LTM3LjI0OCA5My4wNTYtMjcuOTA0IDIzLjIzMi02MC40MTYgMzcuMTg0LTkyLjk5MiAzNy4xODR6TTk0MC4wOTYgNDYuNzJIODMuODRDMzcuMTg0IDQ2LjcyIDAgODMuOTA0IDAgMTMwLjQ5NnY3NjMuMjY0YzAgNDYuNTkyIDM3LjE4NCA4My44NCA4My43NzYgODMuODRoODU2LjQ0OGM0Ni41OTIgMCA4My43NzYtMzcuMjQ4IDgzLjc3Ni04My44NFYxMzAuNTZBODMuNTIgODMuNTIgMCAwIDAgOTQwLjE2IDQ2LjcyeiIgcC1pZD0iMjc2OSI+PC9wYXRoPjwvc3ZnPg==',
+  on: {
+    click: function click(evt) {
+      console.log('更换图片', evt);
+    }
+  }
+}, {
+  title: "裁剪图片",
+  name: 'text',
+  type: 'div',
+  img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY1NTYxODQyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI3NjgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTEwNy4wMDggMTA3LjI2NGg4MDkuODU2YzIzLjIzMiAwIDQxLjkyIDE4LjY4OCA0MS45MiA0MS45MnYzMzAuMzY4Yy00MS45Mi0zMi42NC0xMjAuOTYtODMuNzc2LTE4MS41NjgtODMuNzc2LTg4LjQ0OCAwLTE2Ny41NTIgMjA0LjgtMjY1LjI4IDIwNC44QzQzNy40NCA1OTUuODQgMzM1LjEwNCA1MTIgMjE4LjY4OCA1MjYuMDE2Yy00Ni41MjggOS4yOC0xMTEuNjggODMuODQtMTUzLjYgMTM5LjY0OHYtNTE2LjQ4YzAtMjMuMzYgMTguNjg4LTQxLjkyIDQxLjkyLTQxLjkyeiBtMTk1LjUyIDMzNS4xMDRjLTM3LjI0OCAwLTY5LjgyNC0xMy45NTItOTMuMDU2LTM3LjE4NHMtMzcuMjQ4LTYwLjU0NC0zNy4yNDgtOTMuMDU2YzAtMzIuNjQgMTQuMDE2LTY5Ljc2IDM3LjI0OC05My4wNTZhMTI5Ljk4NCAxMjkuOTg0IDAgMCAxIDkzLjA1Ni0zNy4xODRjMzIuNjQgMCA2NS4wODggMTMuOTUyIDkyLjk5MiAzNy4xODQgMjMuMjMyIDIzLjIzMiAzNy4yNDggNjAuNTQ0IDM3LjI0OCA5My4wNTYgMCAzMi42NC0xNC4wMTYgNjkuODI0LTM3LjI0OCA5My4wNTYtMjcuOTA0IDIzLjIzMi02MC40MTYgMzcuMTg0LTkyLjk5MiAzNy4xODR6TTk0MC4wOTYgNDYuNzJIODMuODRDMzcuMTg0IDQ2LjcyIDAgODMuOTA0IDAgMTMwLjQ5NnY3NjMuMjY0YzAgNDYuNTkyIDM3LjE4NCA4My44NCA4My43NzYgODMuODRoODU2LjQ0OGM0Ni41OTIgMCA4My43NzYtMzcuMjQ4IDgzLjc3Ni04My44NFYxMzAuNTZBODMuNTIgODMuNTIgMCAwIDAgOTQwLjE2IDQ2LjcyeiIgcC1pZD0iMjc2OSI+PC9wYXRoPjwvc3ZnPg==',
+  style: {},
+  on: {
+    click: function click(evt) {
+      console.log('裁剪图片', evt);
+    }
+  }
+}];
+exports.default = _default;
+},{}],"plugin/draw-editer/draw-img/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1097,11 +1346,166 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _drop = _interopRequireDefault(require("./drop"));
+var _utils = require("../../../utils");
 
-var _drawBar = _interopRequireDefault(require("./draw-bar"));
+var _data = _interopRequireDefault(require("./data"));
 
-var _drawDetail = _interopRequireDefault(require("./draw-detail"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var drawImg =
+/*#__PURE__*/
+function () {
+  function drawImg(canvas) {
+    _classCallCheck(this, drawImg);
+
+    this.canvas = canvas;
+  }
+
+  _createClass(drawImg, [{
+    key: "init",
+    value: function init() {
+      var _this = this;
+
+      var detailBox = _utils.creatDom.call(this, {
+        tag: 'form',
+        style: {
+          position: 'absolute',
+          width: '300px',
+          background: '#FFF',
+          margin: '0 -300px 0 0',
+          right: '0px',
+          bottom: '0px',
+          top: '0px',
+          boxShadow: '1px 1px 1px 1px rgba(14,19,24,.15)'
+        }
+      });
+
+      _data.default.map(function (item, index) {
+        detailBox.appendChild(_this.divList(item));
+      });
+
+      this.canvas.appendChild(detailBox);
+    }
+  }, {
+    key: "divList",
+    value: function divList(params) {
+      var domBox = _utils.creatDom.call(this, {});
+
+      var titleDom = null; // let formDom = 
+
+      var itemDom = null;
+
+      if (params.type == 'img') {
+        titleDom = _utils.creatDom.call(this, {
+          tag: 'div',
+          child: params.title,
+          style: {
+            'lineHeight': '60px',
+            paddingLeft: '34px'
+          }
+        });
+        itemDom = _utils.creatDom.call(this, {
+          tag: 'img',
+          attr: {
+            src: params.img
+          },
+          on: params.on,
+          style: {
+            width: '50%',
+            height: '100px',
+            float: 'left'
+          }
+        });
+      } else {
+        titleDom = _utils.creatDom.call(this, {
+          tag: 'span'
+        });
+        itemDom = _utils.creatDom.call(this, {
+          tag: 'span',
+          style: {
+            display: 'inline-block',
+            width: '49%',
+            height: '35px',
+            float: 'right',
+            border: '1px solid #eee',
+            margin: '5px 0 10px 0'
+          },
+          on: params.on,
+          child: params.title
+        });
+      }
+
+      domBox.appendChild(titleDom);
+      domBox.appendChild(itemDom);
+      return domBox;
+    }
+  }]);
+
+  return drawImg;
+}();
+
+var _default = drawImg;
+exports.default = _default;
+},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-img/data.js"}],"plugin/draw-editer/main/data.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = [{
+  name: 1,
+  id: 1,
+  text: '是的 发   送   到1',
+  type: 'text',
+  style: {
+    width: 50,
+    height: 400,
+    angle: 0,
+    top: 40,
+    left: 100,
+    color: '#000',
+    fontSize: 14
+  }
+}, {
+  name: 2,
+  id: 2,
+  type: 'img',
+  src: 'https://tse3-mm.cn.bing.net/th?id=OIP.rJNHO8sYJpEhccdXGlN27gHaFj&w=277&h=207&c=7&o=5&dpr=2&pid=1.7',
+  style: {
+    width: 100,
+    height: 200,
+    angle: 0,
+    top: 200,
+    left: 100,
+    color: '#000',
+    fontSize: 14
+  }
+}];
+exports.default = _default;
+},{}],"plugin/draw-editer/main/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _drop = _interopRequireDefault(require("../drop"));
+
+var _drawBar = _interopRequireDefault(require("../draw-bar"));
+
+var _drawDetail = _interopRequireDefault(require("../draw-detail"));
+
+var _drawImg = _interopRequireDefault(require("../draw-img"));
+
+var _data = _interopRequireDefault(require("./data"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1118,16 +1522,20 @@ function () {
     _classCallCheck(this, drawEditer);
 
     this.canvas = params.canvas.dom;
+    this.unit = params.unit || 'px';
+    this.drawData = _data.default;
     this.canvas.style.position = 'relative';
     this.elements = [];
     this.id = 0; // console.log(params,"kjjj")
 
-    _drop.default.init(this.canvas, params);
+    _drop.default.init(this.canvas, params, this.unit);
 
     this.bar = new _drawBar.default(params.bar, this);
     this.detail = new _drawDetail.default(canvas);
+    this.imgDetail = new _drawImg.default(canvas);
     this.bar.init();
-    this.detail.init(); // return this;
+    this.detail.init();
+    this.imgDetail.init(); // return this;
     // console.log((new bar()).init(),"kkkk")
   }
 
@@ -1137,7 +1545,6 @@ function () {
   }, {
     key: "getData",
     value: function getData() {
-      var arr = [];
       var doms = this.canvas.querySelectorAll('.box');
       console.log(doms, "kkkkk");
 
@@ -1175,7 +1582,17 @@ function () {
           color: '#000',
           fontSize: 14
         }
-      }, this.canvas)); // this.render();
+      }, this.canvas));
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this = this;
+
+      // this.drawDat
+      this.drawData.map(function (item, index) {
+        _this.canvas.appendChild(_drop.default.create(item));
+      });
     }
   }]);
 
@@ -1183,11 +1600,11 @@ function () {
 }();
 
 exports.default = drawEditer;
-},{"./drop":"plugin/draw-editer/drop/index.js","./draw-bar":"plugin/draw-editer/draw-bar/index.js","./draw-detail":"plugin/draw-editer/draw-detail/index.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
+},{"../drop":"plugin/draw-editer/drop/index.js","../draw-bar":"plugin/draw-editer/draw-bar/index.js","../draw-detail":"plugin/draw-editer/draw-detail/index.js","../draw-img":"plugin/draw-editer/draw-img/index.js","./data":"plugin/draw-editer/main/data.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
 var global = arguments[3];
 "use strict";
 
-var _drawEditer = _interopRequireDefault(require("./drawEditer"));
+var _main = _interopRequireDefault(require("./main"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1209,9 +1626,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
   }
 })(typeof window !== "undefined" ? window : void 0, function (window, noGlobal) {
   var version = "0.0.1";
-  window.drawEditer = _drawEditer.default;
+  window.drawEditer = _main.default;
 });
-},{"./drawEditer":"plugin/draw-editer/drawEditer.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./main":"plugin/draw-editer/main/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1239,7 +1656,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51063" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56478" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
