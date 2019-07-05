@@ -1,5 +1,5 @@
 import { creatDom } from '../../../utils';
-export default ()=>{
+export default (params)=>{
     const boxDom = creatDom({
         tag:'div',
         style:{
@@ -58,6 +58,9 @@ export default ()=>{
             boxSizing:'border-box',
             padding:' 0 10px',
 
+        },
+        attr:{
+            name:params.name
         },
         on:{
             focus:()=>{

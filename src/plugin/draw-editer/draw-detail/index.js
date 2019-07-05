@@ -1,10 +1,13 @@
 import { creatDom } from '../../../utils';
-import data from './data';
-import {inputSelect,textarea} from '../components'
+import dataFn from './data';
+import drawData from '../draw-data';
+import {inputSelect,textarea,radioButton} from '../components'
 class drawDetail {
   constructor(canvas) {
     this.canvas = canvas;
     this.form = null;
+    this.activeDom = null;
+    this.data = dataFn.call(this)
 
   }
   init() {
@@ -23,28 +26,52 @@ class drawDetail {
       }
     });
     this.form = detailBox;
-    data.map((item, index) => {
+    this.data.map((item, index) => {
       detailBox.appendChild(this.divList(item));
     })
     this.canvas.appendChild(detailBox)
   }
   active(dom){
     
-    let type = dom.dataset.elemtype,
-    text = dom.innerText,
-    fontFamily = dom.style.fontFamily,
-    fontSize = dom.style.fontSize,
-    lineHeight = dom.style.lineHeight,
-    textAlign = dom.style.textAlign,
-    fontWeight = dom.style.fontWeight,
-    color=dom.style.color;
-
+    // let type = dom.dataset.elemtype,
+    // text = dom.innerText,
+    // fontFamily = dom.style.fontFamily,
+    // fontSize = dom.style.fontSize,
+    // lineHeight = dom.style.lineHeight,
+    // textAlign = dom.style.textAlign,
+    // fontWeight = dom.style.fontWeight,
+    // color=dom.style.color;
+    this.activeDom = dom;
+    let formArr = {text:dom.innerText,
+      fontFamily:dom.style.fontFamily,
+      fontSize:dom.style.fontSize,
+      lineHeight:dom.style.lineHeight,
+      textAlign :dom.style.textAlign,
+    }
+    for(let key in formArr){
+      // console.log(this.form)
+      let itemName = document.getElementsByName(key);
+      if(itemName.length==1){
+        itemName[0].value = formArr[key]
+      }else{
+        for(let i =0;i<itemName.length;i++){
+          let item = itemName[i];
+          if(item.value ==  formArr[key]){
+            item.checked = true;
+          }else{
+            item.checked = false;
+          }
+        }
+      }
+     
+    }
+    drawData.setActive(dom);
     // 
     // .text = '3333'
-    console.log(this.form,"kkkk")
-    
+    // console.log(this.form,"kkkk")
+
     // if(type == text)
-    console.log(type,text,fontFamily,fontSize,lineHeight,textAlign,color)
+    // console.log(type,text,fontFamily,fontSize,lineHeight,textAlign,color)
   }
   divList(params) {
     let domBox = creatDom.call(this, {
@@ -60,22 +87,27 @@ class drawDetail {
     // let formDom = 
     let itemDom = null;
     if (params.type == 'textarea') {
-      itemDom = textarea({name:params.name})
+      itemDom = textarea({name:params.name,on:params.on})
     }
     if (params.type == 'select') {
-      itemDom =  inputSelect()
+      itemDom =  inputSelect({name:params.name})
       // itemDom = creatDom.call(this, { tag: 'select', on: params.on })
       // let optionData = params.options;
       // optionData.map((item) => {
       //   itemDom.appendChild(creatDom.call(this, { tag: 'option', child: item.label }))
       // })
     }
-    if (params.type == 'tab') {
-      itemDom = creatDom.call(this, { tag: 'div', style: { margin: '5px' } })
-      let optionData = params.options;
-      optionData.map((item) => {
-        itemDom.appendChild(creatDom.call(this, item))
+    if (params.type == 'radio-button') {
+      itemDom = radioButton({
+        name:params.name,
+        options:params.options,
+        on:params.on
       })
+      // itemDom = creatDom.call(this, { tag: 'div', style: { margin: '5px' } })
+      // let optionData = params.options;
+      // optionData.map((item) => {
+      //   itemDom.appendChild(creatDom.call(this, item))
+      // })
     }
     if(params.type == 'color'){
       itemDom = creatDom.call(this,{

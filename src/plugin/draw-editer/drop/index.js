@@ -88,7 +88,7 @@ class drop {
         transformOrigin: 'center',
         transform: 'rotate(0deg)',
         boxSizing:'border-box',
-        writingMode:'vertical-rl'
+        // writingMode:'vertical-rl'
       },this.styleFramt(elem.style,elem)),
       child: elem.text||'',
       attr: {

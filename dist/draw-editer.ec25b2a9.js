@@ -405,8 +405,8 @@ function () {
           cursor: 'move',
           transformOrigin: 'center',
           transform: 'rotate(0deg)',
-          boxSizing: 'border-box',
-          writingMode: 'vertical-rl'
+          boxSizing: 'border-box' // writingMode:'vertical-rl'
+
         }, this.styleFramt(elem.style, elem)),
         child: elem.text || '',
         attr: {
@@ -994,13 +994,60 @@ function () {
 
 var _default = bar;
 exports.default = _default;
-},{"./data":"plugin/draw-editer/draw-bar/data.js","../../../utils":"utils/index.js"}],"plugin/draw-editer/draw-detail/data.js":[function(require,module,exports) {
+},{"./data":"plugin/draw-editer/draw-bar/data.js","../../../utils":"utils/index.js"}],"plugin/draw-editer/draw-data/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var arr = [];
+var activeDom = null;
+var _default = {
+  add: function add(item) {
+    return arr.push(item);
+  },
+  getData: function getData(id) {
+    if (id) {
+      return arr;
+    } else {
+      for (var i = 0; i < arr.length; i++) {
+        if (id == arr[i].id) {
+          return arr[i];
+        }
+      }
+    }
+  },
+  editorData: function editorData(id, item) {
+    for (var i = 0; i < arr.lengthl; i++) {
+      if (id == arr[i]) {
+        arr[i] = item;
+        return arr;
+      }
+    }
+
+    return arr;
+  },
+  setActive: function setActive(dom) {
+    activeDom = dom;
+  },
+  getActive: function getActive() {
+    return activeDom;
+  }
+};
+exports.default = _default;
+},{}],"plugin/draw-editer/draw-detail/data.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+
+var _drawData = _interopRequireDefault(require("../draw-data"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var publicStyle = {
   width: '30px',
   height: '30px',
@@ -1031,153 +1078,147 @@ var setActive = function setActive(event) {
   }
 };
 
-var _default = [{
-  title: "文字内容",
-  name: 'text',
-  type: 'textarea'
-}, {
-  title: "字体",
-  name: 'fontFamily',
-  type: 'select',
-  options: [{
-    label: 'Apple',
-    value: 'Apple'
-  }, {
-    label: 'Orange',
-    value: 'Orange'
-  }],
-  on: {
-    change: function change(evt) {
-      console.log('ppppp', evt.value);
-    }
-  }
-}, {
-  title: "字号",
-  name: 'fontSize',
-  type: 'select',
-  options: [{
-    label: '14',
-    value: '14'
-  }, {
-    label: '16',
-    value: '16'
-  }],
-  on: {
-    change: function change(evt) {
-      console.log('ppppp', evt.value);
-    }
-  }
-}, {
-  title: "行高",
-  name: 'lineHeight',
-  type: 'select',
-  options: [{
-    label: '14',
-    value: '14'
-  }, {
-    label: '16',
-    value: '16'
-  }],
-  on: {
-    change: function change(evt) {
-      console.log('ppppp', evt.value);
-    }
-  }
-}, {
-  title: "",
-  name: 'text',
-  type: 'tab',
-  options: [{
-    tag: 'div',
-    style: Object.assign({}, publicStyle, {
-      backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDM1MzM0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE3ODYiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2NC44MDg0OTY0NCA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2NC44MDg0OTY0NHpNMjYzLjQ3NjIzNjc3IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVIMjYzLjQ3NjIzNjc3ek0yNjQuODA4NDk2NDQgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjQuODA4NDk2NDR6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNzg3Ij48L3BhdGg+PC9zdmc+)'
-    }),
+function _default() {
+  return [{
+    title: "文字内容",
+    name: 'text',
+    type: 'textarea',
     on: {
-      click: function click() {
-        console.log("ppppppp");
-      },
-      hover: hover
-    }
-  }, {
-    tag: 'div',
-    style: Object.assign({}, publicStyle, {
-      backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1Mzk5ODM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzUgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE0MTMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjAyMzQzNzUiIGhlaWdodD0iMjAwIj48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwvc3R5bGU+PC9kZWZzPjxwYXRoIGQ9Ik0yODMuNDc2MjM2NzcgNzEzLjQ3MDE4NzY3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NUgyODMuNDc2MjM2Nzd6TTM1Mi4yNTAyMTA1MSA0NzguNDc4NDU3MzZoNTMxLjQ2NjcyMjA2djY3LjA1MzU3NTU1SDM1Mi4yNTAyMTA1MXpNMjgzLjQ3NjIzNjc3IDI0My40NzYyMzY3OGg2NjkuMDE0NjY5NTV2NjcuMDUzNTc1NTRIMjgzLjQ3NjIzNjc3eiIgZmlsbD0iIzY2NjY2NiIgcC1pZD0iMTQxNCI+PC9wYXRoPjwvc3ZnPg==)'
-    }),
-    on: {
-      click: function click() {
-        console.log("ppppppp");
-      },
-      hover: hover
-    }
-  }, {
-    tag: 'div',
-    style: Object.assign({}, publicStyle, {
-      backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+)'
-    }),
-    on: {
-      click: function click() {
-        console.log("ppppppp");
-      },
-      hover: hover
-    }
-  }, {
-    tag: 'div',
-    style: {
-      display: 'inline-block',
-      height: '15px',
-      width: '1px',
-      backgroundColor: '#666',
-      verticalAlign: 'middle',
-      margin: '0 5px'
-    }
-  }, {
-    tag: 'div',
-    style: Object.assign({}, publicStyle, {
-      backgroundSize: '17px',
-      backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzA4NjM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5MzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjczLjUyMjA3MTA1IDg1OS42MTQyODgzM1YxNjQuNDE4NTA0MTloMjA1LjQ5ODEyNTE5cTkyLjEzNTMwMjkgMCAxNDcuMjI2Mjg5NCA0My43MjMwMDUzdDU1LjA5MDk4NzE2IDExNS45OTcxMzI5N3EwIDU3LjQ1MjAyODktMzIuNzkyMjU0MzEgMTAxLjQzNzM3MjMydC05MC4wNDc1Mjk0NiA2Mi40MTQ1OTAxOXYxLjc5MjY0MjhxNzEuMzU1OTQ0NTkgOC4wNzc4MjU1MyAxMTQuMDI5NTk4MDggNTMuNjM3MTk2OTl0NDIuNjI5OTMwMTQgMTE1LjU3MDgzMzYxcTAgODkuNzc0MjYwNS02NC44MDg0MjQ0NCAxNDUuMTkzMTcwMTV0LTE2NS45MTc4NzQ5NCA1NS40Mjk4Mzk4MXpNMzYzLjg0Mjg2OTQ3IDI0Mi45MzQwOTA1NFY0NjAuNjA5MDcyOTVoODIuMTk5MjUwMjFxNjUuNDc1MjAwMjMgMCAxMDIuNzQ5MDYyMjUtMzEuNjQ0NTI1NjJ0MzcuMjYyOTMxMTgtODcuNzQxMTQwNTZxMC05OC4yODkzMTYyMi0xMzEuODY4NTg0MjMtOTguMjg5MzE2MjR6IG0wIDI5NS43NzUyMDAyNHYyNDIuMzM0NzU3MDFoMTA4LjM4OTMzMDE2cTcwLjg5Njg1MzM4IDAgMTA5LjUxNTE5Nzg2LTMyLjU0MDg0NjM3dDM4LjYxODM0Mzc5LTkwLjQ0MTAzNjk3cTAtMTE5LjM4NTY2NjE5LTE2My4wMzIxNTU2MS0xMTkuMzg1NjY1NTF6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxOTQwIj48L3BhdGg+PC9zdmc+)'
-    }),
-    on: {
-      click: function click(event, dom) {
-        console.log("-------", event);
-        setActive(dom); // console.log("ppppppp",elemDom)
-      } // hover: hover,
+      input: function input(event, e) {
+        var activeDom = _drawData.default.getActive(); // console.log(event,e)
 
+
+        activeDom.innerText = e.value;
+      }
     }
   }, {
-    tag: 'div',
-    style: Object.assign({}, publicStyle, {
-      backgroundSize: '17px',
-      backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzM0Njc1IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyNDUiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNDQ2LjEwOTMyNzgyIDkwMi43ODg1NzQyMkgzNjkuMDAxMjQ5NzVMNTc3Ljg5MDY3MjE4IDE2MS4yMTE0MjU3OGg3Ny4xMDgwNzgwN0w0NDYuMTA5MzI3ODIgOTAyLjc4ODU3NDIyeiIgZmlsbD0iIzY2NjY2NiIgcC1pZD0iMjI0NiI+PC9wYXRoPjwvc3ZnPg==)'
-    }),
+    title: "字体",
+    name: 'fontFamily',
+    type: 'select',
+    options: [{
+      label: 'Apple',
+      value: 'Apple'
+    }, {
+      label: 'Orange',
+      value: 'Orange'
+    }],
     on: {
-      click: function click(event, dom) {
-        // console.log("ppppppp")
-        setActive(dom);
-      } // hover: hover,
-
+      change: function change(evt) {
+        console.log('ppppp', evt.value);
+      }
     }
   }, {
-    tag: 'div',
-    style: Object.assign({}, publicStyle, {
-      backgroundSize: '17px',
-      backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzI4NDA5IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwOTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXYtNTMuMzA4MzAzNDNsNTM0LjM5MjE3NjA4LTQuODQ5MDY1NjF2NTMuMjk3ODMwMjNMMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXpNNzUzLjc5ODcxMzc4IDUyMS40MTI3Njk2NXEwIDI3My41MDYxNTcxOS0yNDguMTA4NzgyOTEgMjczLjUwNjE1Nzk3LTIzNy43NDAzNzAyNSAwLTIzNy43NDAzNzAyNy0yNjMuOTIzMjMwNzhWMTM5LjMwMDEwODQ0aDgzLjI2MTQ5NTE0djM4Ny45MzU3Mjk2OXEwIDE5My41NzUxMjIxMSAxNjIuMzMzNzMyODggMTkzLjU3NTEyMjEgMTU2Ljk0MDA2Mzg1IDAgMTU2Ljk0MDA2Mzg2LTE4Ny4zMzMxMjgyVjEzOS4yNDc3NDMwNUg3NTMuNzk4NzEzNzh6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIyMDkzIj48L3BhdGg+PC9zdmc+)'
-    }),
+    title: "字号",
+    name: 'fontSize',
+    type: 'select',
+    options: [{
+      label: '14',
+      value: '14'
+    }, {
+      label: '16',
+      value: '16'
+    }],
     on: {
-      click: function click(event, dom) {
-        // console.log("ppppppp")
-        setActive(dom);
-      } // hover: hover,
-
+      change: function change(evt) {
+        console.log('ppppp', evt.value);
+      }
     }
-  }]
-}, {
-  title: "颜色",
-  name: 'color',
-  type: 'color',
-  on: {}
-}];
-exports.default = _default;
-},{}],"plugin/draw-editer/components/input-select.js":[function(require,module,exports) {
+  }, {
+    title: "行高",
+    name: 'lineHeight',
+    type: 'select',
+    options: [{
+      label: '14',
+      value: '14'
+    }, {
+      label: '16',
+      value: '16'
+    }],
+    on: {
+      change: function change(evt) {
+        console.log('ppppp', evt.value);
+      }
+    }
+  }, {
+    title: "颜色",
+    name: 'color',
+    type: 'color',
+    on: {}
+  }, {
+    title: "",
+    name: 'textAlign',
+    type: 'radio-button',
+    on: {
+      change: function change() {}
+    },
+    options: [{
+      value: 'left',
+      label: '',
+      url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDM1MzM0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE3ODYiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2NC44MDg0OTY0NCA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2NC44MDg0OTY0NHpNMjYzLjQ3NjIzNjc3IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVIMjYzLjQ3NjIzNjc3ek0yNjQuODA4NDk2NDQgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjQuODA4NDk2NDR6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNzg3Ij48L3BhdGg+PC9zdmc+'
+    }, {
+      value: 'center',
+      label: '',
+      url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1Mzk5ODM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzUgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE0MTMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjAyMzQzNzUiIGhlaWdodD0iMjAwIj48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwvc3R5bGU+PC9kZWZzPjxwYXRoIGQ9Ik0yODMuNDc2MjM2NzcgNzEzLjQ3MDE4NzY3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NUgyODMuNDc2MjM2Nzd6TTM1Mi4yNTAyMTA1MSA0NzguNDc4NDU3MzZoNTMxLjQ2NjcyMjA2djY3LjA1MzU3NTU1SDM1Mi4yNTAyMTA1MXpNMjgzLjQ3NjIzNjc3IDI0My40NzYyMzY3OGg2NjkuMDE0NjY5NTV2NjcuMDUzNTc1NTRIMjgzLjQ3NjIzNjc3eiIgZmlsbD0iIzY2NjY2NiIgcC1pZD0iMTQxNCI+PC9wYXRoPjwvc3ZnPg=='
+    }, {
+      value: 'right',
+      label: '',
+      url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+'
+    }, {
+      tag: 'div',
+      style: {
+        display: 'inline-block',
+        height: '15px',
+        width: '1px',
+        backgroundColor: '#666',
+        verticalAlign: 'middle',
+        margin: '0 5px'
+      }
+    }]
+  }];
+}
+/**
+ *   {
+        tag: 'div',
+        style: Object.assign({}, publicStyle, {
+          backgroundSize: '17px',
+          backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzA4NjM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5MzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjczLjUyMjA3MTA1IDg1OS42MTQyODgzM1YxNjQuNDE4NTA0MTloMjA1LjQ5ODEyNTE5cTkyLjEzNTMwMjkgMCAxNDcuMjI2Mjg5NCA0My43MjMwMDUzdDU1LjA5MDk4NzE2IDExNS45OTcxMzI5N3EwIDU3LjQ1MjAyODktMzIuNzkyMjU0MzEgMTAxLjQzNzM3MjMydC05MC4wNDc1Mjk0NiA2Mi40MTQ1OTAxOXYxLjc5MjY0MjhxNzEuMzU1OTQ0NTkgOC4wNzc4MjU1MyAxMTQuMDI5NTk4MDggNTMuNjM3MTk2OTl0NDIuNjI5OTMwMTQgMTE1LjU3MDgzMzYxcTAgODkuNzc0MjYwNS02NC44MDg0MjQ0NCAxNDUuMTkzMTcwMTV0LTE2NS45MTc4NzQ5NCA1NS40Mjk4Mzk4MXpNMzYzLjg0Mjg2OTQ3IDI0Mi45MzQwOTA1NFY0NjAuNjA5MDcyOTVoODIuMTk5MjUwMjFxNjUuNDc1MjAwMjMgMCAxMDIuNzQ5MDYyMjUtMzEuNjQ0NTI1NjJ0MzcuMjYyOTMxMTgtODcuNzQxMTQwNTZxMC05OC4yODkzMTYyMi0xMzEuODY4NTg0MjMtOTguMjg5MzE2MjR6IG0wIDI5NS43NzUyMDAyNHYyNDIuMzM0NzU3MDFoMTA4LjM4OTMzMDE2cTcwLjg5Njg1MzM4IDAgMTA5LjUxNTE5Nzg2LTMyLjU0MDg0NjM3dDM4LjYxODM0Mzc5LTkwLjQ0MTAzNjk3cTAtMTE5LjM4NTY2NjE5LTE2My4wMzIxNTU2MS0xMTkuMzg1NjY1NTF6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxOTQwIj48L3BhdGg+PC9zdmc+)',
+        }),
+        on: {
+          click: (event, dom) => {
+            console.log("-------", event)
+            setActive(dom)
+            // console.log("ppppppp",elemDom)
+          },
+          // hover: hover,
+        }
+      }, {
+        tag: 'div',
+        style: Object.assign({}, publicStyle, {
+          backgroundSize: '17px',
+          backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzM0Njc1IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyNDUiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNDQ2LjEwOTMyNzgyIDkwMi43ODg1NzQyMkgzNjkuMDAxMjQ5NzVMNTc3Ljg5MDY3MjE4IDE2MS4yMTE0MjU3OGg3Ny4xMDgwNzgwN0w0NDYuMTA5MzI3ODIgOTAyLjc4ODU3NDIyeiIgZmlsbD0iIzY2NjY2NiIgcC1pZD0iMjI0NiI+PC9wYXRoPjwvc3ZnPg==)',
+        }),
+        on: {
+          click: (event, dom) => {
+            // console.log("ppppppp")
+            setActive(dom)
+          },
+          // hover: hover,
+        }
+      }, {
+        tag: 'div',
+        style: Object.assign({}, publicStyle, {
+          backgroundSize: '17px',
+          backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzI4NDA5IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwOTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXYtNTMuMzA4MzAzNDNsNTM0LjM5MjE3NjA4LTQuODQ5MDY1NjF2NTMuMjk3ODMwMjNMMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXpNNzUzLjc5ODcxMzc4IDUyMS40MTI3Njk2NXEwIDI3My41MDYxNTcxOS0yNDguMTA4NzgyOTEgMjczLjUwNjE1Nzk3LTIzNy43NDAzNzAyNSAwLTIzNy43NDAzNzAyNy0yNjMuOTIzMjMwNzhWMTM5LjMwMDEwODQ0aDgzLjI2MTQ5NTE0djM4Ny45MzU3Mjk2OXEwIDE5My41NzUxMjIxMSAxNjIuMzMzNzMyODggMTkzLjU3NTEyMjEgMTU2Ljk0MDA2Mzg1IDAgMTU2Ljk0MDA2Mzg2LTE4Ny4zMzMxMjgyVjEzOS4yNDc3NDMwNUg3NTMuNzk4NzEzNzh6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIyMDkzIj48L3BhdGg+PC9zdmc+)',
+        }),
+        on: {
+          click: (event, dom) => {
+            // console.log("ppppppp")
+            setActive(dom)
+          },
+          // hover: hover,
+        }
+      }*/
+},{"../draw-data":"plugin/draw-editer/draw-data/index.js"}],"plugin/draw-editer/components/input-select.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1189,7 +1230,7 @@ var _utils = require("../../../utils");
 
 var _this = void 0;
 
-var _default = function _default() {
+var _default = function _default(params) {
   var boxDom = (0, _utils.creatDom)({
     tag: 'div',
     style: {
@@ -1251,6 +1292,9 @@ var _default = function _default() {
       boxSizing: 'border-box',
       padding: ' 0 10px'
     },
+    attr: {
+      name: params.name
+    },
     on: {
       focus: function focus() {
         select.style.display = 'block';
@@ -1290,10 +1334,95 @@ var _default = function _default(params) {
     },
     attr: {
       name: params.name
-    }
+    },
+    on: params.on
   });
 
   return textareaDom;
+};
+
+exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/radio-button.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+var options = [];
+
+var render = function render(options, boxDom, params) {
+  var change = params.on.change;
+  boxDom.innerHTML = '';
+  options.map(function (item) {
+    var everyItem = (0, _utils.creatDom)({
+      tag: 'input',
+      attr: {
+        value: item.value,
+        name: params.name,
+        checked: item.active ? true : false,
+        type: 'radio'
+      },
+      style: {
+        width: '30px',
+        height: '30px',
+        cursor: 'pointer',
+        display: 'inline-block',
+        backgroundSize: '25px',
+        backgroundColor: item.active ? 'rgba(14,19,24,.15)' : '#fff',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        borderRadius: '4px',
+        verticalAlign: 'middle',
+        margin: '2px',
+        backgroundImage: "url(".concat(item.url, ")")
+      },
+      on: {
+        click: function click(event, dom) {
+          var value = dom.getAttribute('value');
+          options = options.map(function (item, index) {
+            if (item.value == value) {
+              item.active = true;
+            } else {
+              item.active = false;
+            }
+
+            return item;
+          });
+          boxDom.value = value;
+          boxDom.setAttribute('value', value); // change()
+
+          render(options, boxDom, params);
+        }
+      }
+    });
+    boxDom.appendChild(everyItem);
+  });
+};
+
+var _default = function _default(params) {
+  options = [].concat(params.options);
+  var boxDom = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      display: 'inline-block'
+    },
+    on: {
+      input: function input() {
+        console.log("kkjjjjj");
+      }
+    }
+  }); // new Proxy(boxDom,{
+  //     set:function(target, key, value){
+  //         console.log(value,"jjjjj")
+  //     }
+  // })
+
+  render(options, boxDom, params);
+  return boxDom;
 };
 
 exports.default = _default;
@@ -1315,13 +1444,21 @@ Object.defineProperty(exports, "textarea", {
     return _textarea.default;
   }
 });
+Object.defineProperty(exports, "radioButton", {
+  enumerable: true,
+  get: function () {
+    return _radioButton.default;
+  }
+});
 
 var _inputSelect = _interopRequireDefault(require("./input-select"));
 
 var _textarea = _interopRequireDefault(require("./textarea"));
 
+var _radioButton = _interopRequireDefault(require("./radio-button"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./input-select":"plugin/draw-editer/components/input-select.js","./textarea":"plugin/draw-editer/components/textarea.js"}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
+},{"./input-select":"plugin/draw-editer/components/input-select.js","./textarea":"plugin/draw-editer/components/textarea.js","./radio-button":"plugin/draw-editer/components/radio-button.js"}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1332,6 +1469,8 @@ exports.default = void 0;
 var _utils = require("../../../utils");
 
 var _data = _interopRequireDefault(require("./data"));
+
+var _drawData = _interopRequireDefault(require("../draw-data"));
 
 var _components = require("../components");
 
@@ -1351,6 +1490,8 @@ function () {
 
     this.canvas = canvas;
     this.form = null;
+    this.activeDom = null;
+    this.data = _data.default.call(this);
   }
 
   _createClass(drawDetail, [{
@@ -1373,35 +1514,60 @@ function () {
       });
 
       this.form = detailBox;
-
-      _data.default.map(function (item, index) {
+      this.data.map(function (item, index) {
         detailBox.appendChild(_this.divList(item));
       });
-
       this.canvas.appendChild(detailBox);
     }
   }, {
     key: "active",
     value: function active(dom) {
-      var type = dom.dataset.elemtype,
-          text = dom.innerText,
-          fontFamily = dom.style.fontFamily,
-          fontSize = dom.style.fontSize,
-          lineHeight = dom.style.lineHeight,
-          textAlign = dom.style.textAlign,
-          fontWeight = dom.style.fontWeight,
-          color = dom.style.color; // 
+      // let type = dom.dataset.elemtype,
+      // text = dom.innerText,
+      // fontFamily = dom.style.fontFamily,
+      // fontSize = dom.style.fontSize,
+      // lineHeight = dom.style.lineHeight,
+      // textAlign = dom.style.textAlign,
+      // fontWeight = dom.style.fontWeight,
+      // color=dom.style.color;
+      this.activeDom = dom;
+      var formArr = {
+        text: dom.innerText,
+        fontFamily: dom.style.fontFamily,
+        fontSize: dom.style.fontSize,
+        lineHeight: dom.style.lineHeight,
+        textAlign: dom.style.textAlign
+      };
+
+      for (var key in formArr) {
+        // console.log(this.form)
+        var itemName = document.getElementsByName(key);
+
+        if (itemName.length == 1) {
+          itemName[0].value = formArr[key];
+        } else {
+          for (var i = 0; i < itemName.length; i++) {
+            var item = itemName[i];
+
+            if (item.value == formArr[key]) {
+              item.checked = true;
+            } else {
+              item.checked = false;
+            }
+          }
+        }
+      }
+
+      _drawData.default.setActive(dom); // 
       // .text = '3333'
+      // console.log(this.form,"kkkk")
+      // if(type == text)
+      // console.log(type,text,fontFamily,fontSize,lineHeight,textAlign,color)
 
-      console.log(this.form, "kkkk"); // if(type == text)
-
-      console.log(type, text, fontFamily, fontSize, lineHeight, textAlign, color);
     }
   }, {
     key: "divList",
     value: function divList(params) {
-      var _this2 = this;
-
       var domBox = _utils.creatDom.call(this, {
         tag: 'div',
         style: {
@@ -1423,29 +1589,31 @@ function () {
 
       if (params.type == 'textarea') {
         itemDom = (0, _components.textarea)({
-          name: params.name
+          name: params.name,
+          on: params.on
         });
       }
 
       if (params.type == 'select') {
-        itemDom = (0, _components.inputSelect)(); // itemDom = creatDom.call(this, { tag: 'select', on: params.on })
+        itemDom = (0, _components.inputSelect)({
+          name: params.name
+        }); // itemDom = creatDom.call(this, { tag: 'select', on: params.on })
         // let optionData = params.options;
         // optionData.map((item) => {
         //   itemDom.appendChild(creatDom.call(this, { tag: 'option', child: item.label }))
         // })
       }
 
-      if (params.type == 'tab') {
-        itemDom = _utils.creatDom.call(this, {
-          tag: 'div',
-          style: {
-            margin: '5px'
-          }
-        });
-        var optionData = params.options;
-        optionData.map(function (item) {
-          itemDom.appendChild(_utils.creatDom.call(_this2, item));
-        });
+      if (params.type == 'radio-button') {
+        itemDom = (0, _components.radioButton)({
+          name: params.name,
+          options: params.options,
+          on: params.on
+        }); // itemDom = creatDom.call(this, { tag: 'div', style: { margin: '5px' } })
+        // let optionData = params.options;
+        // optionData.map((item) => {
+        //   itemDom.appendChild(creatDom.call(this, item))
+        // })
       }
 
       if (params.type == 'color') {
@@ -1468,7 +1636,7 @@ function () {
 
 var _default = drawDetail;
 exports.default = _default;
-},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-detail/data.js","../components":"plugin/draw-editer/components/index.js"}],"plugin/draw-editer/draw-img/data.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-detail/data.js","../draw-data":"plugin/draw-editer/draw-data/index.js","../components":"plugin/draw-editer/components/index.js"}],"plugin/draw-editer/draw-img/data.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -12,7 +12,8 @@ export default (params)=>{
         },
         attr:{
             name:params.name
-        }
+        },
+        on:params.on
     });
     return textareaDom;
 }

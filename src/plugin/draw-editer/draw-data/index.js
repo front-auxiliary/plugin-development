@@ -1,4 +1,5 @@
 let arr = [];
+let activeDom = null;
 export default {
   add:(item)=>{
       return arr.push(item)
@@ -23,6 +24,12 @@ export default {
       }
     }
     return arr;
+  },
+  setActive(dom){
+    activeDom = dom 
+  },
+  getActive(){
+    return activeDom
   }
 
 }
