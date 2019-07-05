@@ -305,11 +305,12 @@ function () {
     this.activeDom = null;
     this.type == 'text';
     this.isAngleClick = false;
+    this.activeElemClick = null;
   }
 
   _createClass(drop, [{
     key: "init",
-    value: function init(canvas, params, unit) {
+    value: function init(canvas, params, unit, activeElemClick) {
       var _this = this;
 
       this.canvas = canvas;
@@ -317,6 +318,7 @@ function () {
       this.canvasDetail = this.canvas.getBoundingClientRect(); // console.log(this.canvasDetail)
 
       this.elemClick = params.canvas.on.elemClick;
+      this.activeElemClick = activeElemClick;
 
       document.onmouseup = function (event) {
         _this.onmouseup(event, _this.canvas);
@@ -329,13 +331,13 @@ function () {
   }, {
     key: "styleFramt",
     value: function styleFramt(style, elem) {
-      var judgeStr = 'width,height,left,top,fontSize';
+      var judgeStr = 'width,height,left,top,fontSize,lineHeight';
       var newStyle = {};
 
       for (var key in style) {
         if (key == 'angle' && style[key]) {
           newStyle.transform = "rotate(".concat(style[key], "deg)");
-        } else if (elem.type == 'img' && (key == 'width' || key == 'height')) {
+        } else if (key == 'width' || key == 'height') {
           if (key == 'width') {
             newStyle.minWidth = style.width + this.unit;
           }
@@ -381,8 +383,7 @@ function () {
         on: {
           load: function load(event) {
             dropDom.style.height = img.height + _this2.unit;
-            dropDom.style.width = img.width + _this2.unit;
-            console.log(img.width, "kkk");
+            dropDom.style.width = img.width + _this2.unit; // console.log(img.width,"kkk")
           }
         }
       });
@@ -404,7 +405,8 @@ function () {
           cursor: 'move',
           transformOrigin: 'center',
           transform: 'rotate(0deg)',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          writingMode: 'vertical-rl'
         }, this.styleFramt(elem.style, elem)),
         child: elem.text || '',
         attr: {
@@ -412,6 +414,7 @@ function () {
           tabindex: elem.id,
           class: 'draw-editor-elem'
         },
+        data: {},
         on: {
           mousedown: function mousedown(event) {
             event.stopPropagation();
@@ -419,24 +422,28 @@ function () {
             _this3.onmousedown(event, dropDom, _this3.canvas);
 
             if (_this3.elemClick) {
-              _this3.elemClick(event);
+              _this3.elemClick(dropDom); // console.log('-----')
+
+
+              _this3.activeElemClick(dropDom);
             }
           },
           blur: function blur() {
-            console.log(that.isAngleClick); // if(that.isAngleClick){
+            // console.log(that.isAngleClick)
+            // if(that.isAngleClick){
             //   return ;
             // }
-
             var zoomArr = dropDom.querySelectorAll('.zoom');
             dropDom.style.borderWidth = 0;
 
             for (var i = 0; i < zoomArr.length; i++) {
               zoomArr[i].style.display = 'none';
-            }
+            } // console.log("kkkk1111")
 
-            console.log("kkkk1111");
           },
           focus: function focus() {
+            var elemType = dropDom.dataset.elemtype; // console.log(elemType,"jjjjjj")
+
             var zoomArr = dropDom.querySelectorAll('.zoom');
 
             for (var i = 0; i < zoomArr.length; i++) {
@@ -454,9 +461,10 @@ function () {
 
       if (elem.type == 'img') {
         childs = [].concat(_toConsumableArray(childs), _toConsumableArray(sizes));
-      } // dropDom.innerText = elem.text;
-      // 添加旋转图标
+      }
 
+      dropDom.dataset.elemtype = elem.type; // dropDom.innerText = elem.text;
+      // 添加旋转图标
 
       dropDom.appendChild(angleDom); // dropDom.appendChild("<h1>8888</h1>")
       // 添加缩放图标
@@ -695,8 +703,7 @@ function () {
 
       angleIcon.onmousedown = function (evt) {
         _this6.activeDom = angleIcon;
-        _this6.isAngleClick = true;
-        console.log("kkkk222");
+        _this6.isAngleClick = true; // console.log("kkkk222")
 
         _this6.domSetTag(evt, 'angle');
       };
@@ -1030,7 +1037,7 @@ var _default = [{
   type: 'textarea'
 }, {
   title: "字体",
-  name: 'text',
+  name: 'fontFamily',
   type: 'select',
   options: [{
     label: 'Apple',
@@ -1046,7 +1053,7 @@ var _default = [{
   }
 }, {
   title: "字号",
-  name: 'text',
+  name: 'fontSize',
   type: 'select',
   options: [{
     label: '14',
@@ -1062,7 +1069,7 @@ var _default = [{
   }
 }, {
   title: "行高",
-  name: 'text',
+  name: 'lineHeight',
   type: 'select',
   options: [{
     label: '14',
@@ -1130,8 +1137,9 @@ var _default = [{
       backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzA4NjM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5MzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjczLjUyMjA3MTA1IDg1OS42MTQyODgzM1YxNjQuNDE4NTA0MTloMjA1LjQ5ODEyNTE5cTkyLjEzNTMwMjkgMCAxNDcuMjI2Mjg5NCA0My43MjMwMDUzdDU1LjA5MDk4NzE2IDExNS45OTcxMzI5N3EwIDU3LjQ1MjAyODktMzIuNzkyMjU0MzEgMTAxLjQzNzM3MjMydC05MC4wNDc1Mjk0NiA2Mi40MTQ1OTAxOXYxLjc5MjY0MjhxNzEuMzU1OTQ0NTkgOC4wNzc4MjU1MyAxMTQuMDI5NTk4MDggNTMuNjM3MTk2OTl0NDIuNjI5OTMwMTQgMTE1LjU3MDgzMzYxcTAgODkuNzc0MjYwNS02NC44MDg0MjQ0NCAxNDUuMTkzMTcwMTV0LTE2NS45MTc4NzQ5NCA1NS40Mjk4Mzk4MXpNMzYzLjg0Mjg2OTQ3IDI0Mi45MzQwOTA1NFY0NjAuNjA5MDcyOTVoODIuMTk5MjUwMjFxNjUuNDc1MjAwMjMgMCAxMDIuNzQ5MDYyMjUtMzEuNjQ0NTI1NjJ0MzcuMjYyOTMxMTgtODcuNzQxMTQwNTZxMC05OC4yODkzMTYyMi0xMzEuODY4NTg0MjMtOTguMjg5MzE2MjR6IG0wIDI5NS43NzUyMDAyNHYyNDIuMzM0NzU3MDFoMTA4LjM4OTMzMDE2cTcwLjg5Njg1MzM4IDAgMTA5LjUxNTE5Nzg2LTMyLjU0MDg0NjM3dDM4LjYxODM0Mzc5LTkwLjQ0MTAzNjk3cTAtMTE5LjM4NTY2NjE5LTE2My4wMzIxNTU2MS0xMTkuMzg1NjY1NTF6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxOTQwIj48L3BhdGg+PC9zdmc+)'
     }),
     on: {
-      click: function click(event) {
-        setActive(event); // console.log("ppppppp",elemDom)
+      click: function click(event, dom) {
+        console.log("-------", event);
+        setActive(dom); // console.log("ppppppp",elemDom)
       } // hover: hover,
 
     }
@@ -1142,9 +1150,9 @@ var _default = [{
       backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzM0Njc1IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyNDUiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNDQ2LjEwOTMyNzgyIDkwMi43ODg1NzQyMkgzNjkuMDAxMjQ5NzVMNTc3Ljg5MDY3MjE4IDE2MS4yMTE0MjU3OGg3Ny4xMDgwNzgwN0w0NDYuMTA5MzI3ODIgOTAyLjc4ODU3NDIyeiIgZmlsbD0iIzY2NjY2NiIgcC1pZD0iMjI0NiI+PC9wYXRoPjwvc3ZnPg==)'
     }),
     on: {
-      click: function click(event) {
+      click: function click(event, dom) {
         // console.log("ppppppp")
-        setActive(event);
+        setActive(dom);
       } // hover: hover,
 
     }
@@ -1155,16 +1163,165 @@ var _default = [{
       backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzI4NDA5IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwOTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXYtNTMuMzA4MzAzNDNsNTM0LjM5MjE3NjA4LTQuODQ5MDY1NjF2NTMuMjk3ODMwMjNMMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXpNNzUzLjc5ODcxMzc4IDUyMS40MTI3Njk2NXEwIDI3My41MDYxNTcxOS0yNDguMTA4NzgyOTEgMjczLjUwNjE1Nzk3LTIzNy43NDAzNzAyNSAwLTIzNy43NDAzNzAyNy0yNjMuOTIzMjMwNzhWMTM5LjMwMDEwODQ0aDgzLjI2MTQ5NTE0djM4Ny45MzU3Mjk2OXEwIDE5My41NzUxMjIxMSAxNjIuMzMzNzMyODggMTkzLjU3NTEyMjEgMTU2Ljk0MDA2Mzg1IDAgMTU2Ljk0MDA2Mzg2LTE4Ny4zMzMxMjgyVjEzOS4yNDc3NDMwNUg3NTMuNzk4NzEzNzh6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIyMDkzIj48L3BhdGg+PC9zdmc+)'
     }),
     on: {
-      click: function click(event) {
+      click: function click(event, dom) {
         // console.log("ppppppp")
-        setActive(event);
+        setActive(dom);
       } // hover: hover,
 
     }
   }]
+}, {
+  title: "颜色",
+  name: 'color',
+  type: 'color',
+  on: {}
 }];
 exports.default = _default;
-},{}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
+},{}],"plugin/draw-editer/components/input-select.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+var _this = void 0;
+
+var _default = function _default() {
+  var boxDom = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      position: 'relative'
+    }
+  });
+  var select = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      maxHeight: '200px',
+      overflow: 'auto',
+      position: 'absolute',
+      width: '100%',
+      display: 'none',
+      zIndex: '999',
+      background: '#fff',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+      borderRadius: '4px',
+      margin: '5px 0'
+    }
+  }); // const options = [];
+
+  var _loop = function _loop(i) {
+    var everyOption = _utils.creatDom.call(_this, {
+      tag: 'div',
+      child: i,
+      style: {
+        cursor: 'pointer',
+        boxSizing: 'border-box',
+        padding: '8px 10px',
+        background: '#fff'
+      },
+      on: {
+        hover: function hover() {
+          everyOption.style.background = "#e6f7ff";
+        },
+        mousedown: function mousedown() {
+          console.log("----");
+          inputDom.value = everyOption.innerText;
+        }
+      }
+    });
+
+    select.appendChild(everyOption);
+  };
+
+  for (var i = 1; i < 100; i++) {
+    _loop(i);
+  }
+
+  var inputDom = (0, _utils.creatDom)({
+    tag: 'input',
+    style: {
+      display: 'block',
+      width: '100%',
+      lineHeight: '35px',
+      borderRadius: '4px',
+      border: '1px solid #d9d9d9',
+      boxSizing: 'border-box',
+      padding: ' 0 10px'
+    },
+    on: {
+      focus: function focus() {
+        select.style.display = 'block';
+      },
+      blur: function blur() {
+        select.style.display = 'none';
+      }
+    }
+  });
+  boxDom.appendChild(inputDom);
+  boxDom.appendChild(select);
+  return boxDom;
+};
+
+exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/textarea.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+var _this = void 0;
+
+var _default = function _default(params) {
+  var textareaDom = _utils.creatDom.call(_this, {
+    tag: 'textarea',
+    style: {
+      display: 'block',
+      width: '100%',
+      height: '100px',
+      borderRadius: '4px',
+      border: '1px solid #d9d9d9'
+    },
+    attr: {
+      name: params.name
+    }
+  });
+
+  return textareaDom;
+};
+
+exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "inputSelect", {
+  enumerable: true,
+  get: function () {
+    return _inputSelect.default;
+  }
+});
+Object.defineProperty(exports, "textarea", {
+  enumerable: true,
+  get: function () {
+    return _textarea.default;
+  }
+});
+
+var _inputSelect = _interopRequireDefault(require("./input-select"));
+
+var _textarea = _interopRequireDefault(require("./textarea"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./input-select":"plugin/draw-editer/components/input-select.js","./textarea":"plugin/draw-editer/components/textarea.js"}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1175,6 +1332,8 @@ exports.default = void 0;
 var _utils = require("../../../utils");
 
 var _data = _interopRequireDefault(require("./data"));
+
+var _components = require("../components");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1191,6 +1350,7 @@ function () {
     _classCallCheck(this, drawDetail);
 
     this.canvas = canvas;
+    this.form = null;
   }
 
   _createClass(drawDetail, [{
@@ -1205,12 +1365,14 @@ function () {
           width: '300px',
           background: '#FFF',
           margin: '0 -300px 0 0',
-          right: '0px',
+          right: '-5px',
           bottom: '0px',
-          top: '0px',
-          boxShadow: '1px 1px 1px 1px rgba(14,19,24,.15)'
+          top: '0px' // boxShadow:'0 2px 8px rgba(0,0,0,0.15)',
+
         }
       });
+
+      this.form = detailBox;
 
       _data.default.map(function (item, index) {
         detailBox.appendChild(_this.divList(item));
@@ -1219,38 +1381,58 @@ function () {
       this.canvas.appendChild(detailBox);
     }
   }, {
+    key: "active",
+    value: function active(dom) {
+      var type = dom.dataset.elemtype,
+          text = dom.innerText,
+          fontFamily = dom.style.fontFamily,
+          fontSize = dom.style.fontSize,
+          lineHeight = dom.style.lineHeight,
+          textAlign = dom.style.textAlign,
+          fontWeight = dom.style.fontWeight,
+          color = dom.style.color; // 
+      // .text = '3333'
+
+      console.log(this.form, "kkkk"); // if(type == text)
+
+      console.log(type, text, fontFamily, fontSize, lineHeight, textAlign, color);
+    }
+  }, {
     key: "divList",
     value: function divList(params) {
       var _this2 = this;
 
-      var domBox = _utils.creatDom.call(this, {});
+      var domBox = _utils.creatDom.call(this, {
+        tag: 'div',
+        style: {
+          padding: '5px 10px',
+          margin: '8px 5px'
+        }
+      });
 
       var titleDom = _utils.creatDom.call(this, {
         tag: 'div',
-        child: params.title
+        child: params.title,
+        style: {
+          margin: '5px 0'
+        }
       }); // let formDom = 
 
 
       var itemDom = null;
 
       if (params.type == 'textarea') {
-        itemDom = _utils.creatDom.call(this, {
-          tag: 'textarea'
+        itemDom = (0, _components.textarea)({
+          name: params.name
         });
       }
 
       if (params.type == 'select') {
-        itemDom = _utils.creatDom.call(this, {
-          tag: 'select',
-          on: params.on
-        });
-        var optionData = params.options;
-        optionData.map(function (item) {
-          itemDom.appendChild(_utils.creatDom.call(_this2, {
-            tag: 'option',
-            child: item.label
-          }));
-        });
+        itemDom = (0, _components.inputSelect)(); // itemDom = creatDom.call(this, { tag: 'select', on: params.on })
+        // let optionData = params.options;
+        // optionData.map((item) => {
+        //   itemDom.appendChild(creatDom.call(this, { tag: 'option', child: item.label }))
+        // })
       }
 
       if (params.type == 'tab') {
@@ -1260,10 +1442,18 @@ function () {
             margin: '5px'
           }
         });
-        var _optionData = params.options;
-
-        _optionData.map(function (item) {
+        var optionData = params.options;
+        optionData.map(function (item) {
           itemDom.appendChild(_utils.creatDom.call(_this2, item));
+        });
+      }
+
+      if (params.type == 'color') {
+        itemDom = _utils.creatDom.call(this, {
+          tag: 'input',
+          attr: {
+            type: 'color'
+          }
         });
       }
 
@@ -1278,7 +1468,7 @@ function () {
 
 var _default = drawDetail;
 exports.default = _default;
-},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-detail/data.js"}],"plugin/draw-editer/draw-img/data.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js","./data":"plugin/draw-editer/draw-detail/data.js","../components":"plugin/draw-editer/components/index.js"}],"plugin/draw-editer/draw-img/data.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1469,16 +1659,19 @@ exports.default = void 0;
 var _default = [{
   name: 1,
   id: 1,
-  text: '是的 发   送   到1',
+  text: '物理 <br/> 元本9',
   type: 'text',
   style: {
     width: 50,
     height: 400,
     angle: 0,
     top: 40,
-    left: 100,
+    left: 800,
     color: '#000',
-    fontSize: 14
+    fontSize: 80,
+    lineHeight: 96,
+    textAlign: 'left',
+    fontWeight: 'bold'
   }
 }, {
   name: 2,
@@ -1526,29 +1719,41 @@ var drawEditer =
 /*#__PURE__*/
 function () {
   function drawEditer(params) {
+    var _this = this;
+
     _classCallCheck(this, drawEditer);
 
     this.canvas = params.canvas.dom;
     this.unit = params.unit || 'px';
     this.drawData = _data.default;
     this.canvas.style.position = 'relative';
+    this.canvas.style.height = params.canvas.height + this.unit;
+    this.canvas.style.width = params.canvas.width + this.unit;
     this.elements = [];
     this.id = 0; // console.log(params,"kjjj")
 
-    _drop.default.init(this.canvas, params, this.unit);
+    _drop.default.init(this.canvas, params, this.unit, function (dom) {
+      _this.activeElemClick(dom);
+    });
 
     this.bar = new _drawBar.default(params.bar, this);
     this.detail = new _drawDetail.default(canvas);
     this.imgDetail = new _drawImg.default(canvas);
     this.bar.init();
-    this.detail.init();
-    this.imgDetail.init(); // return this;
+    this.detail.init(); // this.imgDetail.init();
+    // return this;
     // console.log((new bar()).init(),"kkkk")
   }
 
   _createClass(drawEditer, [{
     key: "create",
     value: function create() {}
+  }, {
+    key: "activeElemClick",
+    value: function activeElemClick(dom) {
+      console.log(this);
+      this.detail.active(dom);
+    }
   }, {
     key: "getData",
     value: function getData() {
@@ -1584,8 +1789,8 @@ function () {
           width: 50 + 'px',
           height: 400 + 'px',
           angle: 0,
-          top: 0,
-          left: 0,
+          top: 100,
+          left: 100,
           color: '#000',
           fontSize: 14
         }
@@ -1594,11 +1799,11 @@ function () {
   }, {
     key: "render",
     value: function render() {
-      var _this = this;
+      var _this2 = this;
 
       // this.drawDat
       this.drawData.map(function (item, index) {
-        _this.canvas.appendChild(_drop.default.create(item));
+        _this2.canvas.appendChild(_drop.default.create(item));
       });
     }
   }]);
@@ -1663,7 +1868,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56478" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50527" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

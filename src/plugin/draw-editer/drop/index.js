@@ -10,13 +10,15 @@ class drop {
     this.activeDom = null;
     this.type == 'text';
     this.isAngleClick = false;
+    this.activeElemClick = null
   }
-  init(canvas, params,unit) {
+  init(canvas, params,unit,activeElemClick) {
     this.canvas = canvas;
     this.unit = unit;
     this.canvasDetail = this.canvas.getBoundingClientRect();
     // console.log(this.canvasDetail)
     this.elemClick = params.canvas.on.elemClick;
+    this.activeElemClick = activeElemClick;
     document.onmouseup = (event) => {
       this.onmouseup(event, this.canvas)
     }
@@ -25,13 +27,13 @@ class drop {
     }
   }
   styleFramt (style,elem){
-    let judgeStr = 'width,height,left,top,fontSize';
+    let judgeStr = 'width,height,left,top,fontSize,lineHeight';
     let newStyle = {};
     for(let key in style){
      
       if(key == 'angle' && style[key]){
         newStyle.transform = `rotate(${style[key]}deg)`
-      }else if(elem.type == 'img' && (key=='width'||key == 'height')){
+      }else if( (key=='width'||key == 'height')){
         if(key == 'width'){
           newStyle.minWidth = style.width+this.unit;
         }
@@ -69,7 +71,7 @@ class drop {
       load:(event)=>{
         dropDom.style.height = img.height +this.unit;
         dropDom.style.width = img.width+this.unit;
-        console.log(img.width,"kkk")
+        // console.log(img.width,"kkk")
       }
     }})
     return img
@@ -85,7 +87,8 @@ class drop {
         cursor: 'move',
         transformOrigin: 'center',
         transform: 'rotate(0deg)',
-        boxSizing:'border-box'
+        boxSizing:'border-box',
+        writingMode:'vertical-rl'
       },this.styleFramt(elem.style,elem)),
       child: elem.text||'',
       attr: {
@@ -93,16 +96,21 @@ class drop {
         tabindex:elem.id,
         class:'draw-editor-elem'
       },
+      data:{
+        
+      },
       on: {
         mousedown: (event) => {
           event.stopPropagation();
           this.onmousedown(event, dropDom, this.canvas)
           if (this.elemClick) {
-            this.elemClick(event)
+            this.elemClick(dropDom)
+            // console.log('-----')
+            this.activeElemClick(dropDom)
           }
         },
         blur:()=>{
-          console.log(that.isAngleClick)
+          // console.log(that.isAngleClick)
           // if(that.isAngleClick){
           //   return ;
           // }
@@ -112,9 +120,11 @@ class drop {
             zoomArr[i].style.display='none'
           }
         
-          console.log("kkkk1111")
+          // console.log("kkkk1111")
         },
         focus:()=>{
+          let elemType= dropDom.dataset.elemtype;
+          // console.log(elemType,"jjjjjj")
           let zoomArr = dropDom.querySelectorAll('.zoom')
           for(let i= 0;i<zoomArr.length;i++){
             zoomArr[i].style.display='block'
@@ -134,6 +144,7 @@ class drop {
     if(elem.type == 'img'){
       childs = [...childs,...sizes]
     }
+    dropDom.dataset.elemtype = elem.type;
     // dropDom.innerText = elem.text;
     // 添加旋转图标
     dropDom.appendChild(angleDom);
@@ -285,7 +296,7 @@ class drop {
     angleIcon.onmousedown = (evt) => {
       this.activeDom = angleIcon;
       this.isAngleClick = true;
-      console.log("kkkk222")
+      // console.log("kkkk222")
       this.domSetTag(evt, 'angle')
     }
     return angleIcon;

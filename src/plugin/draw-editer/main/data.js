@@ -2,16 +2,19 @@ export default [
     {
         name:1,
         id:1,
-        text:'是的 发   送   到1',
+        text:'物理 <br/> 元本9',
         type:'text',
         style:{
           width:50,
           height:400,
           angle:0,
           top:40,
-          left:100,
+          left:800,
           color:'#000',
-          fontSize:14,
+          fontSize:80,
+          lineHeight:96,
+          textAlign:'left',
+          fontWeight:'bold'
         }
     },
     {

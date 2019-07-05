@@ -18,19 +18,21 @@
     html {
         margin: 0;
         padding: 0;
+        background: rgba(237,240,242,.9)
     }
-    .draw-editor-elem:hover{
-        border: 1px solid #ffffff !important;
-    }
+
+   
 
     .canvas {
         /* 210 * 297    2.83464567*/
         width: 595.275591pt;
         height: 841.889764pt;
-        background: rgba(0, 0, 0, 0.5);
-        overflow: hidden;
+        background-color: #ffffff;
+        /* overflow: hidden; */
+
         /* background: #000; */
-        margin: auto;
+        margin-left: 20px;
+        /* margin: auto; */
         /* transform: scale(0.7); */
         transform-origin: left top;
         moz-user-select: -moz-none;
@@ -43,18 +45,21 @@
         /* background: url(./public/1.emf); */
         background-size: 100%;
         background-repeat: no-repeat;
-
+        background-image: url(/bg1.d0c5fd19.svg)
     }
 
     #img {
         width: 200px;
         height: 200px;
     }
-    #bar{
+
+    #bar {
         width: 413px;
-        margin: auto;
+        margin-left: 20px;
+        /* margin: auto; */
     }
-    #detail{
+
+    #detail {
         position: absolute;
         /* right: 0; */
         width: 200px;
@@ -71,12 +76,12 @@
     <!-- <button id="buttonImg">图片</button> -->
     <div id="bar"></div>
     <div id="canvas" class="canvas ">
-   
+
         <!-- <img src="./public/2.svg" alt="" srcset=""> -->
 
     </div>
     <!-- <div id="detail"></div> -->
-    </body>
+</body>
 <script>// setTimeout()
 var dom = null;
 
@@ -89,8 +94,11 @@ window.onload = function () {
   var btnSave = document.getElementById('buttonsave');
   var bar = document.getElementById('bar');
   var drawEditer1 = new drawEditer({
+    unit: 'px',
     canvas: {
       dom: canvas,
+      width: 1218.8976,
+      height: 807.870,
       on: {
         elemClick: function elemClick() {},
         elemMove: function elemMove() {}
