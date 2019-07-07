@@ -10,7 +10,7 @@ export default [
           angle:0,
           top:40,
           left:800,
-          color:'#000',
+          color:'#333',
           fontSize:80,
           lineHeight:96,
           textAlign:'left',

@@ -33,12 +33,11 @@ const render = (options, boxDom, params) => {
             },
             on: {
                 change: (event, dom) => {
-                    // lableDom.style.backgroundColor = "red"
-                    // console.log(dom.checked, "jjj", event)
-                    console.log("------",options)
+                    // console.log('iiiiii')
                     for(let i=0;i<options.length;i++){
                         let value = options[i].dom.dataset.value;
                         console.log(options[i].dom.value)
+
                         if(value == dom.value){
                             options[i].dom.style.backgroundColor='red'
                         }else{
@@ -52,7 +51,8 @@ const render = (options, boxDom, params) => {
                 width: '30px',
                 height: '30px',
                 display: 'inline-block',
-                opacity: '0'
+                opacity: '0',
+                cursor:'pointer'
             }
         })
        
@@ -61,7 +61,7 @@ const render = (options, boxDom, params) => {
         item.dom = lableDom;
         return item;
     })
-    console.log("mmmmn",options)
+    // console.log("mmmmn",options)
 
 }
 export default (params) => {

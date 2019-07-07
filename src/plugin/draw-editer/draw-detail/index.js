@@ -1,7 +1,7 @@
 import { creatDom } from '../../../utils';
 import dataFn from './data';
 import drawData from '../draw-data';
-import {inputSelect,textarea,radioButton} from '../components'
+import {inputSelect,textarea,radioButton,switched} from '../components'
 class drawDetail {
   constructor(canvas) {
     this.canvas = canvas;
@@ -47,10 +47,14 @@ class drawDetail {
       fontSize:dom.style.fontSize,
       lineHeight:dom.style.lineHeight,
       textAlign :dom.style.textAlign,
+      color:dom.style.color
     }
     for(let key in formArr){
       let itemName = this.form.elements[key];
-      // console.log("----",itemName)
+      
+      if(key == 'color'){
+        console.log(key,"----",itemName,formArr[key])
+      }
       if(!itemName.length){
         itemName.value = formArr[key]
       }else{
@@ -74,12 +78,14 @@ class drawDetail {
     // console.log(type,text,fontFamily,fontSize,lineHeight,textAlign,color)
   }
   divList(params) {
+    // console.log(params.style,"hhh")
     let domBox = creatDom.call(this, {
       tag:'div',
-      style:{
+      style:Object.assign({
         padding:'5px 10px',
-        margin:'8px 5px'
-      }
+        margin:'8px 5px',
+        display:params.type=='switch'?'inline-block':'block'
+      },params.style)
     });
     let titleDom = creatDom.call(this, { tag: 'div', child: params.title,style:{
       margin:'5px 0'
@@ -90,7 +96,7 @@ class drawDetail {
       itemDom = textarea({name:params.name,on:params.on})
     }
     if (params.type == 'select') {
-      itemDom =  inputSelect({name:params.name})
+      itemDom =  inputSelect(params)
       // itemDom = creatDom.call(this, { tag: 'select', on: params.on })
       // let optionData = params.options;
       // optionData.map((item) => {
@@ -109,16 +115,25 @@ class drawDetail {
       //   itemDom.appendChild(creatDom.call(this, item))
       // })
     }
+    if(params.type == 'switch'){
+      itemDom = switched(params)
+    }
     if(params.type == 'color'){
       itemDom = creatDom.call(this,{
         tag:'input',
         attr:{
-          type:'color'
+          name:params.name,
+          class:'jscolor'
         },
+
+        on:params.on
 
       })
     }
-    domBox.appendChild(titleDom);
+    if(params.type !== 'switch'){
+      domBox.appendChild(titleDom);
+    }
+   
     domBox.appendChild(itemDom)
     return domBox;
 

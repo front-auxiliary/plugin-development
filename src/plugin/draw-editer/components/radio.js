@@ -3,7 +3,7 @@ function radio(){
 
 }
 export default (params)=>{
-    const boxDom = creatDom({
+    const lableDom = creatDom({
         tag:'label',
         chlid:'niho',
         style:{
@@ -36,6 +36,6 @@ export default (params)=>{
             opacity:'0'
         }
     })
-    boxDom.appendChild(radioDom)
+    lableDom.appendChild(radioDom)
     return boxDom
 }

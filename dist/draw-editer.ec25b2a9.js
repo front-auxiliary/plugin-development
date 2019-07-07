@@ -220,6 +220,12 @@ function creatDom(params) {
   (0, _setStyle.default)(dom, params.style);
   (0, _setAttr.default)(dom, params.attr);
 
+  if (params.data) {
+    for (var key in params.data) {
+      dom.dataset[key] = params.data[key];
+    }
+  }
+
   _onListener.default.call(this, dom, params.on, params);
 
   return dom;
@@ -1111,6 +1117,7 @@ function _default() {
     title: "字号",
     name: 'fontSize',
     type: 'select',
+    isInput: true,
     options: [{
       label: '14',
       value: '14'
@@ -1119,13 +1126,16 @@ function _default() {
       value: '16'
     }],
     on: {
-      change: function change(evt) {
-        console.log('ppppp', evt.value);
+      change: function change(evt, e) {
+        var activeDom = _drawData.default.getActive();
+
+        activeDom.style.fontSize = e.value + 'pt';
       }
     }
   }, {
     title: "行高",
     name: 'lineHeight',
+    isInput: true,
     type: 'select',
     options: [{
       label: '14',
@@ -1135,23 +1145,36 @@ function _default() {
       value: '16'
     }],
     on: {
-      change: function change(evt) {
-        console.log('ppppp', evt.value);
+      change: function change(evt, e) {
+        var activeDom = _drawData.default.getActive();
+
+        activeDom.style.lineHeight = e.value + 'pt';
       }
     }
   }, {
     title: "颜色",
     name: 'color',
     type: 'color',
-    on: {}
+    on: {
+      change: function change(event, e) {
+        console.log("00000");
+
+        var activeDom = _drawData.default.getActive();
+
+        activeDom.style.color = '#' + e.value;
+        console.log(e.value);
+      }
+    }
   }, {
     title: "",
     name: 'textAlign',
     type: 'radio-button',
+    style: {
+      display: 'inline-block'
+    },
     on: {
       change: function change(event, dom) {
-        console.log("oooo", dom.value, event);
-
+        // console.log("oooo",dom.value,event)
         var activeDom = _drawData.default.getActive();
 
         activeDom.style.textAlign = dom.value;
@@ -1170,16 +1193,76 @@ function _default() {
       label: '',
       url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+'
     }, {
-      tag: 'div',
-      style: {
-        display: 'inline-block',
-        height: '15px',
-        width: '1px',
-        backgroundColor: '#666',
-        verticalAlign: 'middle',
-        margin: '0 5px'
-      }
+      value: 'll',
+      label: '',
+      url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+'
     }]
+  }, {
+    title: "",
+    name: 'blod',
+    type: 'switch',
+    style: {
+      padding: '0px',
+      margin: '0px 5px'
+    },
+    url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzA4NjM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5MzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjczLjUyMjA3MTA1IDg1OS42MTQyODgzM1YxNjQuNDE4NTA0MTloMjA1LjQ5ODEyNTE5cTkyLjEzNTMwMjkgMCAxNDcuMjI2Mjg5NCA0My43MjMwMDUzdDU1LjA5MDk4NzE2IDExNS45OTcxMzI5N3EwIDU3LjQ1MjAyODktMzIuNzkyMjU0MzEgMTAxLjQzNzM3MjMydC05MC4wNDc1Mjk0NiA2Mi40MTQ1OTAxOXYxLjc5MjY0MjhxNzEuMzU1OTQ0NTkgOC4wNzc4MjU1MyAxMTQuMDI5NTk4MDggNTMuNjM3MTk2OTl0NDIuNjI5OTMwMTQgMTE1LjU3MDgzMzYxcTAgODkuNzc0MjYwNS02NC44MDg0MjQ0NCAxNDUuMTkzMTcwMTV0LTE2NS45MTc4NzQ5NCA1NS40Mjk4Mzk4MXpNMzYzLjg0Mjg2OTQ3IDI0Mi45MzQwOTA1NFY0NjAuNjA5MDcyOTVoODIuMTk5MjUwMjFxNjUuNDc1MjAwMjMgMCAxMDIuNzQ5MDYyMjUtMzEuNjQ0NTI1NjJ0MzcuMjYyOTMxMTgtODcuNzQxMTQwNTZxMC05OC4yODkzMTYyMi0xMzEuODY4NTg0MjMtOTguMjg5MzE2MjR6IG0wIDI5NS43NzUyMDAyNHYyNDIuMzM0NzU3MDFoMTA4LjM4OTMzMDE2cTcwLjg5Njg1MzM4IDAgMTA5LjUxNTE5Nzg2LTMyLjU0MDg0NjM3dDM4LjYxODM0Mzc5LTkwLjQ0MTAzNjk3cTAtMTE5LjM4NTY2NjE5LTE2My4wMzIxNTU2MS0xMTkuMzg1NjY1NTF6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxOTQwIj48L3BhdGg+PC9zdmc+',
+    on: {
+      change: function change(event, e) {
+        var activeDom = _drawData.default.getActive(); // console.log(event,e)
+
+
+        if (e.checked) {
+          activeDom.style.fontWeight = 'bold';
+          return;
+        }
+
+        activeDom.style.fontWeight = 'normal';
+      }
+    }
+  }, {
+    title: "",
+    name: 'italic',
+    type: 'switch',
+    style: {
+      padding: '0px',
+      margin: '0px'
+    },
+    url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzM0Njc1IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyNDUiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNDQ2LjEwOTMyNzgyIDkwMi43ODg1NzQyMkgzNjkuMDAxMjQ5NzVMNTc3Ljg5MDY3MjE4IDE2MS4yMTE0MjU3OGg3Ny4xMDgwNzgwN0w0NDYuMTA5MzI3ODIgOTAyLjc4ODU3NDIyeiIgZmlsbD0iIzY2NjY2NiIgcC1pZD0iMjI0NiI+PC9wYXRoPjwvc3ZnPg==',
+    on: {
+      change: function change(event, e) {
+        var activeDom = _drawData.default.getActive(); // console.log(event,e)
+
+
+        if (e.checked) {
+          activeDom.style.fontStyle = 'italic';
+          return;
+        }
+
+        activeDom.style.fontStyle = 'normal';
+      }
+    }
+  }, {
+    title: "",
+    name: 'italic',
+    type: 'switch',
+    style: {
+      padding: '0px',
+      margin: '5px'
+    },
+    url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzI4NDA5IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwOTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXYtNTMuMzA4MzAzNDNsNTM0LjM5MjE3NjA4LTQuODQ5MDY1NjF2NTMuMjk3ODMwMjNMMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXpNNzUzLjc5ODcxMzc4IDUyMS40MTI3Njk2NXEwIDI3My41MDYxNTcxOS0yNDguMTA4NzgyOTEgMjczLjUwNjE1Nzk3LTIzNy43NDAzNzAyNSAwLTIzNy43NDAzNzAyNy0yNjMuOTIzMjMwNzhWMTM5LjMwMDEwODQ0aDgzLjI2MTQ5NTE0djM4Ny45MzU3Mjk2OXEwIDE5My41NzUxMjIxMSAxNjIuMzMzNzMyODggMTkzLjU3NTEyMjEgMTU2Ljk0MDA2Mzg1IDAgMTU2Ljk0MDA2Mzg2LTE4Ny4zMzMxMjgyVjEzOS4yNDc3NDMwNUg3NTMuNzk4NzEzNzh6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIyMDkzIj48L3BhdGg+PC9zdmc+',
+    on: {
+      change: function change(event, e) {
+        var activeDom = _drawData.default.getActive(); // console.log(event,e)
+
+
+        if (e.checked) {
+          activeDom.style.textDecoration = 'underline';
+          return;
+        }
+
+        activeDom.style.textDecoration = 'none';
+      }
+    }
   }];
 }
 /**
@@ -1187,7 +1270,7 @@ function _default() {
         tag: 'div',
         style: Object.assign({}, publicStyle, {
           backgroundSize: '17px',
-          backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzA4NjM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5MzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjczLjUyMjA3MTA1IDg1OS42MTQyODgzM1YxNjQuNDE4NTA0MTloMjA1LjQ5ODEyNTE5cTkyLjEzNTMwMjkgMCAxNDcuMjI2Mjg5NCA0My43MjMwMDUzdDU1LjA5MDk4NzE2IDExNS45OTcxMzI5N3EwIDU3LjQ1MjAyODktMzIuNzkyMjU0MzEgMTAxLjQzNzM3MjMydC05MC4wNDc1Mjk0NiA2Mi40MTQ1OTAxOXYxLjc5MjY0MjhxNzEuMzU1OTQ0NTkgOC4wNzc4MjU1MyAxMTQuMDI5NTk4MDggNTMuNjM3MTk2OTl0NDIuNjI5OTMwMTQgMTE1LjU3MDgzMzYxcTAgODkuNzc0MjYwNS02NC44MDg0MjQ0NCAxNDUuMTkzMTcwMTV0LTE2NS45MTc4NzQ5NCA1NS40Mjk4Mzk4MXpNMzYzLjg0Mjg2OTQ3IDI0Mi45MzQwOTA1NFY0NjAuNjA5MDcyOTVoODIuMTk5MjUwMjFxNjUuNDc1MjAwMjMgMCAxMDIuNzQ5MDYyMjUtMzEuNjQ0NTI1NjJ0MzcuMjYyOTMxMTgtODcuNzQxMTQwNTZxMC05OC4yODkzMTYyMi0xMzEuODY4NTg0MjMtOTguMjg5MzE2MjR6IG0wIDI5NS43NzUyMDAyNHYyNDIuMzM0NzU3MDFoMTA4LjM4OTMzMDE2cTcwLjg5Njg1MzM4IDAgMTA5LjUxNTE5Nzg2LTMyLjU0MDg0NjM3dDM4LjYxODM0Mzc5LTkwLjQ0MTAzNjk3cTAtMTE5LjM4NTY2NjE5LTE2My4wMzIxNTU2MS0xMTkuMzg1NjY1NTF6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxOTQwIj48L3BhdGg+PC9zdmc+)',
+          backgroundImage: 'url()',
         }),
         on: {
           click: (event, dom) => {
@@ -1214,7 +1297,7 @@ function _default() {
         tag: 'div',
         style: Object.assign({}, publicStyle, {
           backgroundSize: '17px',
-          backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzI4NDA5IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwOTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXYtNTMuMzA4MzAzNDNsNTM0LjM5MjE3NjA4LTQuODQ5MDY1NjF2NTMuMjk3ODMwMjNMMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXpNNzUzLjc5ODcxMzc4IDUyMS40MTI3Njk2NXEwIDI3My41MDYxNTcxOS0yNDguMTA4NzgyOTEgMjczLjUwNjE1Nzk3LTIzNy43NDAzNzAyNSAwLTIzNy43NDAzNzAyNy0yNjMuOTIzMjMwNzhWMTM5LjMwMDEwODQ0aDgzLjI2MTQ5NTE0djM4Ny45MzU3Mjk2OXEwIDE5My41NzUxMjIxMSAxNjIuMzMzNzMyODggMTkzLjU3NTEyMjEgMTU2Ljk0MDA2Mzg1IDAgMTU2Ljk0MDA2Mzg2LTE4Ny4zMzMxMjgyVjEzOS4yNDc3NDMwNUg3NTMuNzk4NzEzNzh6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIyMDkzIj48L3BhdGg+PC9zdmc+)',
+          backgroundImage: 'url()',
         }),
         on: {
           click: (event, dom) => {
@@ -1234,16 +1317,16 @@ exports.default = void 0;
 
 var _utils = require("../../../utils");
 
-var _this = void 0;
-
 var _default = function _default(params) {
+  var options = params.options,
+      isInput = params.isInput;
   var boxDom = (0, _utils.creatDom)({
     tag: 'div',
     style: {
       position: 'relative'
     }
   });
-  var select = (0, _utils.creatDom)({
+  var select = isInput ? (0, _utils.creatDom)({
     tag: 'div',
     style: {
       maxHeight: '200px',
@@ -1257,36 +1340,22 @@ var _default = function _default(params) {
       borderRadius: '4px',
       margin: '5px 0'
     }
-  }); // const options = [];
-
-  var _loop = function _loop(i) {
-    var everyOption = _utils.creatDom.call(_this, {
-      tag: 'div',
-      child: i,
-      style: {
-        cursor: 'pointer',
-        boxSizing: 'border-box',
-        padding: '8px 10px',
-        background: '#fff'
-      },
-      on: {
-        hover: function hover() {
-          everyOption.style.background = "#e6f7ff";
-        },
-        mousedown: function mousedown() {
-          console.log("----");
-          inputDom.value = everyOption.innerText;
-        }
-      }
-    });
-
-    select.appendChild(everyOption);
-  };
-
-  for (var i = 1; i < 100; i++) {
-    _loop(i);
-  }
-
+  }) : (0, _utils.creatDom)({
+    tag: 'select',
+    attr: {
+      name: params.name
+    },
+    style: {
+      display: 'block',
+      width: '100%',
+      height: '35px',
+      borderRadius: '4px',
+      border: '1px solid #d9d9d9',
+      boxSizing: 'border-box',
+      padding: ' 0 10px',
+      background: '#fff'
+    }
+  });
   var inputDom = (0, _utils.creatDom)({
     tag: 'input',
     style: {
@@ -1299,23 +1368,80 @@ var _default = function _default(params) {
       padding: ' 0 10px'
     },
     attr: {
-      name: params.name
+      name: params.name,
+      autocomplete: "off"
     },
     on: {
-      focus: function focus() {
+      focus: function focus(event, dom) {
         select.style.display = 'block';
+        var value = dom.value || ''; // console.log(arr,"kkkk")
+
+        creatOptions(select, options, inputDom, params);
       },
       blur: function blur() {
         select.style.display = 'none';
+      },
+      input: function input(event, dom) {
+        var value = dom.value || '';
+        var arr = value ? options.filter(function (currentValue) {
+          // console.log(currentValue,"kkkkk")
+          return (currentValue.value + '').indexOf(value) != -1;
+        }) : options;
+
+        if (value) {
+          arr.unshift({
+            value: value,
+            label: value
+          });
+        }
+
+        creatOptions(select, arr, inputDom, params);
       }
     }
   });
-  boxDom.appendChild(inputDom);
+  creatOptions(select, options, inputDom, params);
+
+  if (isInput) {
+    boxDom.appendChild(inputDom);
+  }
+
   boxDom.appendChild(select);
   return boxDom;
 };
 
 exports.default = _default;
+
+function creatOptions(select, options, inputDom, params) {
+  select.innerHTML = '';
+  console.log(options, "kkkkk");
+  options.map(function (item, index) {
+    var everyOption = (0, _utils.creatDom)({
+      tag: 'option',
+      child: item.value,
+      style: {
+        display: 'block',
+        cursor: 'pointer',
+        boxSizing: 'border-box',
+        padding: '8px 10px',
+        height: '35px',
+        background: '#fff'
+      },
+      attr: {
+        value: item.value
+      },
+      on: {
+        hover: function hover() {
+          everyOption.style.background = "#e6f7ff";
+        },
+        mousedown: function mousedown(event, dom) {
+          inputDom.value = everyOption.innerText;
+          params.on.change(event, dom);
+        }
+      }
+    });
+    select.appendChild(everyOption);
+  });
+}
 },{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/textarea.js":[function(require,module,exports) {
 "use strict";
 
@@ -1361,7 +1487,7 @@ var _utils = require("../../../utils");
 function radio() {}
 
 var _default = function _default(params) {
-  var boxDom = (0, _utils.creatDom)({
+  var lableDom = (0, _utils.creatDom)({
     tag: 'label',
     chlid: 'niho',
     style: {
@@ -1394,7 +1520,7 @@ var _default = function _default(params) {
       opacity: '0'
     }
   });
-  boxDom.appendChild(radioDom);
+  lableDom.appendChild(radioDom);
   return boxDom;
 };
 
@@ -1446,10 +1572,7 @@ var render = function render(options, boxDom, params) {
       },
       on: {
         change: function change(event, dom) {
-          // lableDom.style.backgroundColor = "red"
-          // console.log(dom.checked, "jjj", event)
-          console.log("------", options);
-
+          // console.log('iiiiii')
           for (var i = 0; i < options.length; i++) {
             var value = options[i].dom.dataset.value;
             console.log(options[i].dom.value);
@@ -1468,15 +1591,15 @@ var render = function render(options, boxDom, params) {
         width: '30px',
         height: '30px',
         display: 'inline-block',
-        opacity: '0'
+        opacity: '0',
+        cursor: 'pointer'
       }
     });
     lableDom.appendChild(radioDom);
     boxDom.appendChild(lableDom);
     item.dom = lableDom;
     return item;
-  });
-  console.log("mmmmn", options);
+  }); // console.log("mmmmn",options)
 };
 
 var _default = function _default(params) {
@@ -1497,7 +1620,58 @@ var _default = function _default(params) {
 };
 
 exports.default = _default;
-},{"../../../utils":"utils/index.js","./radio":"plugin/draw-editer/components/radio.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js","./radio":"plugin/draw-editer/components/radio.js"}],"plugin/draw-editer/components/switched.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+var _default = function _default(params) {
+  var boxDom = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      display: 'inline-block',
+      width: '30px',
+      height: '30px',
+      backgroundImage: "url(".concat(params.url, ")"),
+      backgroundSize: '100%',
+      backgroundPosition: 'center'
+    }
+  });
+  var checkbox = (0, _utils.creatDom)({
+    tag: 'input',
+    attr: {
+      type: 'checkbox'
+    },
+    style: {
+      width: '30px',
+      height: '30px',
+      display: 'inline-block',
+      opacity: '0',
+      cursor: 'pointer'
+    },
+    on: {
+      change: function change(event, dom) {
+        if (dom.checked) {
+          boxDom.style.backgroundColor = 'red';
+        } else {
+          boxDom.style.backgroundColor = '#fff';
+        }
+
+        params.on.change(event, dom);
+      }
+    }
+  });
+  boxDom.appendChild(checkbox);
+  return boxDom;
+};
+
+exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1521,6 +1695,12 @@ Object.defineProperty(exports, "radioButton", {
     return _radioButton.default;
   }
 });
+Object.defineProperty(exports, "switched", {
+  enumerable: true,
+  get: function () {
+    return _switched.default;
+  }
+});
 
 var _inputSelect = _interopRequireDefault(require("./input-select"));
 
@@ -1528,8 +1708,10 @@ var _textarea = _interopRequireDefault(require("./textarea"));
 
 var _radioButton = _interopRequireDefault(require("./radio-button"));
 
+var _switched = _interopRequireDefault(require("./switched"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./input-select":"plugin/draw-editer/components/input-select.js","./textarea":"plugin/draw-editer/components/textarea.js","./radio-button":"plugin/draw-editer/components/radio-button.js"}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
+},{"./input-select":"plugin/draw-editer/components/input-select.js","./textarea":"plugin/draw-editer/components/textarea.js","./radio-button":"plugin/draw-editer/components/radio-button.js","./switched":"plugin/draw-editer/components/switched.js"}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1607,11 +1789,16 @@ function () {
         fontFamily: dom.style.fontFamily,
         fontSize: dom.style.fontSize,
         lineHeight: dom.style.lineHeight,
-        textAlign: dom.style.textAlign
+        textAlign: dom.style.textAlign,
+        color: dom.style.color
       };
 
       for (var key in formArr) {
-        var itemName = this.form.elements[key]; // console.log("----",itemName)
+        var itemName = this.form.elements[key];
+
+        if (key == 'color') {
+          console.log(key, "----", itemName, formArr[key]);
+        }
 
         if (!itemName.length) {
           itemName.value = formArr[key];
@@ -1638,12 +1825,14 @@ function () {
   }, {
     key: "divList",
     value: function divList(params) {
+      // console.log(params.style,"hhh")
       var domBox = _utils.creatDom.call(this, {
         tag: 'div',
-        style: {
+        style: Object.assign({
           padding: '5px 10px',
-          margin: '8px 5px'
-        }
+          margin: '8px 5px',
+          display: params.type == 'switch' ? 'inline-block' : 'block'
+        }, params.style)
       });
 
       var titleDom = _utils.creatDom.call(this, {
@@ -1665,9 +1854,7 @@ function () {
       }
 
       if (params.type == 'select') {
-        itemDom = (0, _components.inputSelect)({
-          name: params.name
-        }); // itemDom = creatDom.call(this, { tag: 'select', on: params.on })
+        itemDom = (0, _components.inputSelect)(params); // itemDom = creatDom.call(this, { tag: 'select', on: params.on })
         // let optionData = params.options;
         // optionData.map((item) => {
         //   itemDom.appendChild(creatDom.call(this, { tag: 'option', child: item.label }))
@@ -1686,16 +1873,25 @@ function () {
         // })
       }
 
+      if (params.type == 'switch') {
+        itemDom = (0, _components.switched)(params);
+      }
+
       if (params.type == 'color') {
         itemDom = _utils.creatDom.call(this, {
           tag: 'input',
           attr: {
-            type: 'color'
-          }
+            name: params.name,
+            class: 'jscolor'
+          },
+          on: params.on
         });
       }
 
-      domBox.appendChild(titleDom);
+      if (params.type !== 'switch') {
+        domBox.appendChild(titleDom);
+      }
+
       domBox.appendChild(itemDom);
       return domBox;
     }
@@ -1905,7 +2101,7 @@ var _default = [{
     angle: 0,
     top: 40,
     left: 800,
-    color: '#000',
+    color: '#333',
     fontSize: 80,
     lineHeight: 96,
     textAlign: 'left',
