@@ -105,7 +105,11 @@ export default function () {
       name: 'textAlign',
       type: 'radio-button',
       on:{
-        change:()=>{}
+        change:(event,dom)=>{
+          console.log("oooo",dom.value,event)
+         let activeDom = drawData.getActive();
+         activeDom.style.textAlign = dom.value;
+        }
       },
       options: [{
         value:'left',

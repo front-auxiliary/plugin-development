@@ -49,10 +49,10 @@ class drawDetail {
       textAlign :dom.style.textAlign,
     }
     for(let key in formArr){
-      // console.log(this.form)
-      let itemName = document.getElementsByName(key);
-      if(itemName.length==1){
-        itemName[0].value = formArr[key]
+      let itemName = this.form.elements[key];
+      // console.log("----",itemName)
+      if(!itemName.length){
+        itemName.value = formArr[key]
       }else{
         for(let i =0;i<itemName.length;i++){
           let item = itemName[i];

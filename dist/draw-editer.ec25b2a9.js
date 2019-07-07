@@ -1149,7 +1149,13 @@ function _default() {
     name: 'textAlign',
     type: 'radio-button',
     on: {
-      change: function change() {}
+      change: function change(event, dom) {
+        console.log("oooo", dom.value, event);
+
+        var activeDom = _drawData.default.getActive();
+
+        activeDom.style.textAlign = dom.value;
+      }
     },
     options: [{
       value: 'left',
@@ -1342,6 +1348,57 @@ var _default = function _default(params) {
 };
 
 exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/radio.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+function radio() {}
+
+var _default = function _default(params) {
+  var boxDom = (0, _utils.creatDom)({
+    tag: 'label',
+    chlid: 'niho',
+    style: {
+      width: '30px',
+      height: '30px',
+      backgroundImage: "url(".concat(params.url, ")"),
+      display: 'inline-block',
+      backgroundSize: '100%',
+      backgroundPosition: 'center'
+    }
+  });
+  var radioDom = (0, _utils.creatDom)({
+    tag: 'input',
+    attr: {
+      type: 'radio',
+      name: params.name,
+      value: params.value
+    },
+    on: {
+      change: function change(event, dom) {
+        boxDom.style.backgroundColor = "red";
+        console.log(dom.checked, "jjj", event);
+        params.on.change(event, dom);
+      }
+    },
+    style: {
+      width: '30px',
+      height: '30px',
+      display: 'inline-block',
+      opacity: '0'
+    }
+  });
+  boxDom.appendChild(radioDom);
+  return boxDom;
+};
+
+exports.default = _default;
 },{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/radio-button.js":[function(require,module,exports) {
 "use strict";
 
@@ -1352,55 +1409,74 @@ exports.default = void 0;
 
 var _utils = require("../../../utils");
 
+var _radio = _interopRequireDefault(require("./radio"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var options = [];
 
 var render = function render(options, boxDom, params) {
   var change = params.on.change;
   boxDom.innerHTML = '';
-  options.map(function (item) {
-    var everyItem = (0, _utils.creatDom)({
-      tag: 'input',
+  options = options.map(function (item) {
+    var lableDom = (0, _utils.creatDom)({
+      tag: 'label',
+      chlid: 'niho',
       attr: {
-        value: item.value,
-        name: params.name,
-        checked: item.active ? true : false,
-        type: 'radio'
+        value: item.value
+      },
+      data: {
+        value: item.value
       },
       style: {
         width: '30px',
         height: '30px',
-        cursor: 'pointer',
+        backgroundImage: "url(".concat(item.url, ")"),
         display: 'inline-block',
-        backgroundSize: '25px',
-        backgroundColor: item.active ? 'rgba(14,19,24,.15)' : '#fff',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        borderRadius: '4px',
-        verticalAlign: 'middle',
-        margin: '2px',
-        backgroundImage: "url(".concat(item.url, ")")
-      },
-      on: {
-        click: function click(event, dom) {
-          var value = dom.getAttribute('value');
-          options = options.map(function (item, index) {
-            if (item.value == value) {
-              item.active = true;
-            } else {
-              item.active = false;
-            }
-
-            return item;
-          });
-          boxDom.value = value;
-          boxDom.setAttribute('value', value); // change()
-
-          render(options, boxDom, params);
-        }
+        backgroundSize: '100%',
+        backgroundPosition: 'center'
       }
     });
-    boxDom.appendChild(everyItem);
+    var radioDom = (0, _utils.creatDom)({
+      tag: 'input',
+      attr: {
+        type: 'radio',
+        name: params.name,
+        value: item.value
+      },
+      on: {
+        change: function change(event, dom) {
+          // lableDom.style.backgroundColor = "red"
+          // console.log(dom.checked, "jjj", event)
+          console.log("------", options);
+
+          for (var i = 0; i < options.length; i++) {
+            var value = options[i].dom.dataset.value;
+            console.log(options[i].dom.value);
+
+            if (value == dom.value) {
+              options[i].dom.style.backgroundColor = 'red';
+            } else {
+              options[i].dom.style.backgroundColor = '#fff';
+            }
+          }
+
+          params.on.change(event, dom);
+        }
+      },
+      style: {
+        width: '30px',
+        height: '30px',
+        display: 'inline-block',
+        opacity: '0'
+      }
+    });
+    lableDom.appendChild(radioDom);
+    boxDom.appendChild(lableDom);
+    item.dom = lableDom;
+    return item;
   });
+  console.log("mmmmn", options);
 };
 
 var _default = function _default(params) {
@@ -1409,11 +1485,6 @@ var _default = function _default(params) {
     tag: 'div',
     style: {
       display: 'inline-block'
-    },
-    on: {
-      input: function input() {
-        console.log("kkjjjjj");
-      }
     }
   }); // new Proxy(boxDom,{
   //     set:function(target, key, value){
@@ -1426,7 +1497,7 @@ var _default = function _default(params) {
 };
 
 exports.default = _default;
-},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js","./radio":"plugin/draw-editer/components/radio.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1540,11 +1611,10 @@ function () {
       };
 
       for (var key in formArr) {
-        // console.log(this.form)
-        var itemName = document.getElementsByName(key);
+        var itemName = this.form.elements[key]; // console.log("----",itemName)
 
-        if (itemName.length == 1) {
-          itemName[0].value = formArr[key];
+        if (!itemName.length) {
+          itemName.value = formArr[key];
         } else {
           for (var i = 0; i < itemName.length; i++) {
             var item = itemName[i];
@@ -1893,10 +1963,11 @@ function () {
 
     this.canvas = params.canvas.dom;
     this.unit = params.unit || 'px';
+    this.zoom = params.canvas.zoom || 1;
     this.drawData = _data.default;
     this.canvas.style.position = 'relative';
-    this.canvas.style.height = params.canvas.height + this.unit;
-    this.canvas.style.width = params.canvas.width + this.unit;
+    this.canvas.style.height = params.canvas.height * this.zoom + this.unit;
+    this.canvas.style.width = params.canvas.width * this.zoom + this.unit;
     this.elements = [];
     this.id = 0; // console.log(params,"kjjj")
 
@@ -2036,7 +2107,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50527" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53829" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

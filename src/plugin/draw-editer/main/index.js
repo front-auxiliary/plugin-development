@@ -6,13 +6,14 @@ import data from './data';
 
 export default class drawEditer {
   constructor(params) {
-
+    
     this.canvas = params.canvas.dom;
     this.unit = params.unit||'px';
+    this.zoom = params.canvas.zoom||1
     this.drawData = data;
     this.canvas.style.position = 'relative';
-    this.canvas.style.height = params.canvas.height+this.unit;
-    this.canvas.style.width = params.canvas.width+this.unit;
+    this.canvas.style.height = params.canvas.height*this.zoom+this.unit;
+    this.canvas.style.width = params.canvas.width*this.zoom+this.unit;
     this.elements = [];
     this.id = 0;
     // console.log(params,"kjjj")
