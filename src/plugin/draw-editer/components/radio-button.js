@@ -21,7 +21,8 @@ const render = (options, boxDom, params) => {
                 backgroundImage: `url(${item.url})`,
                 display: 'inline-block',
                 backgroundSize: '100%',
-                backgroundPosition: 'center'
+                backgroundPosition: 'center',
+                borderRadius:'4px',
             }
         })
         const radioDom = creatDom({
@@ -39,7 +40,7 @@ const render = (options, boxDom, params) => {
                         console.log(options[i].dom.value)
 
                         if(value == dom.value){
-                            options[i].dom.style.backgroundColor='red'
+                            options[i].dom.style.backgroundColor='rgba(14,19,24,.07)'
                         }else{
                             options[i].dom.style.backgroundColor='#fff'
                         }

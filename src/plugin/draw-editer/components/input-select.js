@@ -96,7 +96,6 @@ export default (params)=>{
 }
 function creatOptions(select,options,inputDom,params){
     select.innerHTML = '';
-    console.log(options,"kkkkk")
     options.map((item,index)=>{
         let everyOption = creatDom({
             tag:'option',

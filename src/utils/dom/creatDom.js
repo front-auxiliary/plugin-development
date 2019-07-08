@@ -12,6 +12,20 @@
             dom.dataset[key] = params.data[key]
         }
     }
+    // console.log()
+    // if(dom.name == 'text'){
+    //     Object.defineProperty(dom,'_value',{
+    //         configurable: true,
+    //         set: function(value) {
+    //             // this.value = value;
+    //            console.log("-------||")
+    //         },
+    //         get: function() {
+    //             return this.value;
+    //         }
+    //     })
+    // }
+    
     onListener.call(this,dom,params.on,params)
 
     return dom;

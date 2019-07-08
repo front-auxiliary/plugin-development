@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.1/cropper.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.1/cropper.js"></script>
-
+  
     <title>Document</title>
 </head>
 <script src="./public/jscolor.js"></script>
@@ -46,6 +44,7 @@
         /* background: url(./public/1.emf); */
         background-size: 100%;
         background-repeat: no-repeat;
+        display: inline-block;
         background-image: url(./public/bg1.svg)
     }
 
@@ -57,16 +56,20 @@
     #bar {
         width: 413px;
         margin-left: 20px;
+
         /* margin: auto; */
     }
 
     #detail {
         position: absolute;
         /* right: 0; */
-        width: 200px;
-        height: 400px;
+        /* width: 200px;
+        height: 400px; */
         background: red;
+        display: inline-block;
         /* top: 0; */
+        margin-left: 5px;
+
 
 
     }
@@ -78,10 +81,12 @@
     <!-- <button id="buttonImg">图片</button> -->
     <div id="bar"></div>
     <div id="canvas" class="canvas ">
+        
 
         <!-- <img src="./public/2.svg" alt="" srcset=""> -->
 
     </div>
+    <div id="detail"></div>
     <!-- <div id="detail"></div> -->
 </body>
 <script>
@@ -89,6 +94,7 @@
     var dom = null;
     // window.onload = function () {
         var canvas = document.getElementById('canvas');
+        var detail = document.getElementById('detail');
         // var url = './public/1.pdf';
         // PDFJS.workerSrc = './pdf/pdf.worker.js';
         // PDFJS.getDocument(url);
@@ -98,11 +104,13 @@
 
         var drawEditer1 = new drawEditer({
             unit:'px',
+            // imageUp:(flie)=>{
+            //     drawEditer1.add('text');
+            // },
             canvas: {
                 dom: canvas,
                 width: 1218.8976,
                 height: 807.870,
-                zoom:1,
                 on: {
                     elemClick: () => {
 
@@ -130,9 +138,9 @@
 
                 }]
             },
-            // detail:{
-
-            // }
+            detail:{
+                dom:detail
+            }
         })
         // console.log(drawEditer1,"jjjjjj")
         btnSave.onclick = function () {

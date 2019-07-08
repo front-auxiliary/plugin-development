@@ -7,28 +7,32 @@ export default (params)=>{
             width:'30px',
             height:'30px',
             backgroundImage:`url(${params.url})`,
-            backgroundSize:'100%',
-            backgroundPosition:'center'
+            backgroundSize:'80%',
+            backgroundPosition:'center',
+            borderRadius:'4px',
+            backgroundRepeat:'no-repeat'
 
         }
     })
     let checkbox = creatDom({
         tag:'input',
         attr:{
-            type:'checkbox'
+            type:'checkbox',
+            name:params.name
         },
         style:{
             width: '30px',
             height: '30px',
             display: 'inline-block',
             opacity: '0',
-            cursor:'pointer'
+            cursor:'pointer',
+          
         },
         on:{
             change:(event,dom)=>{
             
                 if(dom.checked){
-                    boxDom.style.backgroundColor='red';
+                    boxDom.style.backgroundColor='rgba(14,19,24,.07)';
                 }else{
                     boxDom.style.backgroundColor='#fff';
                 }

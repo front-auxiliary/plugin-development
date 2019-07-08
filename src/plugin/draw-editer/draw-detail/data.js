@@ -16,6 +16,7 @@ const hover = (event) => {
   event.currentTarget.style.backgroundColor = 'rgba(14,19,24,.15)'
 }
 
+
 const setActive = (event) => {
   let active = +event.dataset.active;
   if (!active) {
@@ -27,16 +28,22 @@ const setActive = (event) => {
   }
 }
 export default function () {
+  const {unit} = drawData.getParams();
+ 
   return [
     {
       title: "文字内容",
       name: 'text',
       type: 'textarea',
       on: {
+        change:()=>{
+          console.log("------")
+        },
         input: function (event,e) {
           let activeDom = drawData.getActive();
-          // console.log(event,e)
-         activeDom.innerText = e.value;
+          if(activeDom){
+            activeDom.innerText = e.value;
+          }
         }
       }
     },
@@ -72,8 +79,11 @@ export default function () {
       }],
       on: {
         change: (evt,e) => {
+          console.log("------","kkkk")
           let activeDom = drawData.getActive();
-          activeDom.style.fontSize = e.value+'pt';
+          if(activeDom){
+          activeDom.style.fontSize = e.value+unit;
+          }
         }
       }
     },
@@ -92,7 +102,9 @@ export default function () {
       on: {
         change: (evt,e) => {
           let activeDom = drawData.getActive();
-          activeDom.style.lineHeight = e.value+'pt';
+          if(activeDom){
+          activeDom.style.lineHeight = e.value+unit;
+        }
         }
       }
     },
@@ -102,10 +114,11 @@ export default function () {
       type: 'color',
       on: {
         change:(event,e)=>{
-          console.log("00000")
           let activeDom = drawData.getActive();
-          activeDom.style.color ='#'+ e.value;
-          console.log(e.value)
+          if(activeDom){
+            activeDom.style.color ='#'+ e.value;
+          }
+         
         }
       }
 
@@ -138,7 +151,7 @@ export default function () {
         label:'',
         url:'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+',
       }, {
-       value:'ll',
+       value:'justify',
        label:'',
        url:'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+'
 
@@ -148,7 +161,7 @@ export default function () {
     },
     {
       title: "",
-      name: 'blod',
+      name: 'fontWeight',
       type: 'switch',
       style:{
         padding:'0px',margin:'0px 5px'
@@ -168,7 +181,7 @@ export default function () {
     },
     {
       title: "",
-      name: 'italic',
+      name: 'fontStyle',
       type: 'switch',
       style:{
         padding:'0px',margin:'0px'
@@ -188,7 +201,7 @@ export default function () {
     },
     {
       title: "",
-      name: 'italic',
+      name: 'textDecoration',
       type: 'switch',
       style:{
         padding:'0px',margin:'5px'

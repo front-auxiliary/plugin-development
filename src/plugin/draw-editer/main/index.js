@@ -3,11 +3,18 @@ import bar from '../draw-bar';
 import detail from '../draw-detail';
 import imgDetail from '../draw-img';
 import data from './data';
+import dreawData from '../draw-data';
 
 export default class drawEditer {
   constructor(params) {
-    
+    dreawData.setParams({
+      canvas:params.canvas.dom,
+      unit:params.unit||'px',
+      zoom:params.canvas.zoom||1,
+      detail:params.detail.dom
+    })
     this.canvas = params.canvas.dom;
+    
     this.unit = params.unit||'px';
     this.zoom = params.canvas.zoom||1
     this.drawData = data;
@@ -33,28 +40,11 @@ export default class drawEditer {
 
   }
   activeElemClick(dom){
-    console.log(this)
-    this.detail.active(dom)
+    // console.log(this)
+    // this.detail.active(dom)
   }
   
  
-  getData(){
-   
-    var doms = this.canvas.querySelectorAll('.box')
-    console.log(doms,"kkkkk")
-    for(let key in doms){
-      let style = doms[key].style;
-      console.log(style,"kkkk")
-      // arr.push({
-
-      // })
-    }
-    // doms.map((item,index)=>{
-    //   let style = item.style;
-    //   console.log(style,"kkkk")
-    // })
-    
-  }
   elemClick(callback){
 
     drop.elemClick(callback)

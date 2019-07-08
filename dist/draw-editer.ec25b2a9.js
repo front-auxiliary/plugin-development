@@ -224,13 +224,95 @@ function creatDom(params) {
     for (var key in params.data) {
       dom.dataset[key] = params.data[key];
     }
-  }
+  } // console.log()
+  // if(dom.name == 'text'){
+  //     Object.defineProperty(dom,'_value',{
+  //         configurable: true,
+  //         set: function(value) {
+  //             // this.value = value;
+  //            console.log("-------||")
+  //         },
+  //         get: function() {
+  //             return this.value;
+  //         }
+  //     })
+  // }
+
 
   _onListener.default.call(this, dom, params.on, params);
 
   return dom;
 }
-},{"./setStyle":"utils/dom/setStyle.js","./setAttr":"utils/dom/setAttr.js","./onListener":"utils/dom/onListener.js"}],"utils/index.js":[function(require,module,exports) {
+},{"./setStyle":"utils/dom/setStyle.js","./setAttr":"utils/dom/setAttr.js","./onListener":"utils/dom/onListener.js"}],"utils/dom/delUnit.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _default = function _default(str, unit) {
+  if (str) {
+    return str.replace(unit, '');
+  }
+
+  return str;
+};
+
+exports.default = _default;
+},{}],"utils/colorHex.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _default = function _default(value) {
+  var that = value; //十六进制颜色值的正则表达式
+
+  var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/; // 如果是rgb颜色表示
+
+  if (/^(rgb|RGB)/.test(that)) {
+    var aColor = that.replace(/(?:\(|\)|rgb|RGB)*/g, "").split(",");
+    var strHex = "#";
+
+    for (var i = 0; i < aColor.length; i++) {
+      var hex = Number(aColor[i]).toString(16);
+
+      if (hex.length < 2) {
+        hex = '0' + hex;
+      }
+
+      strHex += hex;
+    }
+
+    if (strHex.length !== 7) {
+      strHex = that;
+    }
+
+    return strHex;
+  } else if (reg.test(that)) {
+    var aNum = that.replace(/#/, "").split("");
+
+    if (aNum.length === 6) {
+      return that;
+    } else if (aNum.length === 3) {
+      var numHex = "#";
+
+      for (var i = 0; i < aNum.length; i += 1) {
+        numHex += aNum[i] + aNum[i];
+      }
+
+      return numHex;
+    }
+  }
+
+  return that;
+};
+
+exports.default = _default;
+},{}],"utils/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -248,13 +330,29 @@ Object.defineProperty(exports, "creatDom", {
     return _creatDom.default;
   }
 });
+Object.defineProperty(exports, "delUnit", {
+  enumerable: true,
+  get: function () {
+    return _delUnit.default;
+  }
+});
+Object.defineProperty(exports, "colorHex", {
+  enumerable: true,
+  get: function () {
+    return _colorHex.default;
+  }
+});
 
 var _setStyle = _interopRequireDefault(require("./dom/setStyle"));
 
 var _creatDom = _interopRequireDefault(require("./dom/creatDom"));
 
+var _delUnit = _interopRequireDefault(require("./dom/delUnit"));
+
+var _colorHex = _interopRequireDefault(require("./colorHex"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
+},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js","./dom/delUnit":"utils/dom/delUnit.js","./colorHex":"utils/colorHex.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -270,7 +368,142 @@ var _default = {
   angleCursor: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABpklEQVR4AWIYWmAUjAIAY+SAW0EARdH8X9u24rqrKDcxG6htLGXidAm1bdu2+U7y7Z+czOu79747mWp0aO2gAVd9to67fXx8dL69vXXZQrSO1dXVGGB24OvklmUJzd5/8lNVdcSU6enpcfY3NzcV4vECZnZoln723OKmaQGNATrRQFpa2pm81dn29naj/B1KEJhl14SGxzTDj1vctCwIsiwoKipae319PXt5eRm/vLysPz8/LwNmdmh4bBQE2SoI1heEh4c/yPOX2c3N7VtRlLn+/v6xg4ODOWBmh4YHLxmTgmB7BXyWc3mzczm0npWVdUjIEXjwkiHrqCAIEePCwkLX0tJSz9fX1/XW1tZSW1vbdEFBwX50dPQtMLNDw4OXDFn7n0hXsLa21iJzvBCXk5OTMT09XXFxcdEr/9BNOXYDzOzQ8OAlI9lWRwX+R0dHtfKMFAIFP50xXIgREoVkYGaHhgcvGbJyo45blgVawUsn+AoeOoO7bs8OLRBMfGh48JLR+/7HjpIPYFkfphhHscCMhjGLD4SjmLAWF3BMPkCYMWjAKAAAxlBp/QKMhJEAAAAASUVORK5CYII='
 };
 exports.default = _default;
-},{}],"plugin/draw-editer/drop/index.js":[function(require,module,exports) {
+},{}],"plugin/draw-editer/draw-data/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+var arr = [];
+var activeDom = null;
+var activeData = {};
+var params = {};
+var detailDom = null;
+var _default = {
+  add: function add(item) {
+    return arr.push(item);
+  },
+  getActiveData: function getActiveData() {
+    var type = activeDom.dataset.elemtype;
+    var detail = activeDom.getBoundingClientRect();
+    var _activeDom$style = activeDom.style,
+        left = _activeDom$style.left,
+        top = _activeDom$style.top,
+        height = _activeDom$style.height,
+        width = _activeDom$style.width,
+        fontSize = _activeDom$style.fontSize,
+        lineHeight = _activeDom$style.lineHeight,
+        color = _activeDom$style.color,
+        textAlign = _activeDom$style.textAlign,
+        fontWeight = _activeDom$style.fontWeight,
+        fontStyle = _activeDom$style.fontStyle,
+        textDecoration = _activeDom$style.textDecoration;
+
+    if (type == 'text') {
+      activeData = {
+        text: activeDom.innerText,
+        left: (0, _utils.delUnit)(left, params.unit),
+        top: (0, _utils.delUnit)(top, params.unit),
+        width: (0, _utils.delUnit)(width, params.unit),
+        height: (0, _utils.delUnit)(height, params.unit),
+        fontSize: (0, _utils.delUnit)(fontSize, params.unit),
+        lineHeight: (0, _utils.delUnit)(lineHeight, params.unit),
+        color: (0, _utils.colorHex)(color),
+        textAlign: textAlign || 'left',
+        fontWeight: fontWeight || 'normal',
+        fontStyle: fontStyle || 'normal',
+        textDecoration: textDecoration || 'none'
+      };
+      console.log(activeData, "kkkkk");
+      return Object.assign({}, activeData);
+    }
+  },
+  editorData: function editorData(id, item) {
+    for (var i = 0; i < arr.lengthl; i++) {
+      if (id == arr[i]) {
+        arr[i] = item;
+        return arr;
+      }
+    }
+
+    return arr;
+  },
+  setActive: function setActive(dom) {
+    activeDom = dom;
+    this.getActiveData();
+  },
+  getActive: function getActive() {
+    return activeDom;
+  },
+  setParams: function setParams(values) {
+    params = Object.assign({}, values);
+  },
+  getParams: function getParams() {
+    return Object.assign({}, params);
+  },
+  setDetail: function setDetail(dom) {
+    detailDom = dom;
+    return detailDom;
+  },
+  getDetail: function getDetail() {
+    return detailDom;
+  },
+  setForm: function setForm() {
+    var formArr = this.getActiveData();
+
+    for (var key in formArr) {
+      var itemName = detailDom.elements[key];
+
+      if (!itemName) {
+        continue;
+      }
+
+      if (!itemName.length) {
+        if (key == 'fontStyle') {
+          if (formArr[key] == 'italic') {
+            itemName.checked = true;
+          } else {
+            itemName.checked = false;
+          }
+        }
+
+        if (key == 'fontWeight') {
+          if (formArr[key] == 'bold') {
+            itemName.checked = true;
+          } else {
+            itemName.checked = false;
+          }
+        }
+
+        if (key == 'textDecoration') {
+          if (formArr[key] == 'underline') {
+            itemName.checked = true;
+          } else {
+            itemName.checked = false;
+          }
+        }
+
+        itemName.value = formArr[key];
+      } else {
+        for (var i = 0; i < itemName.length; i++) {
+          var item = itemName[i];
+
+          if (item.value == formArr[key]) {
+            item.checked = true;
+          } else {
+            item.checked = false;
+          }
+        }
+      }
+    }
+  }
+};
+exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/drop/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -281,6 +514,8 @@ exports.default = void 0;
 var _utils = require("../../../utils");
 
 var _icon = _interopRequireDefault(require("./icon"));
+
+var _drawData = _interopRequireDefault(require("../draw-data"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -332,6 +567,10 @@ function () {
 
       document.onmousemove = function (event) {
         _this.onmousemove(event, _this.canvas);
+      };
+
+      this.canvas.onmousedown = function () {
+        _drawData.default.getDetail().style.display = 'none';
       };
     }
   }, {
@@ -427,9 +666,16 @@ function () {
 
             _this3.onmousedown(event, dropDom, _this3.canvas);
 
-            if (_this3.elemClick) {
-              _this3.elemClick(dropDom); // console.log('-----')
+            console.log('-----');
 
+            _drawData.default.setActive(dropDom);
+
+            _drawData.default.setForm();
+
+            if (_this3.elemClick) {
+              _this3.elemClick(dropDom);
+
+              console.log('-----22');
 
               _this3.activeElemClick(dropDom);
             }
@@ -876,7 +1122,7 @@ function () {
 var _default = new drop();
 
 exports.default = _default;
-},{"../../../utils":"utils/index.js","./icon":"plugin/draw-editer/drop/icon.js"}],"plugin/draw-editer/draw-bar/data.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js","./icon":"plugin/draw-editer/drop/icon.js","../draw-data":"plugin/draw-editer/draw-data/index.js"}],"plugin/draw-editer/draw-bar/data.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1000,49 +1246,7 @@ function () {
 
 var _default = bar;
 exports.default = _default;
-},{"./data":"plugin/draw-editer/draw-bar/data.js","../../../utils":"utils/index.js"}],"plugin/draw-editer/draw-data/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var arr = [];
-var activeDom = null;
-var _default = {
-  add: function add(item) {
-    return arr.push(item);
-  },
-  getData: function getData(id) {
-    if (id) {
-      return arr;
-    } else {
-      for (var i = 0; i < arr.length; i++) {
-        if (id == arr[i].id) {
-          return arr[i];
-        }
-      }
-    }
-  },
-  editorData: function editorData(id, item) {
-    for (var i = 0; i < arr.lengthl; i++) {
-      if (id == arr[i]) {
-        arr[i] = item;
-        return arr;
-      }
-    }
-
-    return arr;
-  },
-  setActive: function setActive(dom) {
-    activeDom = dom;
-  },
-  getActive: function getActive() {
-    return activeDom;
-  }
-};
-exports.default = _default;
-},{}],"plugin/draw-editer/draw-detail/data.js":[function(require,module,exports) {
+},{"./data":"plugin/draw-editer/draw-bar/data.js","../../../utils":"utils/index.js"}],"plugin/draw-editer/draw-detail/data.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1085,16 +1289,23 @@ var setActive = function setActive(event) {
 };
 
 function _default() {
+  var _drawData$getParams = _drawData.default.getParams(),
+      unit = _drawData$getParams.unit;
+
   return [{
     title: "文字内容",
     name: 'text',
     type: 'textarea',
     on: {
+      change: function change() {
+        console.log("------");
+      },
       input: function input(event, e) {
-        var activeDom = _drawData.default.getActive(); // console.log(event,e)
+        var activeDom = _drawData.default.getActive();
 
-
-        activeDom.innerText = e.value;
+        if (activeDom) {
+          activeDom.innerText = e.value;
+        }
       }
     }
   }, {
@@ -1127,9 +1338,13 @@ function _default() {
     }],
     on: {
       change: function change(evt, e) {
+        console.log("------", "kkkk");
+
         var activeDom = _drawData.default.getActive();
 
-        activeDom.style.fontSize = e.value + 'pt';
+        if (activeDom) {
+          activeDom.style.fontSize = e.value + unit;
+        }
       }
     }
   }, {
@@ -1148,7 +1363,9 @@ function _default() {
       change: function change(evt, e) {
         var activeDom = _drawData.default.getActive();
 
-        activeDom.style.lineHeight = e.value + 'pt';
+        if (activeDom) {
+          activeDom.style.lineHeight = e.value + unit;
+        }
       }
     }
   }, {
@@ -1157,12 +1374,11 @@ function _default() {
     type: 'color',
     on: {
       change: function change(event, e) {
-        console.log("00000");
-
         var activeDom = _drawData.default.getActive();
 
-        activeDom.style.color = '#' + e.value;
-        console.log(e.value);
+        if (activeDom) {
+          activeDom.style.color = '#' + e.value;
+        }
       }
     }
   }, {
@@ -1193,13 +1409,13 @@ function _default() {
       label: '',
       url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+'
     }, {
-      value: 'll',
+      value: 'justify',
       label: '',
       url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+'
     }]
   }, {
     title: "",
-    name: 'blod',
+    name: 'fontWeight',
     type: 'switch',
     style: {
       padding: '0px',
@@ -1221,7 +1437,7 @@ function _default() {
     }
   }, {
     title: "",
-    name: 'italic',
+    name: 'fontStyle',
     type: 'switch',
     style: {
       padding: '0px',
@@ -1243,7 +1459,7 @@ function _default() {
     }
   }, {
     title: "",
-    name: 'italic',
+    name: 'textDecoration',
     type: 'switch',
     style: {
       padding: '0px',
@@ -1413,7 +1629,6 @@ exports.default = _default;
 
 function creatOptions(select, options, inputDom, params) {
   select.innerHTML = '';
-  console.log(options, "kkkkk");
   options.map(function (item, index) {
     var everyOption = (0, _utils.creatDom)({
       tag: 'option',
@@ -1560,7 +1775,8 @@ var render = function render(options, boxDom, params) {
         backgroundImage: "url(".concat(item.url, ")"),
         display: 'inline-block',
         backgroundSize: '100%',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        borderRadius: '4px'
       }
     });
     var radioDom = (0, _utils.creatDom)({
@@ -1578,7 +1794,7 @@ var render = function render(options, boxDom, params) {
             console.log(options[i].dom.value);
 
             if (value == dom.value) {
-              options[i].dom.style.backgroundColor = 'red';
+              options[i].dom.style.backgroundColor = 'rgba(14,19,24,.07)';
             } else {
               options[i].dom.style.backgroundColor = '#fff';
             }
@@ -1638,14 +1854,17 @@ var _default = function _default(params) {
       width: '30px',
       height: '30px',
       backgroundImage: "url(".concat(params.url, ")"),
-      backgroundSize: '100%',
-      backgroundPosition: 'center'
+      backgroundSize: '80%',
+      backgroundPosition: 'center',
+      borderRadius: '4px',
+      backgroundRepeat: 'no-repeat'
     }
   });
   var checkbox = (0, _utils.creatDom)({
     tag: 'input',
     attr: {
-      type: 'checkbox'
+      type: 'checkbox',
+      name: params.name
     },
     style: {
       width: '30px',
@@ -1657,7 +1876,7 @@ var _default = function _default(params) {
     on: {
       change: function change(event, dom) {
         if (dom.checked) {
-          boxDom.style.backgroundColor = 'red';
+          boxDom.style.backgroundColor = 'rgba(14,19,24,.07)';
         } else {
           boxDom.style.backgroundColor = '#fff';
         }
@@ -1741,10 +1960,13 @@ function () {
   function drawDetail(canvas) {
     _classCallCheck(this, drawDetail);
 
-    this.canvas = canvas;
+    var _drawData$getParams = _drawData.default.getParams(),
+        detail = _drawData$getParams.detail;
+
+    this.canvas = detail;
     this.form = null;
     this.activeDom = null;
-    this.data = _data.default.call(this);
+    this.data = _data.default.call(this), this.detailBox = null;
   }
 
   _createClass(drawDetail, [{
@@ -1752,17 +1974,24 @@ function () {
     value: function init() {
       var _this = this;
 
+      if (this.detailBox) {
+        this.detailBox.parentNode.removeChild(this.detailBox);
+      }
+
+      var _drawData$getParams2 = _drawData.default.getParams(),
+          canvas = _drawData$getParams2.canvas;
+
       var detailBox = _utils.creatDom.call(this, {
         tag: 'form',
         style: {
           position: 'absolute',
           width: '300px',
+          minHeight: canvas.style.height,
           background: '#FFF',
           margin: '0 -300px 0 0',
           right: '-5px',
           bottom: '0px',
-          top: '0px' // boxShadow:'0 2px 8px rgba(0,0,0,0.15)',
-
+          top: '0px'
         }
       });
 
@@ -1770,37 +1999,50 @@ function () {
       this.data.map(function (item, index) {
         detailBox.appendChild(_this.divList(item));
       });
+      this.detailBox = _drawData.default.setDetail(detailBox);
       this.canvas.appendChild(detailBox);
     }
   }, {
     key: "active",
     value: function active(dom) {
-      // let type = dom.dataset.elemtype,
-      // text = dom.innerText,
-      // fontFamily = dom.style.fontFamily,
-      // fontSize = dom.style.fontSize,
-      // lineHeight = dom.style.lineHeight,
-      // textAlign = dom.style.textAlign,
-      // fontWeight = dom.style.fontWeight,
-      // color=dom.style.color;
-      this.activeDom = dom;
-      var formArr = {
-        text: dom.innerText,
-        fontFamily: dom.style.fontFamily,
-        fontSize: dom.style.fontSize,
-        lineHeight: dom.style.lineHeight,
-        textAlign: dom.style.textAlign,
-        color: dom.style.color
-      };
+      this.activeDom = dom; // this.init();
+
+      _drawData.default.getDetail().style.display = 'block';
+
+      var formArr = _drawData.default.getActiveData();
 
       for (var key in formArr) {
         var itemName = this.form.elements[key];
 
-        if (key == 'color') {
-          console.log(key, "----", itemName, formArr[key]);
+        if (!itemName) {
+          continue;
         }
 
         if (!itemName.length) {
+          if (key == 'fontStyle') {
+            if (formArr[key] == 'italic') {
+              itemName.checked = true;
+            } else {
+              itemName.checked = false;
+            }
+          }
+
+          if (key == 'fontWeight') {
+            if (formArr[key] == 'bold') {
+              itemName.checked = true;
+            } else {
+              itemName.checked = false;
+            }
+          }
+
+          if (key == 'textDecoration') {
+            if (formArr[key] == 'underline') {
+              itemName.checked = true;
+            } else {
+              itemName.checked = false;
+            }
+          }
+
           itemName.value = formArr[key];
         } else {
           for (var i = 0; i < itemName.length; i++) {
@@ -1813,9 +2055,7 @@ function () {
             }
           }
         }
-      }
-
-      _drawData.default.setActive(dom); // 
+      } // 
       // .text = '3333'
       // console.log(this.form,"kkkk")
       // if(type == text)
@@ -1883,6 +2123,14 @@ function () {
           attr: {
             name: params.name,
             class: 'jscolor'
+          },
+          style: {
+            width: '100%',
+            lineHeight: '35px',
+            borderRadius: '4px',
+            border: '1px solid #d9d9d9',
+            boxSizing: 'border-box',
+            padding: ' 0 10px'
           },
           on: params.on
         });
@@ -2141,6 +2389,8 @@ var _drawImg = _interopRequireDefault(require("../draw-img"));
 
 var _data = _interopRequireDefault(require("./data"));
 
+var _drawData = _interopRequireDefault(require("../draw-data"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2156,6 +2406,13 @@ function () {
     var _this = this;
 
     _classCallCheck(this, drawEditer);
+
+    _drawData.default.setParams({
+      canvas: params.canvas.dom,
+      unit: params.unit || 'px',
+      zoom: params.canvas.zoom || 1,
+      detail: params.detail.dom
+    });
 
     this.canvas = params.canvas.dom;
     this.unit = params.unit || 'px';
@@ -2185,25 +2442,8 @@ function () {
     value: function create() {}
   }, {
     key: "activeElemClick",
-    value: function activeElemClick(dom) {
-      console.log(this);
-      this.detail.active(dom);
-    }
-  }, {
-    key: "getData",
-    value: function getData() {
-      var doms = this.canvas.querySelectorAll('.box');
-      console.log(doms, "kkkkk");
-
-      for (var key in doms) {
-        var style = doms[key].style;
-        console.log(style, "kkkk"); // arr.push({
-        // })
-      } // doms.map((item,index)=>{
-      //   let style = item.style;
-      //   console.log(style,"kkkk")
-      // })
-
+    value: function activeElemClick(dom) {// console.log(this)
+      // this.detail.active(dom)
     }
   }, {
     key: "elemClick",
@@ -2247,7 +2487,7 @@ function () {
 }();
 
 exports.default = drawEditer;
-},{"../drop":"plugin/draw-editer/drop/index.js","../draw-bar":"plugin/draw-editer/draw-bar/index.js","../draw-detail":"plugin/draw-editer/draw-detail/index.js","../draw-img":"plugin/draw-editer/draw-img/index.js","./data":"plugin/draw-editer/main/data.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
+},{"../drop":"plugin/draw-editer/drop/index.js","../draw-bar":"plugin/draw-editer/draw-bar/index.js","../draw-detail":"plugin/draw-editer/draw-detail/index.js","../draw-img":"plugin/draw-editer/draw-img/index.js","./data":"plugin/draw-editer/main/data.js","../draw-data":"plugin/draw-editer/draw-data/index.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
 var global = arguments[3];
 "use strict";
 
@@ -2303,7 +2543,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53829" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64781" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,6 +1,6 @@
 import { setStyle, creatDom } from '../../../utils';
 import iconData from './icon';
-
+import drawData from '../draw-data';
 class drop {
   constructor() {
     this.canvas = null;
@@ -12,7 +12,7 @@ class drop {
     this.isAngleClick = false;
     this.activeElemClick = null
   }
-  init(canvas, params,unit,activeElemClick) {
+  init(canvas, params, unit, activeElemClick) {
     this.canvas = canvas;
     this.unit = unit;
     this.canvasDetail = this.canvas.getBoundingClientRect();
@@ -25,55 +25,60 @@ class drop {
     document.onmousemove = (event) => {
       this.onmousemove(event, this.canvas)
     }
+    this.canvas.onmousedown = ()=>{
+      drawData.getDetail().style.display = 'none'
+    }
   }
-  styleFramt (style,elem){
+  styleFramt(style, elem) {
     let judgeStr = 'width,height,left,top,fontSize,lineHeight';
     let newStyle = {};
-    for(let key in style){
-     
-      if(key == 'angle' && style[key]){
+    for (let key in style) {
+
+      if (key == 'angle' && style[key]) {
         newStyle.transform = `rotate(${style[key]}deg)`
-      }else if( (key=='width'||key == 'height')){
-        if(key == 'width'){
-          newStyle.minWidth = style.width+this.unit;
+      } else if ((key == 'width' || key == 'height')) {
+        if (key == 'width') {
+          newStyle.minWidth = style.width + this.unit;
         }
-        if(key == 'height'){
-          newStyle.minHeight = style.height+this.unit;
+        if (key == 'height') {
+          newStyle.minHeight = style.height + this.unit;
         }
-      }else  if(judgeStr.indexOf(key)!=-1){
-        newStyle[key] = style[key]+this.unit;
-      }else {
+      } else if (judgeStr.indexOf(key) != -1) {
+        newStyle[key] = style[key] + this.unit;
+      } else {
         newStyle[key] = style[key]
       }
     }
-    return Object.assign({},newStyle);
+    return Object.assign({}, newStyle);
   }
-  creatImg(elem,dropDom){
+  creatImg(elem, dropDom) {
     let dom = creatDom({
-      tag:'div',
-      style:{
-        backgroundImage:`url(${elem.src})`,
-        width:'100%',
-        height:'100%',
-        display:'block'
+      tag: 'div',
+      style: {
+        backgroundImage: `url(${elem.src})`,
+        width: '100%',
+        height: '100%',
+        display: 'block'
       },
     })
-    let img  = creatDom({tag:'img',
-    attr:{src:elem.src},
-    style:{
-      height:'100%',
-      width:'100%',
-      display:'block',
-      userSelect:'none',
-      // pointerEvents:'none'
-    },
-    on:{
-      load:(event)=>{
-        dropDom.style.height = img.height +this.unit;
-        dropDom.style.width = img.width+this.unit;
-        // console.log(img.width,"kkk")
+    let img = creatDom({
+      tag: 'img',
+      attr: { src: elem.src },
+      style: {
+        height: '100%',
+        width: '100%',
+        display: 'block',
+        userSelect: 'none',
+        // pointerEvents:'none'
+      },
+      on: {
+        load: (event) => {
+          dropDom.style.height = img.height + this.unit;
+          dropDom.style.width = img.width + this.unit;
+          // console.log(img.width,"kkk")
+        }
       }
-    }})
+    })
     return img
   }
   create(elem, canvas) {
@@ -87,62 +92,65 @@ class drop {
         cursor: 'move',
         transformOrigin: 'center',
         transform: 'rotate(0deg)',
-        boxSizing:'border-box',
+        boxSizing: 'border-box',
         // writingMode:'vertical-rl'
-      },this.styleFramt(elem.style,elem)),
-      child: elem.text||'',
+      }, this.styleFramt(elem.style, elem)),
+      child: elem.text || '',
       attr: {
         id: elem.name,
-        tabindex:elem.id,
-        class:'draw-editor-elem'
+        tabindex: elem.id,
+        class: 'draw-editor-elem'
       },
-      data:{
-        
+      data: {
+
       },
       on: {
         mousedown: (event) => {
           event.stopPropagation();
           this.onmousedown(event, dropDom, this.canvas)
+          console.log('-----')
+          drawData.setActive(dropDom);
+          drawData.setForm();
           if (this.elemClick) {
             this.elemClick(dropDom)
-            // console.log('-----')
+            console.log('-----22')
             this.activeElemClick(dropDom)
           }
         },
-        blur:()=>{
+        blur: () => {
           // console.log(that.isAngleClick)
           // if(that.isAngleClick){
           //   return ;
           // }
           let zoomArr = dropDom.querySelectorAll('.zoom')
           dropDom.style.borderWidth = 0;
-          for(let i= 0;i<zoomArr.length;i++){
-            zoomArr[i].style.display='none'
+          for (let i = 0; i < zoomArr.length; i++) {
+            zoomArr[i].style.display = 'none'
           }
-        
+
           // console.log("kkkk1111")
         },
-        focus:()=>{
-          let elemType= dropDom.dataset.elemtype;
+        focus: () => {
+          let elemType = dropDom.dataset.elemtype;
           // console.log(elemType,"jjjjjj")
           let zoomArr = dropDom.querySelectorAll('.zoom')
-          for(let i= 0;i<zoomArr.length;i++){
-            zoomArr[i].style.display='block'
+          for (let i = 0; i < zoomArr.length; i++) {
+            zoomArr[i].style.display = 'block'
           }
         }
-      
-        
+
+
       }
     })
-   
+
     // const dropDom = document.createElement('div');
     const zoomDoms = this.createZoom();
     const angleDom = this.createAngle();
     const sizes = this.createSize();
-    
+
     let childs = [angleDom, ...zoomDoms]
-    if(elem.type == 'img'){
-      childs = [...childs,...sizes]
+    if (elem.type == 'img') {
+      childs = [...childs, ...sizes]
     }
     dropDom.dataset.elemtype = elem.type;
     // dropDom.innerText = elem.text;
@@ -163,10 +171,10 @@ class drop {
     //     this.elemClick(event)
     //   }
     // }
-    if(elem.type == 'img'){
+    if (elem.type == 'img') {
 
-      dropDom.appendChild(this.creatImg(elem,dropDom))
-      dropDom.appendChild(creatDom({tag:'div',style:{position:'absolute',top:'0px',left:'0px',right:'0px',bottom:'0px'}}))
+      dropDom.appendChild(this.creatImg(elem, dropDom))
+      dropDom.appendChild(creatDom({ tag: 'div', style: { position: 'absolute', top: '0px', left: '0px', right: '0px', bottom: '0px' } }))
     }
     return dropDom;
   }
@@ -180,17 +188,17 @@ class drop {
       width: '10px',
       height: '10px',
       borderRadius: '50%',
-      zIndex:10,
+      zIndex: 10,
       boxShadow: '0 0 5px 1px rgba(14,19,24,.15), 0 0 0 1px rgba(14,19,24,.15)',
     }
-    const {tilt,reverseTilt} = iconData;
+    const { tilt, reverseTilt } = iconData;
     const leftTopIcon = document.createElement('div');
     const rightTopIcon = document.createElement('div');
     const rightBottomIcon = document.createElement('div');
     const leftBottomIcon = document.createElement('div');
     const leftTopIconStyle = Object.assign({}, style, { top: '-5px', left: '-5px', cursor: `url(${tilt}) 8 12, auto` })
     const rightTopIconStyle = Object.assign({}, style, { top: '-5px', left: '100%', marginLeft: '-5px', cursor: `url(${reverseTilt}) 8 12, auto` })
-    const rightBottomIconStyle = Object.assign({}, style, { top: '100%', left: '100%', marginLeft: '-5px', marginTop: '-5px', cursor: `url(${tilt}) 8 12, auto`})
+    const rightBottomIconStyle = Object.assign({}, style, { top: '100%', left: '100%', marginLeft: '-5px', marginTop: '-5px', cursor: `url(${tilt}) 8 12, auto` })
     const leftBottomIconStyle = Object.assign({}, style, { top: '100%', left: '-5px', marginTop: '-5px', cursor: `url(${reverseTilt}) 8 12, auto` })
     leftTopIcon.className = 'zoom'
     rightBottomIcon.className = 'zoom'
@@ -230,16 +238,16 @@ class drop {
       boxShadow: '0 0 5px 1px rgba(14,19,24,.15), 0 0 0 1px rgba(14,19,24,.15)',
       borderRadius: '5px'
     }
-    const {vertical,level} = iconData;
+    const { vertical, level } = iconData;
     const topIcon = document.createElement('div');
     const rightIcon = document.createElement('div');
     const bottomIcon = document.createElement('div');
     const leftIcon = document.createElement('div');
 
-    const topIconStyle = Object.assign({}, style, { width: '16px', height: '5px', top: '-3px', left: '50%', marginLeft: '-8px',cursor:`url(${vertical}) 8 12, auto` })
-    const rightIconStyle = Object.assign({}, style, { width: '5px', height: '16px', top: '50%', left: '100%', marginLeft: '-2px', marginTop: '-8px',cursor:`url(${level}) 8 12, auto`  })
-    const bottomIconStyle = Object.assign({}, style, { width: '16px', height: '5px', top: '100%', left: '50%', marginLeft: '-8px', marginTop: '-2px',cursor:`url(${vertical}) 8 12, auto`  })
-    const leftIconStyle = Object.assign({}, style, { width: '5px', height: '16px', top: '50%', left: '0%', marginLeft: '-3px', marginTop: '-8px',cursor:`url(${level}) 8 12, auto` })
+    const topIconStyle = Object.assign({}, style, { width: '16px', height: '5px', top: '-3px', left: '50%', marginLeft: '-8px', cursor: `url(${vertical}) 8 12, auto` })
+    const rightIconStyle = Object.assign({}, style, { width: '5px', height: '16px', top: '50%', left: '100%', marginLeft: '-2px', marginTop: '-8px', cursor: `url(${level}) 8 12, auto` })
+    const bottomIconStyle = Object.assign({}, style, { width: '16px', height: '5px', top: '100%', left: '50%', marginLeft: '-8px', marginTop: '-2px', cursor: `url(${vertical}) 8 12, auto` })
+    const leftIconStyle = Object.assign({}, style, { width: '5px', height: '16px', top: '50%', left: '0%', marginLeft: '-3px', marginTop: '-8px', cursor: `url(${level}) 8 12, auto` })
     topIcon.className = 'zoom'
     rightIcon.className = 'zoom'
     bottomIcon.className = 'zoom'
@@ -270,7 +278,7 @@ class drop {
   // 生成旋转icon
   createAngle() {
     const angleIcon = document.createElement('div');
-    const {angle,angleCursor} = iconData;
+    const { angle, angleCursor } = iconData;
     const style = {
       position: 'absolute',
       backgroundImage: `url(${angle})`,
@@ -288,9 +296,9 @@ class drop {
     }
     angleIcon.className = 'zoom'
     // angleIcon. = 10;
-  angleIcon.tabIndex = 1;
+    angleIcon.tabIndex = 1;
     setStyle(angleIcon, style)
-    angleIcon.onblur = () =>{
+    angleIcon.onblur = () => {
       this.isAngleClick = false;
     }
     angleIcon.onmousedown = (evt) => {
@@ -379,20 +387,20 @@ class drop {
       activeDetail.angle = this.getAngle(centerPos, { x: evt.pageX, y: evt.pageY });
     }
     if (type == 'top') {
-      activeDetail.height = activePos.y - mousePos.y + (+activeDetail.height) ;
+      activeDetail.height = activePos.y - mousePos.y + (+activeDetail.height);
       activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
     }
     if (type == 'right') {
-      activeDetail.width = mousePos.x -activePos.x  + (+activeDetail.width) ;
+      activeDetail.width = mousePos.x - activePos.x + (+activeDetail.width);
       // activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
     }
-    if(type == 'left'){
-      activeDetail.width =  activePos.x-mousePos.x  + (+activeDetail.width) ;
+    if (type == 'left') {
+      activeDetail.width = activePos.x - mousePos.x + (+activeDetail.width);
       activeDetail.x = activeDetail.x - (activePos.x - mousePos.x);
     }
-    if(type == 'bottom'){
-      activeDetail.height =mousePos.y- activePos.y  + (+activeDetail.height) ;
-    
+    if (type == 'bottom') {
+      activeDetail.height = mousePos.y - activePos.y + (+activeDetail.height);
+
     }
 
     if (type === 'leftTop') {
