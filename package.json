@@ -12,6 +12,7 @@
     "dev:image-slicer": "parcel serve src/image-slicer.html --no-cache  --port 80",
     "dev:pdf": "parcel serve src/pdf.html --no-cache  --port 80",
     "dev:dragger": "parcel serve src/dragger.html --no-cache  --port 80",
+    "dev:map": "parcel serve src/map.html --no-cache  --port 80",
     "build": " parcel build src/index.html --no-cache"
   },
   "devDependencies": {
