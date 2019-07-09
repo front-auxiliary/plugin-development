@@ -220,11 +220,172 @@ function creatDom(params) {
   (0, _setStyle.default)(dom, params.style);
   (0, _setAttr.default)(dom, params.attr);
 
+  if (params.data) {
+    for (var key in params.data) {
+      dom.dataset[key] = params.data[key];
+    }
+  } // console.log()
+  // if(dom.name == 'text'){
+  //     Object.defineProperty(dom,'_value',{
+  //         configurable: true,
+  //         set: function(value) {
+  //             // this.value = value;
+  //            console.log("-------||")
+  //         },
+  //         get: function() {
+  //             return this.value;
+  //         }
+  //     })
+  // }
+
+
   _onListener.default.call(this, dom, params.on, params);
 
   return dom;
 }
-},{"./setStyle":"utils/dom/setStyle.js","./setAttr":"utils/dom/setAttr.js","./onListener":"utils/dom/onListener.js"}],"utils/index.js":[function(require,module,exports) {
+},{"./setStyle":"utils/dom/setStyle.js","./setAttr":"utils/dom/setAttr.js","./onListener":"utils/dom/onListener.js"}],"utils/dom/delUnit.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _default = function _default(str, unit) {
+  if (str) {
+    return str.replace(unit, '');
+  }
+
+  return str;
+};
+
+exports.default = _default;
+},{}],"utils/colorHex.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _default = function _default(value) {
+  var that = value; //十六进制颜色值的正则表达式
+
+  var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/; // 如果是rgb颜色表示
+
+  if (/^(rgb|RGB)/.test(that)) {
+    var aColor = that.replace(/(?:\(|\)|rgb|RGB)*/g, "").split(",");
+    var strHex = "#";
+
+    for (var i = 0; i < aColor.length; i++) {
+      var hex = Number(aColor[i]).toString(16);
+
+      if (hex.length < 2) {
+        hex = '0' + hex;
+      }
+
+      strHex += hex;
+    }
+
+    if (strHex.length !== 7) {
+      strHex = that;
+    }
+
+    return strHex;
+  } else if (reg.test(that)) {
+    var aNum = that.replace(/#/, "").split("");
+
+    if (aNum.length === 6) {
+      return that;
+    } else if (aNum.length === 3) {
+      var numHex = "#";
+
+      for (var i = 0; i < aNum.length; i += 1) {
+        numHex += aNum[i] + aNum[i];
+      }
+
+      return numHex;
+    }
+  }
+
+  return that;
+};
+
+exports.default = _default;
+},{}],"utils/hsvToRgb.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = hsvToRgb;
+
+function hsvToRgb(params) {
+  var h = params.h,
+      s = params.s,
+      v = params.v;
+  s = s / 100;
+  v = v / 100;
+  var r = 0,
+      g = 0,
+      b = 0;
+  var i = parseInt(h / 60 % 6);
+  var f = h / 60 - i;
+  var p = v * (1 - s);
+  var q = v * (1 - f * s);
+  var t = v * (1 - (1 - f) * s);
+
+  switch (i) {
+    case 0:
+      r = v;
+      g = t;
+      b = p;
+      break;
+
+    case 1:
+      r = q;
+      g = v;
+      b = p;
+      break;
+
+    case 2:
+      r = p;
+      g = v;
+      b = t;
+      break;
+
+    case 3:
+      r = p;
+      g = q;
+      b = v;
+      break;
+
+    case 4:
+      r = t;
+      g = p;
+      b = v;
+      break;
+
+    case 5:
+      r = v;
+      g = p;
+      b = q;
+      break;
+
+    default:
+      break;
+  }
+
+  r = parseInt(r * 255.0);
+  g = parseInt(g * 255.0);
+  b = parseInt(b * 255.0);
+  return {
+    r: r,
+    g: g,
+    b: b
+  };
+}
+},{}],"utils/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -242,13 +403,37 @@ Object.defineProperty(exports, "creatDom", {
     return _creatDom.default;
   }
 });
+Object.defineProperty(exports, "delUnit", {
+  enumerable: true,
+  get: function () {
+    return _delUnit.default;
+  }
+});
+Object.defineProperty(exports, "colorHex", {
+  enumerable: true,
+  get: function () {
+    return _colorHex.default;
+  }
+});
+Object.defineProperty(exports, "hsvToRgb", {
+  enumerable: true,
+  get: function () {
+    return _hsvToRgb.default;
+  }
+});
 
 var _setStyle = _interopRequireDefault(require("./dom/setStyle"));
 
 var _creatDom = _interopRequireDefault(require("./dom/creatDom"));
 
+var _delUnit = _interopRequireDefault(require("./dom/delUnit"));
+
+var _colorHex = _interopRequireDefault(require("./colorHex"));
+
+var _hsvToRgb = _interopRequireDefault(require("./hsvToRgb"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
+},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js","./dom/delUnit":"utils/dom/delUnit.js","./colorHex":"utils/colorHex.js","./hsvToRgb":"utils/hsvToRgb.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -264,7 +449,142 @@ var _default = {
   angleCursor: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABpklEQVR4AWIYWmAUjAIAY+SAW0EARdH8X9u24rqrKDcxG6htLGXidAm1bdu2+U7y7Z+czOu79747mWp0aO2gAVd9to67fXx8dL69vXXZQrSO1dXVGGB24OvklmUJzd5/8lNVdcSU6enpcfY3NzcV4vECZnZoln723OKmaQGNATrRQFpa2pm81dn29naj/B1KEJhl14SGxzTDj1vctCwIsiwoKipae319PXt5eRm/vLysPz8/LwNmdmh4bBQE2SoI1heEh4c/yPOX2c3N7VtRlLn+/v6xg4ODOWBmh4YHLxmTgmB7BXyWc3mzczm0npWVdUjIEXjwkiHrqCAIEePCwkLX0tJSz9fX1/XW1tZSW1vbdEFBwX50dPQtMLNDw4OXDFn7n0hXsLa21iJzvBCXk5OTMT09XXFxcdEr/9BNOXYDzOzQ8OAlI9lWRwX+R0dHtfKMFAIFP50xXIgREoVkYGaHhgcvGbJyo45blgVawUsn+AoeOoO7bs8OLRBMfGh48JLR+/7HjpIPYFkfphhHscCMhjGLD4SjmLAWF3BMPkCYMWjAKAAAxlBp/QKMhJEAAAAASUVORK5CYII='
 };
 exports.default = _default;
-},{}],"plugin/draw-editer/drop/index.js":[function(require,module,exports) {
+},{}],"plugin/draw-editer/draw-data/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+var arr = [];
+var activeDom = null;
+var activeData = {};
+var params = {};
+var detailDom = null;
+var _default = {
+  add: function add(item) {
+    return arr.push(item);
+  },
+  getActiveData: function getActiveData() {
+    var type = activeDom.dataset.elemtype;
+    var detail = activeDom.getBoundingClientRect();
+    var _activeDom$style = activeDom.style,
+        left = _activeDom$style.left,
+        top = _activeDom$style.top,
+        height = _activeDom$style.height,
+        width = _activeDom$style.width,
+        fontSize = _activeDom$style.fontSize,
+        lineHeight = _activeDom$style.lineHeight,
+        color = _activeDom$style.color,
+        textAlign = _activeDom$style.textAlign,
+        fontWeight = _activeDom$style.fontWeight,
+        fontStyle = _activeDom$style.fontStyle,
+        textDecoration = _activeDom$style.textDecoration;
+
+    if (type == 'text') {
+      activeData = {
+        text: activeDom.innerText,
+        left: (0, _utils.delUnit)(left, params.unit),
+        top: (0, _utils.delUnit)(top, params.unit),
+        width: (0, _utils.delUnit)(width, params.unit),
+        height: (0, _utils.delUnit)(height, params.unit),
+        fontSize: (0, _utils.delUnit)(fontSize, params.unit),
+        lineHeight: (0, _utils.delUnit)(lineHeight, params.unit),
+        color: (0, _utils.colorHex)(color),
+        textAlign: textAlign || 'left',
+        fontWeight: fontWeight || 'normal',
+        fontStyle: fontStyle || 'normal',
+        textDecoration: textDecoration || 'none' // console.log(activeData,"kkkkk")
+
+      };
+      return Object.assign({}, activeData);
+    }
+  },
+  editorData: function editorData(id, item) {
+    for (var i = 0; i < arr.lengthl; i++) {
+      if (id == arr[i]) {
+        arr[i] = item;
+        return arr;
+      }
+    }
+
+    return arr;
+  },
+  setActive: function setActive(dom) {
+    activeDom = dom;
+    this.getActiveData();
+  },
+  getActive: function getActive() {
+    return activeDom;
+  },
+  setParams: function setParams(values) {
+    params = Object.assign({}, values);
+  },
+  getParams: function getParams() {
+    return Object.assign({}, params);
+  },
+  setDetail: function setDetail(dom) {
+    detailDom = dom;
+    return detailDom;
+  },
+  getDetail: function getDetail() {
+    return detailDom;
+  },
+  setForm: function setForm() {
+    var formArr = this.getActiveData();
+
+    for (var key in formArr) {
+      var itemName = detailDom.elements[key];
+
+      if (!itemName) {
+        continue;
+      }
+
+      if (!itemName.length) {
+        if (key == 'fontStyle') {
+          if (formArr[key] == 'italic') {
+            itemName.checked = true;
+          } else {
+            itemName.checked = false;
+          }
+        }
+
+        if (key == 'fontWeight') {
+          if (formArr[key] == 'bold') {
+            itemName.checked = true;
+          } else {
+            itemName.checked = false;
+          }
+        }
+
+        if (key == 'textDecoration') {
+          if (formArr[key] == 'underline') {
+            itemName.checked = true;
+          } else {
+            itemName.checked = false;
+          }
+        }
+
+        itemName.value = formArr[key];
+      } else {
+        for (var i = 0; i < itemName.length; i++) {
+          var item = itemName[i];
+
+          if (item.value == formArr[key]) {
+            item.checked = true;
+          } else {
+            item.checked = false;
+          }
+        }
+      }
+    }
+  }
+};
+exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/drop/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -275,6 +595,8 @@ exports.default = void 0;
 var _utils = require("../../../utils");
 
 var _icon = _interopRequireDefault(require("./icon"));
+
+var _drawData = _interopRequireDefault(require("../draw-data"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -327,11 +649,16 @@ function () {
       document.onmousemove = function (event) {
         _this.onmousemove(event, _this.canvas);
       };
+
+      this.canvas.onmousedown = function () {
+        _drawData.default.getDetail().style.display = 'none';
+      };
     }
   }, {
     key: "styleFramt",
     value: function styleFramt(style, elem) {
-      var judgeStr = 'width,height,left,top,fontSize,lineHeight';
+      console.log(elem, "jjjj");
+      var judgeStr = 'width,height,left,top,fontSize';
       var newStyle = {};
 
       for (var key in style) {
@@ -339,11 +666,19 @@ function () {
           newStyle.transform = "rotate(".concat(style[key], "deg)");
         } else if (key == 'width' || key == 'height') {
           if (key == 'width') {
-            newStyle.minWidth = style.width + this.unit;
+            if (elem.type == 'text') {
+              newStyle.minWidth = style.width + this.unit;
+            } else {
+              newStyle.width = style.width + this.unit;
+            }
           }
 
           if (key == 'height') {
-            newStyle.minHeight = style.height + this.unit;
+            if (elem.type == 'text') {
+              newStyle.minHeight = style.height + this.unit;
+            } else {
+              newStyle.height = style.height + this.unit;
+            }
           }
         } else if (judgeStr.indexOf(key) != -1) {
           newStyle[key] = style[key] + this.unit;
@@ -408,10 +743,8 @@ function () {
           boxSizing: 'border-box' // writingMode:'vertical-rl'
 
         }, this.styleFramt(elem.style, elem)),
-        child: elem.text || '',
         attr: {
           id: elem.name,
-          tabindex: elem.id,
           class: 'draw-editor-elem'
         },
         data: {},
@@ -421,12 +754,20 @@ function () {
 
             _this3.onmousedown(event, dropDom, _this3.canvas);
 
-            if (_this3.elemClick) {
-              _this3.elemClick(dropDom); // console.log('-----')
+            _drawData.default.getDetail().style.display = 'block';
 
+            _drawData.default.setActive(dropDom);
+
+            _drawData.default.setForm();
+
+            if (_this3.elemClick) {
+              _this3.elemClick(dropDom);
 
               _this3.activeElemClick(dropDom);
             }
+          },
+          load: function load() {
+            console.log('uuuuuu');
           },
           blur: function blur() {
             // console.log(that.isAngleClick)
@@ -451,17 +792,20 @@ function () {
             }
           }
         }
-      }); // const dropDom = document.createElement('div');
+      });
 
+      var textDom = (0, _utils.creatDom)({
+        tag: 'span',
+        child: elem.text || ''
+      });
+      dropDom.appendChild(textDom); // const dropDom = document.createElement('div');
 
       var zoomDoms = this.createZoom();
       var angleDom = this.createAngle();
       var sizes = this.createSize();
-      var childs = [angleDom].concat(_toConsumableArray(zoomDoms));
-
-      if (elem.type == 'img') {
-        childs = [].concat(_toConsumableArray(childs), _toConsumableArray(sizes));
-      }
+      var childs = [angleDom].concat(_toConsumableArray(zoomDoms)); // if (elem.type == 'img') {
+      //   childs = [...childs, ...sizes]
+      // }
 
       dropDom.dataset.elemtype = elem.type; // dropDom.innerText = elem.text;
       // 添加旋转图标
@@ -693,8 +1037,8 @@ function () {
         cursor: "url(".concat(angleCursor, ") 4 12, auto")
       };
       angleIcon.className = 'zoom'; // angleIcon. = 10;
+      // angleIcon.tabIndex = 1;
 
-      angleIcon.tabIndex = 1;
       (0, _utils.setStyle)(angleIcon, style);
 
       angleIcon.onblur = function () {
@@ -733,12 +1077,24 @@ function () {
       var detail = parentNode.getBoundingClientRect();
       var width = parentNode.style.width;
       var height = parentNode.style.height;
+      var elemType = parentNode.dataset.elemtype; // console.log(parentNode.offsetWidth,"kkkkk")
+
+      if (elemType !== 'img') {
+        // parentNode.style.minWidth = parentNode.offsetWidth+this.unit;
+        // parentNode.style.minHeight = parentNode.offsetHeight+this.unit;
+        // console.log( parentNode.offsetWidth+this.unit,"jjjkkkk",this.unit)
+        height = parentNode.style.minHeight;
+        width = parentNode.offsetWidth + this.unit;
+      } // console.log(parentNode.offsetWidth,"jjjj")
+
+
       var transform = parentNode.style.transform;
-      var top = parentNode.style.top.replace('px', '');
-      var left = parentNode.style.left.replace('px', '');
+      var top = parentNode.style.top.replace(this.unit, '');
+      var left = parentNode.style.left.replace(this.unit, '');
+      var fontSize = parentNode.style.fontSize.replace(this.unit, '');
       var elemDetail = {
-        width: width.replace('px', ''),
-        height: height.replace('px', ''),
+        width: width.replace(this.unit, ''),
+        height: height.replace(this.unit, ''),
         centerX: detail.left + detail.width / 2,
         centerY: detail.top + detail.height / 2,
         mouseX: event.pageX - left - this.canvasDetail.left,
@@ -747,7 +1103,9 @@ function () {
         pageY: event.pageY,
         angle: transform.replace('rotate(', '').replace('deg)', ''),
         x: left,
-        y: top
+        y: top,
+        fontSize: fontSize,
+        type: parentNode.dataset.elemtype
       };
       this.activeDom.dataset.activeDetail = JSON.stringify(elemDetail);
       this.activeDom.dataset.type = type;
@@ -761,18 +1119,23 @@ function () {
   }, {
     key: "onmousemove",
     value: function onmousemove(evt) {
+      // console.log('move')
       var activeElem = null,
           type = null,
           activeDetail = null,
           centerPos = null,
           mouseToPagePos = null,
           activePos = null,
+          oldWidth = null,
+          oldHeight = null,
           mousePos = null;
 
       if (this.activeDom) {
         type = this.activeDom.dataset.type;
         activeElem = this.activeDom.parentNode;
         activeDetail = JSON.parse(this.activeDom.dataset.activeDetail);
+        oldWidth = activeDetail.width;
+        oldHeight = activeDetail.height;
         centerPos = {
           x: activeDetail.centerX,
           y: activeDetail.centerY
@@ -807,7 +1170,7 @@ function () {
       }
 
       if (type == 'right') {
-        activeDetail.width = mousePos.x - activePos.x + +activeDetail.width; // activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
+        activeDetail.width = mousePos.x - activePos.x + +activeDetail.width;
       }
 
       if (type == 'left') {
@@ -821,34 +1184,47 @@ function () {
 
       if (type === 'leftTop') {
         activeDetail.width = activePos.x - mousePos.x + +activeDetail.width;
-        activeDetail.height = activePos.y - mousePos.y + +activeDetail.height;
+        activeDetail.height = oldHeight * activeDetail.width / oldWidth;
         activeDetail.x = activeDetail.x - (activePos.x - mousePos.x);
-        activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
+        activeDetail.y = activeDetail.y - (activeDetail.height - oldHeight);
       }
 
       if (type === 'rightTop') {
         activeDetail.width = mousePos.x - activePos.x + +activeDetail.width;
-        activeDetail.height = activePos.y - mousePos.y + +activeDetail.height;
-        activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
+        activeDetail.height = oldHeight * activeDetail.width / oldWidth;
+        activeDetail.y = activeDetail.y - (activeDetail.height - oldHeight);
       }
 
       if (type === 'rightBottom') {
         activeDetail.width = mousePos.x - activePos.x + +activeDetail.width;
-        activeDetail.height = mousePos.y - activePos.y + +activeDetail.height;
+        activeDetail.height = oldHeight * activeDetail.width / oldWidth;
       }
 
       if (type === 'leftBottom') {
         activeDetail.width = activePos.x - mousePos.x + +activeDetail.width;
-        activeDetail.height = mousePos.y - activePos.y + +activeDetail.height;
+        activeDetail.height = oldHeight * activeDetail.width / oldWidth;
         activeDetail.x = activeDetail.x - (activePos.x - mousePos.x);
       }
 
       if (activeElem) {
+        activeDetail.fontSize = activeDetail.fontSize * activeDetail.width / oldWidth;
         activeElem.style.transform = "rotate(".concat(activeDetail.angle, "deg) ");
-        activeElem.style.left = "".concat(activeDetail.x, "px");
-        activeElem.style.top = "".concat(activeDetail.y, "px");
-        activeElem.style.width = "".concat(activeDetail.width, "px");
-        activeElem.style.height = "".concat(activeDetail.height, "px");
+
+        if (activeDetail.type == 'img') {
+          activeElem.style.width = activeDetail.width + this.unit;
+          activeElem.style.height = activeDetail.heigh + tthis.unit;
+          activeElem.style.left = activeDetail.x + this.unit;
+          activeElem.style.top = activeDetail.y + this.unit;
+        } else {
+          if (activeDetail.fontSize >= 12) {
+            // console.log('move')
+            activeElem.style.left = activeDetail.x + this.unit;
+            activeElem.style.top = activeDetail.y + this.unit; // activeElem.style.minWidth = activeDetail.width+this.unit;
+            // activeElem.style.minHeight = activeDetail.height+this.unit;
+
+            activeElem.style.fontSize = activeDetail.fontSize + this.unit;
+          }
+        }
       }
     }
   }, {
@@ -870,7 +1246,7 @@ function () {
 var _default = new drop();
 
 exports.default = _default;
-},{"../../../utils":"utils/index.js","./icon":"plugin/draw-editer/drop/icon.js"}],"plugin/draw-editer/draw-bar/data.js":[function(require,module,exports) {
+},{"../../../utils":"utils/index.js","./icon":"plugin/draw-editer/drop/icon.js","../draw-data":"plugin/draw-editer/draw-data/index.js"}],"plugin/draw-editer/draw-bar/data.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -994,49 +1370,7 @@ function () {
 
 var _default = bar;
 exports.default = _default;
-},{"./data":"plugin/draw-editer/draw-bar/data.js","../../../utils":"utils/index.js"}],"plugin/draw-editer/draw-data/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var arr = [];
-var activeDom = null;
-var _default = {
-  add: function add(item) {
-    return arr.push(item);
-  },
-  getData: function getData(id) {
-    if (id) {
-      return arr;
-    } else {
-      for (var i = 0; i < arr.length; i++) {
-        if (id == arr[i].id) {
-          return arr[i];
-        }
-      }
-    }
-  },
-  editorData: function editorData(id, item) {
-    for (var i = 0; i < arr.lengthl; i++) {
-      if (id == arr[i]) {
-        arr[i] = item;
-        return arr;
-      }
-    }
-
-    return arr;
-  },
-  setActive: function setActive(dom) {
-    activeDom = dom;
-  },
-  getActive: function getActive() {
-    return activeDom;
-  }
-};
-exports.default = _default;
-},{}],"plugin/draw-editer/draw-detail/data.js":[function(require,module,exports) {
+},{"./data":"plugin/draw-editer/draw-bar/data.js","../../../utils":"utils/index.js"}],"plugin/draw-editer/draw-detail/data.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1079,16 +1413,27 @@ var setActive = function setActive(event) {
 };
 
 function _default() {
+  var _drawData$getParams = _drawData.default.getParams(),
+      unit = _drawData$getParams.unit;
+
   return [{
     title: "文字内容",
     name: 'text',
     type: 'textarea',
     on: {
+      change: function change() {
+        console.log("------");
+      },
       input: function input(event, e) {
-        var activeDom = _drawData.default.getActive(); // console.log(event,e)
+        var activeDom = _drawData.default.getActive();
 
+        var textDom = activeDom.getElementsByTagName('span')[0];
 
-        activeDom.innerText = e.value;
+        if (activeDom) {
+          textDom.innerText = e.value;
+          activeDom.style.minWidth = '';
+          activeDom.style.minHeight = '';
+        }
       }
     }
   }, {
@@ -1111,6 +1456,7 @@ function _default() {
     title: "字号",
     name: 'fontSize',
     type: 'select',
+    isInput: true,
     options: [{
       label: '14',
       value: '14'
@@ -1119,13 +1465,20 @@ function _default() {
       value: '16'
     }],
     on: {
-      change: function change(evt) {
-        console.log('ppppp', evt.value);
+      change: function change(evt, e) {
+        console.log("------", "kkkk");
+
+        var activeDom = _drawData.default.getActive();
+
+        if (activeDom) {
+          activeDom.style.fontSize = e.value + unit;
+        }
       }
     }
   }, {
     title: "行高",
     name: 'lineHeight',
+    isInput: true,
     type: 'select',
     options: [{
       label: '14',
@@ -1135,21 +1488,42 @@ function _default() {
       value: '16'
     }],
     on: {
-      change: function change(evt) {
-        console.log('ppppp', evt.value);
+      change: function change(evt, e) {
+        var activeDom = _drawData.default.getActive();
+
+        if (activeDom) {
+          activeDom.style.lineHeight = e.value + unit;
+        }
       }
     }
   }, {
     title: "颜色",
     name: 'color',
     type: 'color',
-    on: {}
+    on: {
+      change: function change(event, value) {
+        // console.log(e.value,"jjjj")
+        var activeDom = _drawData.default.getActive();
+
+        if (activeDom) {
+          activeDom.style.color = value;
+        }
+      }
+    }
   }, {
     title: "",
     name: 'textAlign',
     type: 'radio-button',
+    style: {
+      display: 'inline-block'
+    },
     on: {
-      change: function change() {}
+      change: function change(event, dom) {
+        // console.log("oooo",dom.value,event)
+        var activeDom = _drawData.default.getActive();
+
+        activeDom.style.textAlign = dom.value;
+      }
     },
     options: [{
       value: 'left',
@@ -1164,16 +1538,76 @@ function _default() {
       label: '',
       url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+'
     }, {
-      tag: 'div',
-      style: {
-        display: 'inline-block',
-        height: '15px',
-        width: '1px',
-        backgroundColor: '#666',
-        verticalAlign: 'middle',
-        margin: '0 5px'
-      }
+      value: 'justify',
+      label: '',
+      url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg1NDI2NDExIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEyNzggMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2MzMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQ5LjYwOTM3NSIgaGVpZ2h0PSIyMDAiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTI2My40NzYyMzY3NyA3MzMuNDcwMTg3NjdoNjY5LjAxNDY2OTU1djY3LjA1MzU3NTU1SDI2My40NzYyMzY3N3pNNDAyLjc4NjU0MzQ1IDQ5OC40Nzg0NTczNmg1MzEuNDY2NzIyMDl2NjcuMDUzNTc1NTVINDAyLjc4NjU0MzQ1ek0yNjMuNDc2MjM2NzcgMjYzLjQ3NjIzNjc3aDY2OS4wMTQ2Njk1NXY2Ny4wNTM1NzU1NEgyNjMuNDc2MjM2Nzd6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxNjM0Ij48L3BhdGg+PC9zdmc+'
     }]
+  }, {
+    title: "",
+    name: 'fontWeight',
+    type: 'switch',
+    style: {
+      padding: '0px',
+      margin: '0px 5px'
+    },
+    url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzA4NjM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5MzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjczLjUyMjA3MTA1IDg1OS42MTQyODgzM1YxNjQuNDE4NTA0MTloMjA1LjQ5ODEyNTE5cTkyLjEzNTMwMjkgMCAxNDcuMjI2Mjg5NCA0My43MjMwMDUzdDU1LjA5MDk4NzE2IDExNS45OTcxMzI5N3EwIDU3LjQ1MjAyODktMzIuNzkyMjU0MzEgMTAxLjQzNzM3MjMydC05MC4wNDc1Mjk0NiA2Mi40MTQ1OTAxOXYxLjc5MjY0MjhxNzEuMzU1OTQ0NTkgOC4wNzc4MjU1MyAxMTQuMDI5NTk4MDggNTMuNjM3MTk2OTl0NDIuNjI5OTMwMTQgMTE1LjU3MDgzMzYxcTAgODkuNzc0MjYwNS02NC44MDg0MjQ0NCAxNDUuMTkzMTcwMTV0LTE2NS45MTc4NzQ5NCA1NS40Mjk4Mzk4MXpNMzYzLjg0Mjg2OTQ3IDI0Mi45MzQwOTA1NFY0NjAuNjA5MDcyOTVoODIuMTk5MjUwMjFxNjUuNDc1MjAwMjMgMCAxMDIuNzQ5MDYyMjUtMzEuNjQ0NTI1NjJ0MzcuMjYyOTMxMTgtODcuNzQxMTQwNTZxMC05OC4yODkzMTYyMi0xMzEuODY4NTg0MjMtOTguMjg5MzE2MjR6IG0wIDI5NS43NzUyMDAyNHYyNDIuMzM0NzU3MDFoMTA4LjM4OTMzMDE2cTcwLjg5Njg1MzM4IDAgMTA5LjUxNTE5Nzg2LTMyLjU0MDg0NjM3dDM4LjYxODM0Mzc5LTkwLjQ0MTAzNjk3cTAtMTE5LjM4NTY2NjE5LTE2My4wMzIxNTU2MS0xMTkuMzg1NjY1NTF6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxOTQwIj48L3BhdGg+PC9zdmc+',
+    on: {
+      change: function change(event, e) {
+        var activeDom = _drawData.default.getActive(); // console.log(event,e)
+
+
+        if (e.checked) {
+          activeDom.style.fontWeight = 'bold';
+          return;
+        }
+
+        activeDom.style.fontWeight = 'normal';
+      }
+    }
+  }, {
+    title: "",
+    name: 'fontStyle',
+    type: 'switch',
+    style: {
+      padding: '0px',
+      margin: '0px'
+    },
+    url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzM0Njc1IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyNDUiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNDQ2LjEwOTMyNzgyIDkwMi43ODg1NzQyMkgzNjkuMDAxMjQ5NzVMNTc3Ljg5MDY3MjE4IDE2MS4yMTE0MjU3OGg3Ny4xMDgwNzgwN0w0NDYuMTA5MzI3ODIgOTAyLjc4ODU3NDIyeiIgZmlsbD0iIzY2NjY2NiIgcC1pZD0iMjI0NiI+PC9wYXRoPjwvc3ZnPg==',
+    on: {
+      change: function change(event, e) {
+        var activeDom = _drawData.default.getActive(); // console.log(event,e)
+
+
+        if (e.checked) {
+          activeDom.style.fontStyle = 'italic';
+          return;
+        }
+
+        activeDom.style.fontStyle = 'normal';
+      }
+    }
+  }, {
+    title: "",
+    name: 'textDecoration',
+    type: 'switch',
+    style: {
+      padding: '0px',
+      margin: '5px'
+    },
+    url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzI4NDA5IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwOTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXYtNTMuMzA4MzAzNDNsNTM0LjM5MjE3NjA4LTQuODQ5MDY1NjF2NTMuMjk3ODMwMjNMMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXpNNzUzLjc5ODcxMzc4IDUyMS40MTI3Njk2NXEwIDI3My41MDYxNTcxOS0yNDguMTA4NzgyOTEgMjczLjUwNjE1Nzk3LTIzNy43NDAzNzAyNSAwLTIzNy43NDAzNzAyNy0yNjMuOTIzMjMwNzhWMTM5LjMwMDEwODQ0aDgzLjI2MTQ5NTE0djM4Ny45MzU3Mjk2OXEwIDE5My41NzUxMjIxMSAxNjIuMzMzNzMyODggMTkzLjU3NTEyMjEgMTU2Ljk0MDA2Mzg1IDAgMTU2Ljk0MDA2Mzg2LTE4Ny4zMzMxMjgyVjEzOS4yNDc3NDMwNUg3NTMuNzk4NzEzNzh6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIyMDkzIj48L3BhdGg+PC9zdmc+',
+    on: {
+      change: function change(event, e) {
+        var activeDom = _drawData.default.getActive(); // console.log(event,e)
+
+
+        if (e.checked) {
+          activeDom.style.textDecoration = 'underline';
+          return;
+        }
+
+        activeDom.style.textDecoration = 'none';
+      }
+    }
   }];
 }
 /**
@@ -1181,7 +1615,7 @@ function _default() {
         tag: 'div',
         style: Object.assign({}, publicStyle, {
           backgroundSize: '17px',
-          backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzA4NjM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5MzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjczLjUyMjA3MTA1IDg1OS42MTQyODgzM1YxNjQuNDE4NTA0MTloMjA1LjQ5ODEyNTE5cTkyLjEzNTMwMjkgMCAxNDcuMjI2Mjg5NCA0My43MjMwMDUzdDU1LjA5MDk4NzE2IDExNS45OTcxMzI5N3EwIDU3LjQ1MjAyODktMzIuNzkyMjU0MzEgMTAxLjQzNzM3MjMydC05MC4wNDc1Mjk0NiA2Mi40MTQ1OTAxOXYxLjc5MjY0MjhxNzEuMzU1OTQ0NTkgOC4wNzc4MjU1MyAxMTQuMDI5NTk4MDggNTMuNjM3MTk2OTl0NDIuNjI5OTMwMTQgMTE1LjU3MDgzMzYxcTAgODkuNzc0MjYwNS02NC44MDg0MjQ0NCAxNDUuMTkzMTcwMTV0LTE2NS45MTc4NzQ5NCA1NS40Mjk4Mzk4MXpNMzYzLjg0Mjg2OTQ3IDI0Mi45MzQwOTA1NFY0NjAuNjA5MDcyOTVoODIuMTk5MjUwMjFxNjUuNDc1MjAwMjMgMCAxMDIuNzQ5MDYyMjUtMzEuNjQ0NTI1NjJ0MzcuMjYyOTMxMTgtODcuNzQxMTQwNTZxMC05OC4yODkzMTYyMi0xMzEuODY4NTg0MjMtOTguMjg5MzE2MjR6IG0wIDI5NS43NzUyMDAyNHYyNDIuMzM0NzU3MDFoMTA4LjM4OTMzMDE2cTcwLjg5Njg1MzM4IDAgMTA5LjUxNTE5Nzg2LTMyLjU0MDg0NjM3dDM4LjYxODM0Mzc5LTkwLjQ0MTAzNjk3cTAtMTE5LjM4NTY2NjE5LTE2My4wMzIxNTU2MS0xMTkuMzg1NjY1NTF6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxOTQwIj48L3BhdGg+PC9zdmc+)',
+          backgroundImage: 'url()',
         }),
         on: {
           click: (event, dom) => {
@@ -1208,7 +1642,7 @@ function _default() {
         tag: 'div',
         style: Object.assign({}, publicStyle, {
           backgroundSize: '17px',
-          backgroundImage: 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzI4NDA5IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwOTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXYtNTMuMzA4MzAzNDNsNTM0LjM5MjE3NjA4LTQuODQ5MDY1NjF2NTMuMjk3ODMwMjNMMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXpNNzUzLjc5ODcxMzc4IDUyMS40MTI3Njk2NXEwIDI3My41MDYxNTcxOS0yNDguMTA4NzgyOTEgMjczLjUwNjE1Nzk3LTIzNy43NDAzNzAyNSAwLTIzNy43NDAzNzAyNy0yNjMuOTIzMjMwNzhWMTM5LjMwMDEwODQ0aDgzLjI2MTQ5NTE0djM4Ny45MzU3Mjk2OXEwIDE5My41NzUxMjIxMSAxNjIuMzMzNzMyODggMTkzLjU3NTEyMjEgMTU2Ljk0MDA2Mzg1IDAgMTU2Ljk0MDA2Mzg2LTE4Ny4zMzMxMjgyVjEzOS4yNDc3NDMwNUg3NTMuNzk4NzEzNzh6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIyMDkzIj48L3BhdGg+PC9zdmc+)',
+          backgroundImage: 'url()',
         }),
         on: {
           click: (event, dom) => {
@@ -1228,16 +1662,16 @@ exports.default = void 0;
 
 var _utils = require("../../../utils");
 
-var _this = void 0;
-
 var _default = function _default(params) {
+  var options = params.options,
+      isInput = params.isInput;
   var boxDom = (0, _utils.creatDom)({
     tag: 'div',
     style: {
       position: 'relative'
     }
   });
-  var select = (0, _utils.creatDom)({
+  var select = isInput ? (0, _utils.creatDom)({
     tag: 'div',
     style: {
       maxHeight: '200px',
@@ -1251,36 +1685,22 @@ var _default = function _default(params) {
       borderRadius: '4px',
       margin: '5px 0'
     }
-  }); // const options = [];
-
-  var _loop = function _loop(i) {
-    var everyOption = _utils.creatDom.call(_this, {
-      tag: 'div',
-      child: i,
-      style: {
-        cursor: 'pointer',
-        boxSizing: 'border-box',
-        padding: '8px 10px',
-        background: '#fff'
-      },
-      on: {
-        hover: function hover() {
-          everyOption.style.background = "#e6f7ff";
-        },
-        mousedown: function mousedown() {
-          console.log("----");
-          inputDom.value = everyOption.innerText;
-        }
-      }
-    });
-
-    select.appendChild(everyOption);
-  };
-
-  for (var i = 1; i < 100; i++) {
-    _loop(i);
-  }
-
+  }) : (0, _utils.creatDom)({
+    tag: 'select',
+    attr: {
+      name: params.name
+    },
+    style: {
+      display: 'block',
+      width: '100%',
+      height: '35px',
+      borderRadius: '4px',
+      border: '1px solid #d9d9d9',
+      boxSizing: 'border-box',
+      padding: ' 0 10px',
+      background: '#fff'
+    }
+  });
   var inputDom = (0, _utils.creatDom)({
     tag: 'input',
     style: {
@@ -1293,23 +1713,79 @@ var _default = function _default(params) {
       padding: ' 0 10px'
     },
     attr: {
-      name: params.name
+      name: params.name,
+      autocomplete: "off"
     },
     on: {
-      focus: function focus() {
+      focus: function focus(event, dom) {
         select.style.display = 'block';
+        var value = dom.value || ''; // console.log(arr,"kkkk")
+
+        creatOptions(select, options, inputDom, params);
       },
       blur: function blur() {
         select.style.display = 'none';
+      },
+      input: function input(event, dom) {
+        var value = dom.value || '';
+        var arr = value ? options.filter(function (currentValue) {
+          // console.log(currentValue,"kkkkk")
+          return (currentValue.value + '').indexOf(value) != -1;
+        }) : options;
+
+        if (value) {
+          arr.unshift({
+            value: value,
+            label: value
+          });
+        }
+
+        creatOptions(select, arr, inputDom, params);
       }
     }
   });
-  boxDom.appendChild(inputDom);
+  creatOptions(select, options, inputDom, params);
+
+  if (isInput) {
+    boxDom.appendChild(inputDom);
+  }
+
   boxDom.appendChild(select);
   return boxDom;
 };
 
 exports.default = _default;
+
+function creatOptions(select, options, inputDom, params) {
+  select.innerHTML = '';
+  options.map(function (item, index) {
+    var everyOption = (0, _utils.creatDom)({
+      tag: 'option',
+      child: item.value,
+      style: {
+        display: 'block',
+        cursor: 'pointer',
+        boxSizing: 'border-box',
+        padding: '8px 10px',
+        height: '35px',
+        background: '#fff'
+      },
+      attr: {
+        value: item.value
+      },
+      on: {
+        hover: function hover() {
+          everyOption.style.background = "#e6f7ff";
+        },
+        mousedown: function mousedown(event, dom) {
+          inputDom.value = everyOption.innerText;
+          params.on.change(event, dom);
+        }
+      }
+    });
+    select.appendChild(everyOption);
+  });
+}
 },{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/textarea.js":[function(require,module,exports) {
 "use strict";
 
@@ -1342,6 +1818,57 @@ var _default = function _default(params) {
 };
 
 exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/radio.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+function radio() {}
+
+var _default = function _default(params) {
+  var lableDom = (0, _utils.creatDom)({
+    tag: 'label',
+    chlid: 'niho',
+    style: {
+      width: '30px',
+      height: '30px',
+      backgroundImage: "url(".concat(params.url, ")"),
+      display: 'inline-block',
+      backgroundSize: '100%',
+      backgroundPosition: 'center'
+    }
+  });
+  var radioDom = (0, _utils.creatDom)({
+    tag: 'input',
+    attr: {
+      type: 'radio',
+      name: params.name,
+      value: params.value
+    },
+    on: {
+      change: function change(event, dom) {
+        boxDom.style.backgroundColor = "red";
+        console.log(dom.checked, "jjj", event);
+        params.on.change(event, dom);
+      }
+    },
+    style: {
+      width: '30px',
+      height: '30px',
+      display: 'inline-block',
+      opacity: '0'
+    }
+  });
+  lableDom.appendChild(radioDom);
+  return boxDom;
+};
+
+exports.default = _default;
 },{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/radio-button.js":[function(require,module,exports) {
 "use strict";
 
@@ -1352,55 +1879,72 @@ exports.default = void 0;
 
 var _utils = require("../../../utils");
 
+var _radio = _interopRequireDefault(require("./radio"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var options = [];
 
 var render = function render(options, boxDom, params) {
   var change = params.on.change;
   boxDom.innerHTML = '';
-  options.map(function (item) {
-    var everyItem = (0, _utils.creatDom)({
-      tag: 'input',
+  options = options.map(function (item) {
+    var lableDom = (0, _utils.creatDom)({
+      tag: 'label',
+      chlid: 'niho',
       attr: {
-        value: item.value,
-        name: params.name,
-        checked: item.active ? true : false,
-        type: 'radio'
+        value: item.value
+      },
+      data: {
+        value: item.value
       },
       style: {
         width: '30px',
         height: '30px',
-        cursor: 'pointer',
+        backgroundImage: "url(".concat(item.url, ")"),
         display: 'inline-block',
-        backgroundSize: '25px',
-        backgroundColor: item.active ? 'rgba(14,19,24,.15)' : '#fff',
+        backgroundSize: '100%',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        borderRadius: '4px',
-        verticalAlign: 'middle',
-        margin: '2px',
-        backgroundImage: "url(".concat(item.url, ")")
-      },
-      on: {
-        click: function click(event, dom) {
-          var value = dom.getAttribute('value');
-          options = options.map(function (item, index) {
-            if (item.value == value) {
-              item.active = true;
-            } else {
-              item.active = false;
-            }
-
-            return item;
-          });
-          boxDom.value = value;
-          boxDom.setAttribute('value', value); // change()
-
-          render(options, boxDom, params);
-        }
+        borderRadius: '4px'
       }
     });
-    boxDom.appendChild(everyItem);
-  });
+    var radioDom = (0, _utils.creatDom)({
+      tag: 'input',
+      attr: {
+        type: 'radio',
+        name: params.name,
+        value: item.value
+      },
+      on: {
+        change: function change(event, dom) {
+          // console.log('iiiiii')
+          for (var i = 0; i < options.length; i++) {
+            var value = options[i].dom.dataset.value;
+            console.log(options[i].dom.value);
+
+            if (value == dom.value) {
+              options[i].dom.style.backgroundColor = 'rgba(14,19,24,.07)';
+            } else {
+              options[i].dom.style.backgroundColor = '#fff';
+            }
+          }
+
+          params.on.change(event, dom);
+        }
+      },
+      style: {
+        width: '30px',
+        height: '30px',
+        display: 'inline-block',
+        opacity: '0',
+        cursor: 'pointer'
+      }
+    });
+    lableDom.appendChild(radioDom);
+    boxDom.appendChild(lableDom);
+    item.dom = lableDom;
+    return item;
+  }); // console.log("mmmmn",options)
 };
 
 var _default = function _default(params) {
@@ -1409,11 +1953,6 @@ var _default = function _default(params) {
     tag: 'div',
     style: {
       display: 'inline-block'
-    },
-    on: {
-      input: function input() {
-        console.log("kkjjjjj");
-      }
     }
   }); // new Proxy(boxDom,{
   //     set:function(target, key, value){
@@ -1422,6 +1961,204 @@ var _default = function _default(params) {
   // })
 
   render(options, boxDom, params);
+  return boxDom;
+};
+
+exports.default = _default;
+},{"../../../utils":"utils/index.js","./radio":"plugin/draw-editer/components/radio.js"}],"plugin/draw-editer/components/switched.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+var _default = function _default(params) {
+  var boxDom = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      display: 'inline-block',
+      width: '30px',
+      height: '30px',
+      backgroundImage: "url(".concat(params.url, ")"),
+      backgroundSize: '80%',
+      backgroundPosition: 'center',
+      borderRadius: '4px',
+      backgroundRepeat: 'no-repeat'
+    }
+  });
+  var checkbox = (0, _utils.creatDom)({
+    tag: 'input',
+    attr: {
+      type: 'checkbox',
+      name: params.name
+    },
+    style: {
+      width: '30px',
+      height: '30px',
+      display: 'inline-block',
+      opacity: '0',
+      cursor: 'pointer'
+    },
+    on: {
+      change: function change(event, dom) {
+        if (dom.checked) {
+          boxDom.style.backgroundColor = 'rgba(14,19,24,.07)';
+        } else {
+          boxDom.style.backgroundColor = '#fff';
+        }
+
+        params.on.change(event, dom);
+      }
+    }
+  });
+  boxDom.appendChild(checkbox);
+  return boxDom;
+};
+
+exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/color.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var rangeValue = 0;
+
+var _default = function _default(params) {
+  var _style;
+
+  var boxDom = (0, _utils.creatDom)({
+    tag: 'div'
+  });
+  var showColor = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      width: '100%',
+      height: '30px',
+      background: 'red',
+      borderRadius: '4px',
+      cursor: 'pointer'
+    }
+  });
+  var selectDom = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      // height:'200px',
+      width: '100%' // background:'blue'
+
+    }
+  });
+  var svSelevt = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      position: 'relative',
+      height: '112px',
+      width: '268px',
+      // background:'blue',
+      marginTop: '4px',
+      borderRadius: '4px',
+      overflow: 'hidden'
+    },
+    on: {
+      click: function click(event, e) {
+        var svDetail = svSelevt.getBoundingClientRect();
+        var saturation = event.pageX - svDetail.left;
+        var value = svDetail.bottom - event.pageY;
+
+        var _hsvToRgb = (0, _utils.hsvToRgb)({
+          h: rangeValue * 360,
+          s: saturation,
+          v: value
+        }),
+            r = _hsvToRgb.r,
+            g = _hsvToRgb.g,
+            b = _hsvToRgb.b;
+
+        showColor.style.background = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")");
+        params.on.change(event, "rgb(".concat(r, ",").concat(g, ",").concat(b, ")"));
+      } // height:
+
+    }
+  });
+  var gradientBlack = (0, _utils.creatDom)({
+    tag: 'div',
+    style: (_style = {
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(180deg,transparent 0,#000)',
+      borderRadius: '4px',
+      position: 'absolute'
+    }, _defineProperty(_style, "borderRadius", '4px'), _defineProperty(_style, "top", '0'), _defineProperty(_style, "left", '0'), _defineProperty(_style, "zIndex", 1), _defineProperty(_style, "cursor", 'pointer'), _style)
+  });
+  var gradientWhite = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(270deg,transparent 0,#fff)',
+      position: 'absolute',
+      borderRadius: '4px',
+      top: '0',
+      left: '0',
+      cursor: 'pointer'
+    }
+  });
+  var rangeDom = (0, _utils.creatDom)({
+    tag: 'input',
+    attr: {
+      type: 'range',
+      min: 0,
+      max: 1,
+      step: 0.05,
+      value: rangeValue
+    },
+    style: {
+      display: 'block',
+      width: '100%',
+      height: '10px'
+    },
+    on: {
+      change: function change(event, e) {
+        rangeValue = e.value;
+
+        var _hsvToRgb2 = (0, _utils.hsvToRgb)({
+          h: e.value * 360,
+          s: 100,
+          v: 100
+        }),
+            r = _hsvToRgb2.r,
+            g = _hsvToRgb2.g,
+            b = _hsvToRgb2.b;
+
+        svSelevt.style.background = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")"); // console.log()
+      }
+    }
+  });
+  var hSelect = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      height: '10px',
+      borderRadius: '10px',
+      marginTop: '10px',
+      background: 'linear-gradient(90deg,red,#ff2b00,#f50,#ff8000,#fa0,#ffd500,#ff0,#d4ff00,#af0,#80ff00,#5f0,#2bff00,#0f0,#00ff2b,#0f5,#00ff80,#0fa,#00ffd5,#0ff,#00d4ff,#0af,#007fff,#05f,#002bff,#00f,#2a00ff,#50f,#7f00ff,#a0f,#d400ff,#f0f,#ff00d4,#f0a,#ff0080,#f05,#ff002b)'
+    }
+  });
+  svSelevt.appendChild(gradientBlack);
+  svSelevt.appendChild(gradientWhite);
+  hSelect.appendChild(rangeDom);
+  selectDom.appendChild(hSelect);
+  selectDom.appendChild(svSelevt);
+  boxDom.appendChild(showColor);
+  boxDom.appendChild(selectDom);
   return boxDom;
 };
 
@@ -1450,6 +2187,18 @@ Object.defineProperty(exports, "radioButton", {
     return _radioButton.default;
   }
 });
+Object.defineProperty(exports, "switched", {
+  enumerable: true,
+  get: function () {
+    return _switched.default;
+  }
+});
+Object.defineProperty(exports, "color", {
+  enumerable: true,
+  get: function () {
+    return _color.default;
+  }
+});
 
 var _inputSelect = _interopRequireDefault(require("./input-select"));
 
@@ -1457,8 +2206,12 @@ var _textarea = _interopRequireDefault(require("./textarea"));
 
 var _radioButton = _interopRequireDefault(require("./radio-button"));
 
+var _switched = _interopRequireDefault(require("./switched"));
+
+var _color = _interopRequireDefault(require("./color"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./input-select":"plugin/draw-editer/components/input-select.js","./textarea":"plugin/draw-editer/components/textarea.js","./radio-button":"plugin/draw-editer/components/radio-button.js"}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
+},{"./input-select":"plugin/draw-editer/components/input-select.js","./textarea":"plugin/draw-editer/components/textarea.js","./radio-button":"plugin/draw-editer/components/radio-button.js","./switched":"plugin/draw-editer/components/switched.js","./color":"plugin/draw-editer/components/color.js"}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1488,10 +2241,13 @@ function () {
   function drawDetail(canvas) {
     _classCallCheck(this, drawDetail);
 
-    this.canvas = canvas;
+    var _drawData$getParams = _drawData.default.getParams(),
+        detail = _drawData$getParams.detail;
+
+    this.canvas = detail;
     this.form = null;
     this.activeDom = null;
-    this.data = _data.default.call(this);
+    this.data = _data.default.call(this), this.detailBox = null;
   }
 
   _createClass(drawDetail, [{
@@ -1499,17 +2255,24 @@ function () {
     value: function init() {
       var _this = this;
 
+      if (this.detailBox) {
+        this.detailBox.parentNode.removeChild(this.detailBox);
+      }
+
+      var _drawData$getParams2 = _drawData.default.getParams(),
+          canvas = _drawData$getParams2.canvas;
+
       var detailBox = _utils.creatDom.call(this, {
         tag: 'form',
         style: {
           position: 'absolute',
           width: '300px',
+          minHeight: canvas.style.height,
           background: '#FFF',
           margin: '0 -300px 0 0',
           right: '-5px',
           bottom: '0px',
-          top: '0px' // boxShadow:'0 2px 8px rgba(0,0,0,0.15)',
-
+          top: '0px'
         }
       });
 
@@ -1517,63 +2280,31 @@ function () {
       this.data.map(function (item, index) {
         detailBox.appendChild(_this.divList(item));
       });
+      this.detailBox = _drawData.default.setDetail(detailBox);
       this.canvas.appendChild(detailBox);
     }
   }, {
     key: "active",
     value: function active(dom) {
-      // let type = dom.dataset.elemtype,
-      // text = dom.innerText,
-      // fontFamily = dom.style.fontFamily,
-      // fontSize = dom.style.fontSize,
-      // lineHeight = dom.style.lineHeight,
-      // textAlign = dom.style.textAlign,
-      // fontWeight = dom.style.fontWeight,
-      // color=dom.style.color;
-      this.activeDom = dom;
-      var formArr = {
-        text: dom.innerText,
-        fontFamily: dom.style.fontFamily,
-        fontSize: dom.style.fontSize,
-        lineHeight: dom.style.lineHeight,
-        textAlign: dom.style.textAlign
-      };
-
-      for (var key in formArr) {
-        // console.log(this.form)
-        var itemName = document.getElementsByName(key);
-
-        if (itemName.length == 1) {
-          itemName[0].value = formArr[key];
-        } else {
-          for (var i = 0; i < itemName.length; i++) {
-            var item = itemName[i];
-
-            if (item.value == formArr[key]) {
-              item.checked = true;
-            } else {
-              item.checked = false;
-            }
-          }
-        }
-      }
-
-      _drawData.default.setActive(dom); // 
+      this.activeDom = dom; // this.init();
+      // drawData.getDetail().style.display = 'block'
+      // 
       // .text = '3333'
       // console.log(this.form,"kkkk")
       // if(type == text)
       // console.log(type,text,fontFamily,fontSize,lineHeight,textAlign,color)
-
     }
   }, {
     key: "divList",
     value: function divList(params) {
+      // console.log(params.style,"hhh")
       var domBox = _utils.creatDom.call(this, {
         tag: 'div',
-        style: {
+        style: Object.assign({
           padding: '5px 10px',
-          margin: '8px 5px'
-        }
+          margin: '8px 5px',
+          display: params.type == 'switch' ? 'inline-block' : 'block'
+        }, params.style)
       });
 
       var titleDom = _utils.creatDom.call(this, {
@@ -1595,9 +2326,7 @@ function () {
       }
 
       if (params.type == 'select') {
-        itemDom = (0, _components.inputSelect)({
-          name: params.name
-        }); // itemDom = creatDom.call(this, { tag: 'select', on: params.on })
+        itemDom = (0, _components.inputSelect)(params); // itemDom = creatDom.call(this, { tag: 'select', on: params.on })
         // let optionData = params.options;
         // optionData.map((item) => {
         //   itemDom.appendChild(creatDom.call(this, { tag: 'option', child: item.label }))
@@ -1616,16 +2345,34 @@ function () {
         // })
       }
 
-      if (params.type == 'color') {
-        itemDom = _utils.creatDom.call(this, {
-          tag: 'input',
-          attr: {
-            type: 'color'
-          }
-        });
+      if (params.type == 'switch') {
+        itemDom = (0, _components.switched)(params);
       }
 
-      domBox.appendChild(titleDom);
+      if (params.type == 'color') {
+        itemDom = (0, _components.color)(params); // itemDom = creatDom.call(this, {
+        //   tag: 'input',
+        //   attr: {
+        //     name: params.name,
+        //     // class: 'jscolor'
+        //     type:'color'
+        //   },
+        //   style: {
+        //     width: '100%',
+        //     lineHeight: '35px',
+        //     borderRadius: '4px',
+        //     border: '1px solid #d9d9d9',
+        //     boxSizing: 'border-box',
+        //     padding: ' 0 10px',
+        //   },
+        //   on: params.on
+        // })
+      }
+
+      if (params.type !== 'switch') {
+        domBox.appendChild(titleDom);
+      }
+
       domBox.appendChild(itemDom);
       return domBox;
     }
@@ -1827,33 +2574,19 @@ exports.default = void 0;
 var _default = [{
   name: 1,
   id: 1,
-  text: '物理 <br/> 元本9',
+  text: '能力提高体系 八年级 秋',
   type: 'text',
   style: {
-    width: 50,
-    height: 400,
+    // width:50,
+    // height:400,
     angle: 0,
-    top: 40,
-    left: 800,
-    color: '#000',
-    fontSize: 80,
-    lineHeight: 96,
+    top: 297.58740,
+    left: 602.44921,
+    color: '#333',
+    fontSize: 14,
+    lineHeight: 1.5,
     textAlign: 'left',
     fontWeight: 'bold'
-  }
-}, {
-  name: 2,
-  id: 2,
-  type: 'img',
-  src: 'https://tse3-mm.cn.bing.net/th?id=OIP.rJNHO8sYJpEhccdXGlN27gHaFj&w=277&h=207&c=7&o=5&dpr=2&pid=1.7',
-  style: {
-    width: 100,
-    height: 200,
-    angle: 0,
-    top: 200,
-    left: 100,
-    color: '#000',
-    fontSize: 14
   }
 }];
 exports.default = _default;
@@ -1875,6 +2608,8 @@ var _drawImg = _interopRequireDefault(require("../draw-img"));
 
 var _data = _interopRequireDefault(require("./data"));
 
+var _drawData = _interopRequireDefault(require("../draw-data"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1891,14 +2626,22 @@ function () {
 
     _classCallCheck(this, drawEditer);
 
+    _drawData.default.setParams({
+      canvas: params.canvas.dom,
+      unit: params.unit || 'px',
+      zoom: params.canvas.zoom || 1,
+      detail: params.detail.dom
+    });
+
     this.canvas = params.canvas.dom;
     this.unit = params.unit || 'px';
+    this.zoom = params.canvas.zoom || 1;
     this.drawData = _data.default;
     this.canvas.style.position = 'relative';
-    this.canvas.style.height = params.canvas.height + this.unit;
-    this.canvas.style.width = params.canvas.width + this.unit;
+    this.canvas.style.height = params.canvas.height * this.zoom + this.unit;
+    this.canvas.style.width = params.canvas.width * this.zoom + this.unit;
     this.elements = [];
-    this.id = 0; // console.log(params,"kjjj")
+    this.id = 0;
 
     _drop.default.init(this.canvas, params, this.unit, function (dom) {
       _this.activeElemClick(dom);
@@ -1918,25 +2661,8 @@ function () {
     value: function create() {}
   }, {
     key: "activeElemClick",
-    value: function activeElemClick(dom) {
-      console.log(this);
-      this.detail.active(dom);
-    }
-  }, {
-    key: "getData",
-    value: function getData() {
-      var doms = this.canvas.querySelectorAll('.box');
-      console.log(doms, "kkkkk");
-
-      for (var key in doms) {
-        var style = doms[key].style;
-        console.log(style, "kkkk"); // arr.push({
-        // })
-      } // doms.map((item,index)=>{
-      //   let style = item.style;
-      //   console.log(style,"kkkk")
-      // })
-
+    value: function activeElemClick(dom) {// console.log(this)
+      // this.detail.active(dom)
     }
   }, {
     key: "elemClick",
@@ -1952,6 +2678,7 @@ function () {
         name: type + this.id,
         id: this.id,
         text: '是的发送到',
+        type: 'text',
         url: '',
         style: {
           width: 50 + 'px',
@@ -1980,7 +2707,7 @@ function () {
 }();
 
 exports.default = drawEditer;
-},{"../drop":"plugin/draw-editer/drop/index.js","../draw-bar":"plugin/draw-editer/draw-bar/index.js","../draw-detail":"plugin/draw-editer/draw-detail/index.js","../draw-img":"plugin/draw-editer/draw-img/index.js","./data":"plugin/draw-editer/main/data.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
+},{"../drop":"plugin/draw-editer/drop/index.js","../draw-bar":"plugin/draw-editer/draw-bar/index.js","../draw-detail":"plugin/draw-editer/draw-detail/index.js","../draw-img":"plugin/draw-editer/draw-img/index.js","./data":"plugin/draw-editer/main/data.js","../draw-data":"plugin/draw-editer/draw-data/index.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
 var global = arguments[3];
 "use strict";
 
@@ -2036,7 +2763,11 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+<<<<<<< HEAD
   var ws = new WebSocket(protocol + '://' + hostname + ':' + "58492" + '/');
+=======
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58651" + '/');
+>>>>>>> d4e1d9410757b714c75f7229930c46a61b2eca62
 
   ws.onmessage = function (event) {
     checkedAssets = {};
