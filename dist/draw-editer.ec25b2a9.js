@@ -312,6 +312,79 @@ var _default = function _default(value) {
 };
 
 exports.default = _default;
+},{}],"utils/hsvToRgb.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = hsvToRgb;
+
+function hsvToRgb(params) {
+  var h = params.h,
+      s = params.s,
+      v = params.v;
+  s = s / 100;
+  v = v / 100;
+  var r = 0,
+      g = 0,
+      b = 0;
+  var i = parseInt(h / 60 % 6);
+  var f = h / 60 - i;
+  var p = v * (1 - s);
+  var q = v * (1 - f * s);
+  var t = v * (1 - (1 - f) * s);
+
+  switch (i) {
+    case 0:
+      r = v;
+      g = t;
+      b = p;
+      break;
+
+    case 1:
+      r = q;
+      g = v;
+      b = p;
+      break;
+
+    case 2:
+      r = p;
+      g = v;
+      b = t;
+      break;
+
+    case 3:
+      r = p;
+      g = q;
+      b = v;
+      break;
+
+    case 4:
+      r = t;
+      g = p;
+      b = v;
+      break;
+
+    case 5:
+      r = v;
+      g = p;
+      b = q;
+      break;
+
+    default:
+      break;
+  }
+
+  r = parseInt(r * 255.0);
+  g = parseInt(g * 255.0);
+  b = parseInt(b * 255.0);
+  return {
+    r: r,
+    g: g,
+    b: b
+  };
+}
 },{}],"utils/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -342,6 +415,12 @@ Object.defineProperty(exports, "colorHex", {
     return _colorHex.default;
   }
 });
+Object.defineProperty(exports, "hsvToRgb", {
+  enumerable: true,
+  get: function () {
+    return _hsvToRgb.default;
+  }
+});
 
 var _setStyle = _interopRequireDefault(require("./dom/setStyle"));
 
@@ -351,8 +430,10 @@ var _delUnit = _interopRequireDefault(require("./dom/delUnit"));
 
 var _colorHex = _interopRequireDefault(require("./colorHex"));
 
+var _hsvToRgb = _interopRequireDefault(require("./hsvToRgb"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js","./dom/delUnit":"utils/dom/delUnit.js","./colorHex":"utils/colorHex.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
+},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js","./dom/delUnit":"utils/dom/delUnit.js","./colorHex":"utils/colorHex.js","./hsvToRgb":"utils/hsvToRgb.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -416,9 +497,9 @@ var _default = {
         textAlign: textAlign || 'left',
         fontWeight: fontWeight || 'normal',
         fontStyle: fontStyle || 'normal',
-        textDecoration: textDecoration || 'none'
+        textDecoration: textDecoration || 'none' // console.log(activeData,"kkkkk")
+
       };
-      console.log(activeData, "kkkkk");
       return Object.assign({}, activeData);
     }
   },
@@ -576,7 +657,8 @@ function () {
   }, {
     key: "styleFramt",
     value: function styleFramt(style, elem) {
-      var judgeStr = 'width,height,left,top,fontSize,lineHeight';
+      console.log(elem, "jjjj");
+      var judgeStr = 'width,height,left,top,fontSize';
       var newStyle = {};
 
       for (var key in style) {
@@ -584,11 +666,19 @@ function () {
           newStyle.transform = "rotate(".concat(style[key], "deg)");
         } else if (key == 'width' || key == 'height') {
           if (key == 'width') {
-            newStyle.minWidth = style.width + this.unit;
+            if (elem.type == 'text') {
+              newStyle.minWidth = style.width + this.unit;
+            } else {
+              newStyle.width = style.width + this.unit;
+            }
           }
 
           if (key == 'height') {
-            newStyle.minHeight = style.height + this.unit;
+            if (elem.type == 'text') {
+              newStyle.minHeight = style.height + this.unit;
+            } else {
+              newStyle.height = style.height + this.unit;
+            }
           }
         } else if (judgeStr.indexOf(key) != -1) {
           newStyle[key] = style[key] + this.unit;
@@ -653,10 +743,8 @@ function () {
           boxSizing: 'border-box' // writingMode:'vertical-rl'
 
         }, this.styleFramt(elem.style, elem)),
-        child: elem.text || '',
         attr: {
           id: elem.name,
-          tabindex: elem.id,
           class: 'draw-editor-elem'
         },
         data: {},
@@ -666,7 +754,7 @@ function () {
 
             _this3.onmousedown(event, dropDom, _this3.canvas);
 
-            console.log('-----');
+            _drawData.default.getDetail().style.display = 'block';
 
             _drawData.default.setActive(dropDom);
 
@@ -675,10 +763,11 @@ function () {
             if (_this3.elemClick) {
               _this3.elemClick(dropDom);
 
-              console.log('-----22');
-
               _this3.activeElemClick(dropDom);
             }
+          },
+          load: function load() {
+            console.log('uuuuuu');
           },
           blur: function blur() {
             // console.log(that.isAngleClick)
@@ -703,17 +792,20 @@ function () {
             }
           }
         }
-      }); // const dropDom = document.createElement('div');
+      });
 
+      var textDom = (0, _utils.creatDom)({
+        tag: 'span',
+        child: elem.text || ''
+      });
+      dropDom.appendChild(textDom); // const dropDom = document.createElement('div');
 
       var zoomDoms = this.createZoom();
       var angleDom = this.createAngle();
       var sizes = this.createSize();
-      var childs = [angleDom].concat(_toConsumableArray(zoomDoms));
-
-      if (elem.type == 'img') {
-        childs = [].concat(_toConsumableArray(childs), _toConsumableArray(sizes));
-      }
+      var childs = [angleDom].concat(_toConsumableArray(zoomDoms)); // if (elem.type == 'img') {
+      //   childs = [...childs, ...sizes]
+      // }
 
       dropDom.dataset.elemtype = elem.type; // dropDom.innerText = elem.text;
       // 添加旋转图标
@@ -945,8 +1037,8 @@ function () {
         cursor: "url(".concat(angleCursor, ") 4 12, auto")
       };
       angleIcon.className = 'zoom'; // angleIcon. = 10;
+      // angleIcon.tabIndex = 1;
 
-      angleIcon.tabIndex = 1;
       (0, _utils.setStyle)(angleIcon, style);
 
       angleIcon.onblur = function () {
@@ -985,12 +1077,24 @@ function () {
       var detail = parentNode.getBoundingClientRect();
       var width = parentNode.style.width;
       var height = parentNode.style.height;
+      var elemType = parentNode.dataset.elemtype; // console.log(parentNode.offsetWidth,"kkkkk")
+
+      if (elemType !== 'img') {
+        // parentNode.style.minWidth = parentNode.offsetWidth+this.unit;
+        // parentNode.style.minHeight = parentNode.offsetHeight+this.unit;
+        // console.log( parentNode.offsetWidth+this.unit,"jjjkkkk",this.unit)
+        height = parentNode.style.minHeight;
+        width = parentNode.offsetWidth + this.unit;
+      } // console.log(parentNode.offsetWidth,"jjjj")
+
+
       var transform = parentNode.style.transform;
-      var top = parentNode.style.top.replace('px', '');
-      var left = parentNode.style.left.replace('px', '');
+      var top = parentNode.style.top.replace(this.unit, '');
+      var left = parentNode.style.left.replace(this.unit, '');
+      var fontSize = parentNode.style.fontSize.replace(this.unit, '');
       var elemDetail = {
-        width: width.replace('px', ''),
-        height: height.replace('px', ''),
+        width: width.replace(this.unit, ''),
+        height: height.replace(this.unit, ''),
         centerX: detail.left + detail.width / 2,
         centerY: detail.top + detail.height / 2,
         mouseX: event.pageX - left - this.canvasDetail.left,
@@ -999,7 +1103,9 @@ function () {
         pageY: event.pageY,
         angle: transform.replace('rotate(', '').replace('deg)', ''),
         x: left,
-        y: top
+        y: top,
+        fontSize: fontSize,
+        type: parentNode.dataset.elemtype
       };
       this.activeDom.dataset.activeDetail = JSON.stringify(elemDetail);
       this.activeDom.dataset.type = type;
@@ -1013,18 +1119,23 @@ function () {
   }, {
     key: "onmousemove",
     value: function onmousemove(evt) {
+      // console.log('move')
       var activeElem = null,
           type = null,
           activeDetail = null,
           centerPos = null,
           mouseToPagePos = null,
           activePos = null,
+          oldWidth = null,
+          oldHeight = null,
           mousePos = null;
 
       if (this.activeDom) {
         type = this.activeDom.dataset.type;
         activeElem = this.activeDom.parentNode;
         activeDetail = JSON.parse(this.activeDom.dataset.activeDetail);
+        oldWidth = activeDetail.width;
+        oldHeight = activeDetail.height;
         centerPos = {
           x: activeDetail.centerX,
           y: activeDetail.centerY
@@ -1059,7 +1170,7 @@ function () {
       }
 
       if (type == 'right') {
-        activeDetail.width = mousePos.x - activePos.x + +activeDetail.width; // activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
+        activeDetail.width = mousePos.x - activePos.x + +activeDetail.width;
       }
 
       if (type == 'left') {
@@ -1073,34 +1184,47 @@ function () {
 
       if (type === 'leftTop') {
         activeDetail.width = activePos.x - mousePos.x + +activeDetail.width;
-        activeDetail.height = activePos.y - mousePos.y + +activeDetail.height;
+        activeDetail.height = oldHeight * activeDetail.width / oldWidth;
         activeDetail.x = activeDetail.x - (activePos.x - mousePos.x);
-        activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
+        activeDetail.y = activeDetail.y - (activeDetail.height - oldHeight);
       }
 
       if (type === 'rightTop') {
         activeDetail.width = mousePos.x - activePos.x + +activeDetail.width;
-        activeDetail.height = activePos.y - mousePos.y + +activeDetail.height;
-        activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
+        activeDetail.height = oldHeight * activeDetail.width / oldWidth;
+        activeDetail.y = activeDetail.y - (activeDetail.height - oldHeight);
       }
 
       if (type === 'rightBottom') {
         activeDetail.width = mousePos.x - activePos.x + +activeDetail.width;
-        activeDetail.height = mousePos.y - activePos.y + +activeDetail.height;
+        activeDetail.height = oldHeight * activeDetail.width / oldWidth;
       }
 
       if (type === 'leftBottom') {
         activeDetail.width = activePos.x - mousePos.x + +activeDetail.width;
-        activeDetail.height = mousePos.y - activePos.y + +activeDetail.height;
+        activeDetail.height = oldHeight * activeDetail.width / oldWidth;
         activeDetail.x = activeDetail.x - (activePos.x - mousePos.x);
       }
 
       if (activeElem) {
+        activeDetail.fontSize = activeDetail.fontSize * activeDetail.width / oldWidth;
         activeElem.style.transform = "rotate(".concat(activeDetail.angle, "deg) ");
-        activeElem.style.left = "".concat(activeDetail.x, "px");
-        activeElem.style.top = "".concat(activeDetail.y, "px");
-        activeElem.style.width = "".concat(activeDetail.width, "px");
-        activeElem.style.height = "".concat(activeDetail.height, "px");
+
+        if (activeDetail.type == 'img') {
+          activeElem.style.width = activeDetail.width + this.unit;
+          activeElem.style.height = activeDetail.heigh + tthis.unit;
+          activeElem.style.left = activeDetail.x + this.unit;
+          activeElem.style.top = activeDetail.y + this.unit;
+        } else {
+          if (activeDetail.fontSize >= 12) {
+            // console.log('move')
+            activeElem.style.left = activeDetail.x + this.unit;
+            activeElem.style.top = activeDetail.y + this.unit; // activeElem.style.minWidth = activeDetail.width+this.unit;
+            // activeElem.style.minHeight = activeDetail.height+this.unit;
+
+            activeElem.style.fontSize = activeDetail.fontSize + this.unit;
+          }
+        }
       }
     }
   }, {
@@ -1303,8 +1427,12 @@ function _default() {
       input: function input(event, e) {
         var activeDom = _drawData.default.getActive();
 
+        var textDom = activeDom.getElementsByTagName('span')[0];
+
         if (activeDom) {
-          activeDom.innerText = e.value;
+          textDom.innerText = e.value;
+          activeDom.style.minWidth = '';
+          activeDom.style.minHeight = '';
         }
       }
     }
@@ -1373,11 +1501,12 @@ function _default() {
     name: 'color',
     type: 'color',
     on: {
-      change: function change(event, e) {
+      change: function change(event, value) {
+        // console.log(e.value,"jjjj")
         var activeDom = _drawData.default.getActive();
 
         if (activeDom) {
-          activeDom.style.color = '#' + e.value;
+          activeDom.style.color = value;
         }
       }
     }
@@ -1890,6 +2019,150 @@ var _default = function _default(params) {
 };
 
 exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/color.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var rangeValue = 0;
+
+var _default = function _default(params) {
+  var _style;
+
+  var boxDom = (0, _utils.creatDom)({
+    tag: 'div'
+  });
+  var showColor = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      width: '100%',
+      height: '30px',
+      background: 'red',
+      borderRadius: '4px',
+      cursor: 'pointer'
+    }
+  });
+  var selectDom = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      // height:'200px',
+      width: '100%' // background:'blue'
+
+    }
+  });
+  var svSelevt = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      position: 'relative',
+      height: '112px',
+      width: '268px',
+      // background:'blue',
+      marginTop: '4px',
+      borderRadius: '4px',
+      overflow: 'hidden'
+    },
+    on: {
+      click: function click(event, e) {
+        var svDetail = svSelevt.getBoundingClientRect();
+        var saturation = event.pageX - svDetail.left;
+        var value = svDetail.bottom - event.pageY;
+
+        var _hsvToRgb = (0, _utils.hsvToRgb)({
+          h: rangeValue * 360,
+          s: saturation,
+          v: value
+        }),
+            r = _hsvToRgb.r,
+            g = _hsvToRgb.g,
+            b = _hsvToRgb.b;
+
+        showColor.style.background = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")");
+        params.on.change(event, "rgb(".concat(r, ",").concat(g, ",").concat(b, ")"));
+      } // height:
+
+    }
+  });
+  var gradientBlack = (0, _utils.creatDom)({
+    tag: 'div',
+    style: (_style = {
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(180deg,transparent 0,#000)',
+      borderRadius: '4px',
+      position: 'absolute'
+    }, _defineProperty(_style, "borderRadius", '4px'), _defineProperty(_style, "top", '0'), _defineProperty(_style, "left", '0'), _defineProperty(_style, "zIndex", 1), _defineProperty(_style, "cursor", 'pointer'), _style)
+  });
+  var gradientWhite = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(270deg,transparent 0,#fff)',
+      position: 'absolute',
+      borderRadius: '4px',
+      top: '0',
+      left: '0',
+      cursor: 'pointer'
+    }
+  });
+  var rangeDom = (0, _utils.creatDom)({
+    tag: 'input',
+    attr: {
+      type: 'range',
+      min: 0,
+      max: 1,
+      step: 0.05,
+      value: rangeValue
+    },
+    style: {
+      display: 'block',
+      width: '100%',
+      height: '10px'
+    },
+    on: {
+      change: function change(event, e) {
+        rangeValue = e.value;
+
+        var _hsvToRgb2 = (0, _utils.hsvToRgb)({
+          h: e.value * 360,
+          s: 100,
+          v: 100
+        }),
+            r = _hsvToRgb2.r,
+            g = _hsvToRgb2.g,
+            b = _hsvToRgb2.b;
+
+        svSelevt.style.background = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")"); // console.log()
+      }
+    }
+  });
+  var hSelect = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      height: '10px',
+      borderRadius: '10px',
+      marginTop: '10px',
+      background: 'linear-gradient(90deg,red,#ff2b00,#f50,#ff8000,#fa0,#ffd500,#ff0,#d4ff00,#af0,#80ff00,#5f0,#2bff00,#0f0,#00ff2b,#0f5,#00ff80,#0fa,#00ffd5,#0ff,#00d4ff,#0af,#007fff,#05f,#002bff,#00f,#2a00ff,#50f,#7f00ff,#a0f,#d400ff,#f0f,#ff00d4,#f0a,#ff0080,#f05,#ff002b)'
+    }
+  });
+  svSelevt.appendChild(gradientBlack);
+  svSelevt.appendChild(gradientWhite);
+  hSelect.appendChild(rangeDom);
+  selectDom.appendChild(hSelect);
+  selectDom.appendChild(svSelevt);
+  boxDom.appendChild(showColor);
+  boxDom.appendChild(selectDom);
+  return boxDom;
+};
+
+exports.default = _default;
 },{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -1920,6 +2193,12 @@ Object.defineProperty(exports, "switched", {
     return _switched.default;
   }
 });
+Object.defineProperty(exports, "color", {
+  enumerable: true,
+  get: function () {
+    return _color.default;
+  }
+});
 
 var _inputSelect = _interopRequireDefault(require("./input-select"));
 
@@ -1929,8 +2208,10 @@ var _radioButton = _interopRequireDefault(require("./radio-button"));
 
 var _switched = _interopRequireDefault(require("./switched"));
 
+var _color = _interopRequireDefault(require("./color"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./input-select":"plugin/draw-editer/components/input-select.js","./textarea":"plugin/draw-editer/components/textarea.js","./radio-button":"plugin/draw-editer/components/radio-button.js","./switched":"plugin/draw-editer/components/switched.js"}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
+},{"./input-select":"plugin/draw-editer/components/input-select.js","./textarea":"plugin/draw-editer/components/textarea.js","./radio-button":"plugin/draw-editer/components/radio-button.js","./switched":"plugin/draw-editer/components/switched.js","./color":"plugin/draw-editer/components/color.js"}],"plugin/draw-editer/draw-detail/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2006,61 +2287,12 @@ function () {
     key: "active",
     value: function active(dom) {
       this.activeDom = dom; // this.init();
-
-      _drawData.default.getDetail().style.display = 'block';
-
-      var formArr = _drawData.default.getActiveData();
-
-      for (var key in formArr) {
-        var itemName = this.form.elements[key];
-
-        if (!itemName) {
-          continue;
-        }
-
-        if (!itemName.length) {
-          if (key == 'fontStyle') {
-            if (formArr[key] == 'italic') {
-              itemName.checked = true;
-            } else {
-              itemName.checked = false;
-            }
-          }
-
-          if (key == 'fontWeight') {
-            if (formArr[key] == 'bold') {
-              itemName.checked = true;
-            } else {
-              itemName.checked = false;
-            }
-          }
-
-          if (key == 'textDecoration') {
-            if (formArr[key] == 'underline') {
-              itemName.checked = true;
-            } else {
-              itemName.checked = false;
-            }
-          }
-
-          itemName.value = formArr[key];
-        } else {
-          for (var i = 0; i < itemName.length; i++) {
-            var item = itemName[i];
-
-            if (item.value == formArr[key]) {
-              item.checked = true;
-            } else {
-              item.checked = false;
-            }
-          }
-        }
-      } // 
+      // drawData.getDetail().style.display = 'block'
+      // 
       // .text = '3333'
       // console.log(this.form,"kkkk")
       // if(type == text)
       // console.log(type,text,fontFamily,fontSize,lineHeight,textAlign,color)
-
     }
   }, {
     key: "divList",
@@ -2118,22 +2350,23 @@ function () {
       }
 
       if (params.type == 'color') {
-        itemDom = _utils.creatDom.call(this, {
-          tag: 'input',
-          attr: {
-            name: params.name,
-            class: 'jscolor'
-          },
-          style: {
-            width: '100%',
-            lineHeight: '35px',
-            borderRadius: '4px',
-            border: '1px solid #d9d9d9',
-            boxSizing: 'border-box',
-            padding: ' 0 10px'
-          },
-          on: params.on
-        });
+        itemDom = (0, _components.color)(params); // itemDom = creatDom.call(this, {
+        //   tag: 'input',
+        //   attr: {
+        //     name: params.name,
+        //     // class: 'jscolor'
+        //     type:'color'
+        //   },
+        //   style: {
+        //     width: '100%',
+        //     lineHeight: '35px',
+        //     borderRadius: '4px',
+        //     border: '1px solid #d9d9d9',
+        //     boxSizing: 'border-box',
+        //     padding: ' 0 10px',
+        //   },
+        //   on: params.on
+        // })
       }
 
       if (params.type !== 'switch') {
@@ -2341,33 +2574,19 @@ exports.default = void 0;
 var _default = [{
   name: 1,
   id: 1,
-  text: '物理 <br/> 元本9',
+  text: '能力提高体系 八年级 秋',
   type: 'text',
   style: {
-    width: 50,
-    height: 400,
+    // width:50,
+    // height:400,
     angle: 0,
-    top: 40,
-    left: 800,
+    top: 297.58740,
+    left: 602.44921,
     color: '#333',
-    fontSize: 80,
-    lineHeight: 96,
+    fontSize: 14,
+    lineHeight: 1.5,
     textAlign: 'left',
     fontWeight: 'bold'
-  }
-}, {
-  name: 2,
-  id: 2,
-  type: 'img',
-  src: 'https://tse3-mm.cn.bing.net/th?id=OIP.rJNHO8sYJpEhccdXGlN27gHaFj&w=277&h=207&c=7&o=5&dpr=2&pid=1.7',
-  style: {
-    width: 100,
-    height: 200,
-    angle: 0,
-    top: 200,
-    left: 100,
-    color: '#000',
-    fontSize: 14
   }
 }];
 exports.default = _default;
@@ -2422,7 +2641,7 @@ function () {
     this.canvas.style.height = params.canvas.height * this.zoom + this.unit;
     this.canvas.style.width = params.canvas.width * this.zoom + this.unit;
     this.elements = [];
-    this.id = 0; // console.log(params,"kjjj")
+    this.id = 0;
 
     _drop.default.init(this.canvas, params, this.unit, function (dom) {
       _this.activeElemClick(dom);
@@ -2459,6 +2678,7 @@ function () {
         name: type + this.id,
         id: this.id,
         text: '是的发送到',
+        type: 'text',
         url: '',
         style: {
           width: 50 + 'px',
@@ -2543,7 +2763,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64781" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58651" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

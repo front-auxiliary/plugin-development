@@ -1,7 +1,8 @@
 import { creatDom } from '../../../utils';
 import dataFn from './data';
 import drawData from '../draw-data';
-import { inputSelect, textarea, radioButton, switched } from '../components'
+import { inputSelect, textarea, radioButton, switched,
+  color } from '../components'
 class drawDetail {
   constructor(canvas) {
     const { detail } = drawData.getParams()
@@ -41,54 +42,8 @@ class drawDetail {
   active(dom) {
     this.activeDom = dom;
     // this.init();
-    drawData.getDetail().style.display = 'block'
-    let formArr = drawData.getActiveData()
-    for (let key in formArr) {
-      let itemName = this.form.elements[key];
-
-      if (!itemName) {
-        continue;
-      }
-      if (!itemName.length) {
-
-        if (key == 'fontStyle') {
-          if (formArr[key] == 'italic') {
-            itemName.checked = true
-          } else {
-            itemName.checked = false
-          }
-        }
-        if (key == 'fontWeight') {
-          if (formArr[key] == 'bold') {
-            itemName.checked = true
-
-          } else {
-            itemName.checked = false
-          }
-        }
-        if (key == 'textDecoration') {
-          if (formArr[key] == 'underline') {
-            itemName.checked = true
-          } else {
-            itemName.checked = false
-          }
-        }
-        itemName.value = formArr[key]
-
-      } else {
-
-        for (let i = 0; i < itemName.length; i++) {
-          let item = itemName[i];
-
-          if (item.value == formArr[key]) {
-            item.checked = true;
-          } else {
-            item.checked = false;
-          }
-        }
-      }
-
-    }
+    // drawData.getDetail().style.display = 'block'
+    
 
     // 
     // .text = '3333'
@@ -141,23 +96,25 @@ class drawDetail {
       itemDom = switched(params)
     }
     if (params.type == 'color') {
-      itemDom = creatDom.call(this, {
-        tag: 'input',
-        attr: {
-          name: params.name,
-          class: 'jscolor'
-        },
-        style: {
-          width: '100%',
-          lineHeight: '35px',
-          borderRadius: '4px',
-          border: '1px solid #d9d9d9',
-          boxSizing: 'border-box',
-          padding: ' 0 10px',
-        },
-        on: params.on
+      itemDom = color(params);
+      // itemDom = creatDom.call(this, {
+      //   tag: 'input',
+      //   attr: {
+      //     name: params.name,
+      //     // class: 'jscolor'
+      //     type:'color'
+      //   },
+      //   style: {
+      //     width: '100%',
+      //     lineHeight: '35px',
+      //     borderRadius: '4px',
+      //     border: '1px solid #d9d9d9',
+      //     boxSizing: 'border-box',
+      //     padding: ' 0 10px',
+      //   },
+      //   on: params.on
 
-      })
+      // })
     }
     if (params.type !== 'switch') {
       domBox.appendChild(titleDom);

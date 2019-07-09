@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  
+
     <title>Document</title>
 </head>
 <script src="./public/jscolor.js"></script>
@@ -17,10 +17,23 @@
     html {
         margin: 0;
         padding: 0;
-        background: rgba(237,240,242,.9)
+        background: rgba(237, 240, 242, .9)
     }
 
-   
+    #color1 {
+        height: 20px;
+        background-image: linear-gradient(90deg, red, #ff2b00, #f50, #ff8000, #fa0, #ffd500, #ff0, #d4ff00, #af0, #80ff00, #5f0, #2bff00, #0f0, #00ff2b, #0f5, #00ff80, #0fa, #00ffd5, #0ff, #00d4ff, #0af, #007fff, #05f, #002bff, #00f, #2a00ff, #50f, #7f00ff, #a0f, #d400ff, #f0f, #ff00d4, #f0a, #ff0080, #f05, #ff002b);
+    }
+
+    #color2 {
+        height: 20px;
+        background-image: linear-gradient(to right, rgb(131, 153, 31), rgb(255, 255, 255));
+    }
+
+    #color3 {
+        height: 20px;
+        background-image: linear-gradient(to right, rgb(0, 255, 255), rgb(255, 255, 255));
+    }
 
     .canvas {
         /* 210 * 297    2.83464567*/
@@ -73,15 +86,40 @@
 
 
     }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 25px;
+        width: 25px;
+        margin-top: -5px;
+        /*使滑块超出轨道部分的偏移量相等*/
+        background: #ffffff;
+        border-radius: 50%;
+        /*外观设置为圆形*/
+        border: solid 0.125em rgba(205, 224, 230, 0.5);
+        /*设置边框*/
+        box-shadow: 0 .125em .125em #3b4547;
+        /*添加底部阴影*/
+    }
+
+
+    input[type=range]::-webkit-slider-runnable-track {
+        height: 15px;
+        border-radius: 10px;
+        /*将轨道设为圆角的*/
+        box-shadow: 0 1px 1px #def3f8, inset 0 .125em .125em #0d1112;
+        /*轨道内置阴影效果*/
+    }
 </style>
 
 <body>
+    <div id="color1"></div>
     <button id="button">文本</button>
     <button id="buttonsave">save</button>
     <!-- <button id="buttonImg">图片</button> -->
     <div id="bar"></div>
     <div id="canvas" class="canvas ">
-        
+
 
         <!-- <img src="./public/2.svg" alt="" srcset=""> -->
 
@@ -93,70 +131,70 @@
     // setTimeout()
     var dom = null;
     // window.onload = function () {
-        var canvas = document.getElementById('canvas');
-        var detail = document.getElementById('detail');
-        // var url = './public/1.pdf';
-        // PDFJS.workerSrc = './pdf/pdf.worker.js';
-        // PDFJS.getDocument(url);
-        var btn = document.getElementById('button');
-        var btnSave = document.getElementById('buttonsave');
-        var bar = document.getElementById('bar');
+    var canvas = document.getElementById('canvas');
+    var detail = document.getElementById('detail');
+    // var url = './public/1.pdf';
+    // PDFJS.workerSrc = './pdf/pdf.worker.js';
+    // PDFJS.getDocument(url);
+    var btn = document.getElementById('button');
+    var btnSave = document.getElementById('buttonsave');
+    var bar = document.getElementById('bar');
 
-        var drawEditer1 = new drawEditer({
-            unit:'px',
-            // imageUp:(flie)=>{
-            //     drawEditer1.add('text');
-            // },
-            canvas: {
-                dom: canvas,
-                width: 1218.8976,
-                height: 807.870,
+    var drawEditer1 = new drawEditer({
+        unit: 'px',
+        // imageUp:(flie)=>{
+        //     drawEditer1.add('text');
+        // },
+        canvas: {
+            dom: canvas,
+            width: 1218.8976,
+            height: 807.870,
+            on: {
+                elemClick: () => {
+
+                },
+                elemMove: () => {
+
+                }
+            }
+        },
+        bar: {
+            dom: bar,
+            data: [{
+                text: '二维码',
+                img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY3NzM0Mzk0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDE3MDYgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjQxMTAiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNTMuMzEyNSIgaGVpZ2h0PSIzMiI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMTcwLjY2NyAwSDE1MzZhMTcwLjY2NyAxNzAuNjY3IDAgMCAxIDE3MC42NjcgMTcwLjY2N3Y2ODIuNjY2QTE3MC42NjcgMTcwLjY2NyAwIDAgMSAxNTM2IDEwMjRIMTcwLjY2N0ExNzAuNjY3IDE3MC42NjcgMCAwIDEgMCA4NTMuMzMzVjE3MC42NjdBMTcwLjY2NyAxNzAuNjY3IDAgMCAxIDE3MC42NjcgMHogbTAgODUuMzMzYTg1LjMzMyA4NS4zMzMgMCAwIDAtODUuMzM0IDg1LjMzNHY2ODIuNjY2YTg1LjMzMyA4NS4zMzMgMCAwIDAgODUuMzM0IDg1LjMzNEgxNTM2YTg1LjMzMyA4NS4zMzMgMCAwIDAgODUuMzMzLTg1LjMzNFYxNzAuNjY3QTg1LjMzMyA4NS4zMzMgMCAwIDAgMTUzNiA4NS4zMzNIMTcwLjY2N3oiIGZpbGw9IiMzMzMzMzMiIHAtaWQ9IjQxMTEiPjwvcGF0aD48cGF0aCBkPSJNMTcwLjY2NyAxNzAuNjY3aDE3MC42NjZ2NjgyLjY2NkgxNzAuNjY3VjE3MC42Njd6IG0xMjgwIDBIMTUzNnY1MTJoLTg1LjMzM3YtNTEyeiBtLTU5Ny4zMzQgMGg4NS4zMzR2NTEyaC04NS4zMzR2LTUxMnogbTE3MC42NjcgMGg4NS4zMzN2NTEySDEwMjR2LTUxMnogbTE3MC42NjcgMGgxNzAuNjY2djUxMmgtMTcwLjY2NnYtNTEyeiBtMjU2IDU5Ny4zMzNIMTUzNnY4NS4zMzNoLTg1LjMzM1Y3Njh6IG0tMTAyNC01OTcuMzMzSDc2OHY1MTJINDI2LjY2N3YtNTEyeiBtMCA1OTcuMzMzaDkzOC42NjZ2ODUuMzMzSDQyNi42NjdWNzY4eiIgZmlsbD0iIzMzMzMzMyIgcC1pZD0iNDExMiI+PC9wYXRoPjwvc3ZnPg==',
+                style: {},
+                class: '',
                 on: {
-                    elemClick: () => {
-
-                    },
-                    elemMove: () => {
-
+                    click: (evt, ) => {
+                        drawEditer1.add('text');
                     }
                 }
-            },
-            bar: {
-                dom: bar,
-                data: [{
-                    text: '二维码',
-                    img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY3NzM0Mzk0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDE3MDYgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjQxMTAiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNTMuMzEyNSIgaGVpZ2h0PSIzMiI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMTcwLjY2NyAwSDE1MzZhMTcwLjY2NyAxNzAuNjY3IDAgMCAxIDE3MC42NjcgMTcwLjY2N3Y2ODIuNjY2QTE3MC42NjcgMTcwLjY2NyAwIDAgMSAxNTM2IDEwMjRIMTcwLjY2N0ExNzAuNjY3IDE3MC42NjcgMCAwIDEgMCA4NTMuMzMzVjE3MC42NjdBMTcwLjY2NyAxNzAuNjY3IDAgMCAxIDE3MC42NjcgMHogbTAgODUuMzMzYTg1LjMzMyA4NS4zMzMgMCAwIDAtODUuMzM0IDg1LjMzNHY2ODIuNjY2YTg1LjMzMyA4NS4zMzMgMCAwIDAgODUuMzM0IDg1LjMzNEgxNTM2YTg1LjMzMyA4NS4zMzMgMCAwIDAgODUuMzMzLTg1LjMzNFYxNzAuNjY3QTg1LjMzMyA4NS4zMzMgMCAwIDAgMTUzNiA4NS4zMzNIMTcwLjY2N3oiIGZpbGw9IiMzMzMzMzMiIHAtaWQ9IjQxMTEiPjwvcGF0aD48cGF0aCBkPSJNMTcwLjY2NyAxNzAuNjY3aDE3MC42NjZ2NjgyLjY2NkgxNzAuNjY3VjE3MC42Njd6IG0xMjgwIDBIMTUzNnY1MTJoLTg1LjMzM3YtNTEyeiBtLTU5Ny4zMzQgMGg4NS4zMzR2NTEyaC04NS4zMzR2LTUxMnogbTE3MC42NjcgMGg4NS4zMzN2NTEySDEwMjR2LTUxMnogbTE3MC42NjcgMGgxNzAuNjY2djUxMmgtMTcwLjY2NnYtNTEyeiBtMjU2IDU5Ny4zMzNIMTUzNnY4NS4zMzNoLTg1LjMzM1Y3Njh6IG0tMTAyNC01OTcuMzMzSDc2OHY1MTJINDI2LjY2N3YtNTEyeiBtMCA1OTcuMzMzaDkzOC42NjZ2ODUuMzMzSDQyNi42NjdWNzY4eiIgZmlsbD0iIzMzMzMzMyIgcC1pZD0iNDExMiI+PC9wYXRoPjwvc3ZnPg==',
-                    style: {},
-                    class: '',
-                    on: {
-                        click: (evt, ) => {
-                            drawEditer1.add('text');
-                        }
-                    }
-                }, {
-                    text: '爱学习LOGO',
-                    img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY1NTYxODQyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI3NjgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTEwNy4wMDggMTA3LjI2NGg4MDkuODU2YzIzLjIzMiAwIDQxLjkyIDE4LjY4OCA0MS45MiA0MS45MnYzMzAuMzY4Yy00MS45Mi0zMi42NC0xMjAuOTYtODMuNzc2LTE4MS41NjgtODMuNzc2LTg4LjQ0OCAwLTE2Ny41NTIgMjA0LjgtMjY1LjI4IDIwNC44QzQzNy40NCA1OTUuODQgMzM1LjEwNCA1MTIgMjE4LjY4OCA1MjYuMDE2Yy00Ni41MjggOS4yOC0xMTEuNjggODMuODQtMTUzLjYgMTM5LjY0OHYtNTE2LjQ4YzAtMjMuMzYgMTguNjg4LTQxLjkyIDQxLjkyLTQxLjkyeiBtMTk1LjUyIDMzNS4xMDRjLTM3LjI0OCAwLTY5LjgyNC0xMy45NTItOTMuMDU2LTM3LjE4NHMtMzcuMjQ4LTYwLjU0NC0zNy4yNDgtOTMuMDU2YzAtMzIuNjQgMTQuMDE2LTY5Ljc2IDM3LjI0OC05My4wNTZhMTI5Ljk4NCAxMjkuOTg0IDAgMCAxIDkzLjA1Ni0zNy4xODRjMzIuNjQgMCA2NS4wODggMTMuOTUyIDkyLjk5MiAzNy4xODQgMjMuMjMyIDIzLjIzMiAzNy4yNDggNjAuNTQ0IDM3LjI0OCA5My4wNTYgMCAzMi42NC0xNC4wMTYgNjkuODI0LTM3LjI0OCA5My4wNTYtMjcuOTA0IDIzLjIzMi02MC40MTYgMzcuMTg0LTkyLjk5MiAzNy4xODR6TTk0MC4wOTYgNDYuNzJIODMuODRDMzcuMTg0IDQ2LjcyIDAgODMuOTA0IDAgMTMwLjQ5NnY3NjMuMjY0YzAgNDYuNTkyIDM3LjE4NCA4My44NCA4My43NzYgODMuODRoODU2LjQ0OGM0Ni41OTIgMCA4My43NzYtMzcuMjQ4IDgzLjc3Ni04My44NFYxMzAuNTZBODMuNTIgODMuNTIgMCAwIDAgOTQwLjE2IDQ2LjcyeiIgcC1pZD0iMjc2OSI+PC9wYXRoPjwvc3ZnPg=='
+            }, {
+                text: '爱学习LOGO',
+                img: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTY1NTYxODQyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI3NjgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTEwNy4wMDggMTA3LjI2NGg4MDkuODU2YzIzLjIzMiAwIDQxLjkyIDE4LjY4OCA0MS45MiA0MS45MnYzMzAuMzY4Yy00MS45Mi0zMi42NC0xMjAuOTYtODMuNzc2LTE4MS41NjgtODMuNzc2LTg4LjQ0OCAwLTE2Ny41NTIgMjA0LjgtMjY1LjI4IDIwNC44QzQzNy40NCA1OTUuODQgMzM1LjEwNCA1MTIgMjE4LjY4OCA1MjYuMDE2Yy00Ni41MjggOS4yOC0xMTEuNjggODMuODQtMTUzLjYgMTM5LjY0OHYtNTE2LjQ4YzAtMjMuMzYgMTguNjg4LTQxLjkyIDQxLjkyLTQxLjkyeiBtMTk1LjUyIDMzNS4xMDRjLTM3LjI0OCAwLTY5LjgyNC0xMy45NTItOTMuMDU2LTM3LjE4NHMtMzcuMjQ4LTYwLjU0NC0zNy4yNDgtOTMuMDU2YzAtMzIuNjQgMTQuMDE2LTY5Ljc2IDM3LjI0OC05My4wNTZhMTI5Ljk4NCAxMjkuOTg0IDAgMCAxIDkzLjA1Ni0zNy4xODRjMzIuNjQgMCA2NS4wODggMTMuOTUyIDkyLjk5MiAzNy4xODQgMjMuMjMyIDIzLjIzMiAzNy4yNDggNjAuNTQ0IDM3LjI0OCA5My4wNTYgMCAzMi42NC0xNC4wMTYgNjkuODI0LTM3LjI0OCA5My4wNTYtMjcuOTA0IDIzLjIzMi02MC40MTYgMzcuMTg0LTkyLjk5MiAzNy4xODR6TTk0MC4wOTYgNDYuNzJIODMuODRDMzcuMTg0IDQ2LjcyIDAgODMuOTA0IDAgMTMwLjQ5NnY3NjMuMjY0YzAgNDYuNTkyIDM3LjE4NCA4My44NCA4My43NzYgODMuODRoODU2LjQ0OGM0Ni41OTIgMCA4My43NzYtMzcuMjQ4IDgzLjc3Ni04My44NFYxMzAuNTZBODMuNTIgODMuNTIgMCAwIDAgOTQwLjE2IDQ2LjcyeiIgcC1pZD0iMjc2OSI+PC9wYXRoPjwvc3ZnPg=='
 
-                }]
-            },
-            detail:{
-                dom:detail
-            }
-        })
-        // console.log(drawEditer1,"jjjjjj")
-        btnSave.onclick = function () {
-            var data = drawEditer1.getData()
-            console.log(data, "kkkkk")
+            }]
+        },
+        detail: {
+            dom: detail
+        }
+    })
+    // console.log(drawEditer1,"jjjjjj")
+    btnSave.onclick = function () {
+        var data = drawEditer1.getData()
+        console.log(data, "kkkkk")
 
-        }
-        drawEditer1.elemClick = function (event) {
-            console.log(event, "kkkkkk")
-        }
-        drawEditer1.render()
-        // //  console.log(drawEditer1,"kkkkkk")
-        btn.onclick = function () {
-            drawEditer1.add('text');
-            // document.execCommand("print",false,null)
-        }
+    }
+    drawEditer1.elemClick = function (event) {
+        console.log(event, "kkkkkk")
+    }
+    drawEditer1.render()
+    // //  console.log(drawEditer1,"kkkkkk")
+    btn.onclick = function () {
+        drawEditer1.add('text');
+        // document.execCommand("print",false,null)
+    }
 
         // 
 

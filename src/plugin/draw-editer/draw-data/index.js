@@ -13,7 +13,9 @@ export default {
   },
   
   getActiveData:()=>{
+   
     const type = activeDom.dataset.elemtype;
+    
     const detail = activeDom.getBoundingClientRect();
     const {
       left,top,height,width,
@@ -38,7 +40,7 @@ export default {
         textDecoration:textDecoration||'none'
         
       }
-      console.log(activeData,"kkkkk")
+      // console.log(activeData,"kkkkk")
       return Object.assign({},activeData);
     }
   },
@@ -74,7 +76,6 @@ export default {
   },
   setForm(){
     let formArr = this.getActiveData()
-    console.log(formArr,"jjjjjj")
     for (let key in formArr) {
       let itemName = detailDom.elements[key];
 

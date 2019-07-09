@@ -23,7 +23,6 @@ export default class drawEditer {
     this.canvas.style.width = params.canvas.width*this.zoom+this.unit;
     this.elements = [];
     this.id = 0;
-    // console.log(params,"kjjj")
     drop.init(this.canvas,params,this.unit,(dom)=>{
       this.activeElemClick(dom)
     })
@@ -56,6 +55,7 @@ export default class drawEditer {
       name:type+this.id,
       id:this.id,
       text:'是的发送到',
+      type:'text',
       url:'',
       style:{
         width:50+'px',

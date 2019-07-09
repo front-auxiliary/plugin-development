@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  
+
     <title>Document</title>
 </head>
 <script src="/jscolor.52fafabf.js"></script>
@@ -16,10 +16,23 @@
     html {
         margin: 0;
         padding: 0;
-        background: rgba(237,240,242,.9)
+        background: rgba(237, 240, 242, .9)
     }
 
-   
+    #color1 {
+        height: 20px;
+        background-image: linear-gradient(90deg, red, #ff2b00, #f50, #ff8000, #fa0, #ffd500, #ff0, #d4ff00, #af0, #80ff00, #5f0, #2bff00, #0f0, #00ff2b, #0f5, #00ff80, #0fa, #00ffd5, #0ff, #00d4ff, #0af, #007fff, #05f, #002bff, #00f, #2a00ff, #50f, #7f00ff, #a0f, #d400ff, #f0f, #ff00d4, #f0a, #ff0080, #f05, #ff002b);
+    }
+
+    #color2 {
+        height: 20px;
+        background-image: linear-gradient(to right, rgb(131, 153, 31), rgb(255, 255, 255));
+    }
+
+    #color3 {
+        height: 20px;
+        background-image: linear-gradient(to right, rgb(0, 255, 255), rgb(255, 255, 255));
+    }
 
     .canvas {
         /* 210 * 297    2.83464567*/
@@ -71,15 +84,40 @@
 
 
 
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 25px;
+        width: 25px;
+        margin-top: -5px;
+        /*使滑块超出轨道部分的偏移量相等*/
+        background: #ffffff;
+        border-radius: 50%;
+        /*外观设置为圆形*/
+        border: solid 0.125em rgba(205, 224, 230, 0.5);
+        /*设置边框*/
+        box-shadow: 0 .125em .125em #3b4547;
+        /*添加底部阴影*/
+    }
+
+
+    input[type=range]::-webkit-slider-runnable-track {
+        height: 15px;
+        border-radius: 10px;
+        /*将轨道设为圆角的*/
+        box-shadow: 0 1px 1px #def3f8, inset 0 .125em .125em #0d1112;
+        /*轨道内置阴影效果*/
     }</style>
 
 <body>
+    <div id="color1"></div>
     <button id="button">文本</button>
     <button id="buttonsave">save</button>
     <!-- <button id="buttonImg">图片</button> -->
     <div id="bar"></div>
     <div id="canvas" class="canvas ">
-        
+
 
         <!-- <img src="./public/2.svg" alt="" srcset=""> -->
 

@@ -41,8 +41,12 @@ export default function () {
         },
         input: function (event,e) {
           let activeDom = drawData.getActive();
+          let textDom = activeDom.getElementsByTagName('span')[0]
+
           if(activeDom){
-            activeDom.innerText = e.value;
+            textDom.innerText = e.value;
+            activeDom.style.minWidth='';
+            activeDom.style.minHeight=''
           }
         }
       }
@@ -113,10 +117,11 @@ export default function () {
       name: 'color',
       type: 'color',
       on: {
-        change:(event,e)=>{
+        change:(event,value)=>{
+          // console.log(e.value,"jjjj")
           let activeDom = drawData.getActive();
           if(activeDom){
-            activeDom.style.color ='#'+ e.value;
+            activeDom.style.color =value;
           }
          
         }

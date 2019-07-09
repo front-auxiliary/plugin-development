@@ -30,7 +30,8 @@ class drop {
     }
   }
   styleFramt(style, elem) {
-    let judgeStr = 'width,height,left,top,fontSize,lineHeight';
+    console.log(elem,"jjjj")
+    let judgeStr = 'width,height,left,top,fontSize';
     let newStyle = {};
     for (let key in style) {
 
@@ -38,10 +39,20 @@ class drop {
         newStyle.transform = `rotate(${style[key]}deg)`
       } else if ((key == 'width' || key == 'height')) {
         if (key == 'width') {
-          newStyle.minWidth = style.width + this.unit;
+          if(elem.type == 'text'){
+            newStyle.minWidth = style.width + this.unit;
+          }else{
+            newStyle.width = style.width + this.unit;
+          }
+         
         }
         if (key == 'height') {
-          newStyle.minHeight = style.height + this.unit;
+          if(elem.type == 'text'){
+            newStyle.minHeight = style.height + this.unit;
+          }else{
+            newStyle.height = style.height + this.unit;
+          }
+          
         }
       } else if (judgeStr.indexOf(key) != -1) {
         newStyle[key] = style[key] + this.unit;
@@ -95,10 +106,10 @@ class drop {
         boxSizing: 'border-box',
         // writingMode:'vertical-rl'
       }, this.styleFramt(elem.style, elem)),
-      child: elem.text || '',
+     
       attr: {
         id: elem.name,
-        tabindex: elem.id,
+      
         class: 'draw-editor-elem'
       },
       data: {
@@ -108,14 +119,16 @@ class drop {
         mousedown: (event) => {
           event.stopPropagation();
           this.onmousedown(event, dropDom, this.canvas)
-          console.log('-----')
+          drawData.getDetail().style.display='block';
           drawData.setActive(dropDom);
           drawData.setForm();
           if (this.elemClick) {
             this.elemClick(dropDom)
-            console.log('-----22')
             this.activeElemClick(dropDom)
           }
+        },
+        load:()=>{
+          console.log('uuuuuu')
         },
         blur: () => {
           // console.log(that.isAngleClick)
@@ -142,16 +155,22 @@ class drop {
 
       }
     })
-
+    const textDom = creatDom({
+      tag:'span',
+      child: elem.text || ''
+    })
+    dropDom.appendChild(textDom)
+    
+   
     // const dropDom = document.createElement('div');
     const zoomDoms = this.createZoom();
     const angleDom = this.createAngle();
     const sizes = this.createSize();
 
     let childs = [angleDom, ...zoomDoms]
-    if (elem.type == 'img') {
-      childs = [...childs, ...sizes]
-    }
+    // if (elem.type == 'img') {
+    //   childs = [...childs, ...sizes]
+    // }
     dropDom.dataset.elemtype = elem.type;
     // dropDom.innerText = elem.text;
     // 添加旋转图标
@@ -296,7 +315,7 @@ class drop {
     }
     angleIcon.className = 'zoom'
     // angleIcon. = 10;
-    angleIcon.tabIndex = 1;
+    // angleIcon.tabIndex = 1;
     setStyle(angleIcon, style)
     angleIcon.onblur = () => {
       this.isAngleClick = false;
@@ -326,12 +345,27 @@ class drop {
     const detail = parentNode.getBoundingClientRect()
     let width = parentNode.style.width;
     let height = parentNode.style.height;
+    let elemType = parentNode.dataset.elemtype;
+    // console.log(parentNode.offsetWidth,"kkkkk")
+     
+      
+    if(elemType !== 'img'){
+      // parentNode.style.minWidth = parentNode.offsetWidth+this.unit;
+      // parentNode.style.minHeight = parentNode.offsetHeight+this.unit;
+      // console.log( parentNode.offsetWidth+this.unit,"jjjkkkk",this.unit)
+      height = parentNode.style.minHeight;
+      width =  parentNode.offsetWidth+this.unit;
+    }
+    // console.log(parentNode.offsetWidth,"jjjj")
+   
     let transform = parentNode.style.transform;
-    let top = parentNode.style.top.replace('px', '');
-    let left = parentNode.style.left.replace('px', '');
+    let top = parentNode.style.top.replace(this.unit, '');
+    let left = parentNode.style.left.replace(this.unit, '');
+    let fontSize = parentNode.style.fontSize.replace(this.unit, '');
+  
     let elemDetail = {
-      width: width.replace('px', ''),
-      height: height.replace('px', ''),
+      width: width.replace(this.unit, ''),
+      height: height.replace(this.unit, ''),
       centerX: detail.left + detail.width / 2,
       centerY: detail.top + detail.height / 2,
       mouseX: event.pageX - left - this.canvasDetail.left,
@@ -340,7 +374,9 @@ class drop {
       pageY: event.pageY,
       angle: transform.replace('rotate(', '').replace('deg)', ''),
       x: left,
-      y: top
+      y: top,
+      fontSize:fontSize,
+      type:parentNode.dataset.elemtype
     }
     this.activeDom.dataset.activeDetail = JSON.stringify(elemDetail);
     this.activeDom.dataset.type = type;
@@ -352,17 +388,22 @@ class drop {
 
   }
   onmousemove(evt) {
+    // console.log('move')
     let activeElem = null,
       type = null,
       activeDetail = null,
       centerPos = null,
       mouseToPagePos = null,
       activePos = null,
+      oldWidth=null,
+      oldHeight = null,
       mousePos = null;
     if (this.activeDom) {
       type = this.activeDom.dataset.type;
       activeElem = this.activeDom.parentNode;
       activeDetail = JSON.parse(this.activeDom.dataset.activeDetail)
+      oldWidth = activeDetail.width;
+      oldHeight = activeDetail.height;
       centerPos = {
         x: activeDetail.centerX,
         y: activeDetail.centerY
@@ -392,7 +433,6 @@ class drop {
     }
     if (type == 'right') {
       activeDetail.width = mousePos.x - activePos.x + (+activeDetail.width);
-      // activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
     }
     if (type == 'left') {
       activeDetail.width = activePos.x - mousePos.x + (+activeDetail.width);
@@ -405,30 +445,46 @@ class drop {
 
     if (type === 'leftTop') {
       activeDetail.width = activePos.x - mousePos.x + (+activeDetail.width);
-      activeDetail.height = activePos.y - mousePos.y + (+activeDetail.height);
+      activeDetail.height =  oldHeight*activeDetail.width/oldWidth
       activeDetail.x = activeDetail.x - (activePos.x - mousePos.x);
-      activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
+      activeDetail.y = activeDetail.y -(activeDetail.height - oldHeight);
     }
     if (type === 'rightTop') {
       activeDetail.width = mousePos.x - activePos.x + (+activeDetail.width);
-      activeDetail.height = activePos.y - mousePos.y + (+activeDetail.height);
-      activeDetail.y = activeDetail.y - (activePos.y - mousePos.y);
+      activeDetail.height =  oldHeight*activeDetail.width/oldWidth
+      activeDetail.y = activeDetail.y -(activeDetail.height - oldHeight);
     }
     if (type === 'rightBottom') {
       activeDetail.width = mousePos.x - activePos.x + (+activeDetail.width);
-      activeDetail.height = mousePos.y - activePos.y + (+activeDetail.height);
+      activeDetail.height =  oldHeight*activeDetail.width/oldWidth
     }
     if (type === 'leftBottom') {
       activeDetail.width = activePos.x - mousePos.x + (+activeDetail.width);
-      activeDetail.height = mousePos.y - activePos.y + (+activeDetail.height);
+      activeDetail.height =  oldHeight*activeDetail.width/oldWidth
       activeDetail.x = activeDetail.x - (activePos.x - mousePos.x);
     }
     if (activeElem) {
+     
+      activeDetail.fontSize = activeDetail.fontSize*activeDetail.width/oldWidth
       activeElem.style.transform = `rotate(${activeDetail.angle}deg) `;
-      activeElem.style.left = `${activeDetail.x}px`;
-      activeElem.style.top = `${activeDetail.y}px`;
-      activeElem.style.width = `${activeDetail.width}px`;
-      activeElem.style.height = `${activeDetail.height}px`;
+ 
+      if(activeDetail.type == 'img'){
+        activeElem.style.width = activeDetail.width+this.unit;
+        activeElem.style.height = activeDetail.heigh+tthis.unit;
+        activeElem.style.left = activeDetail.x+this.unit;
+        activeElem.style.top = activeDetail.y+this.unit;
+      }else{
+        if(activeDetail.fontSize>=12){
+          // console.log('move')
+          activeElem.style.left = activeDetail.x+this.unit;
+          activeElem.style.top = activeDetail.y+this.unit;
+          // activeElem.style.minWidth = activeDetail.width+this.unit;
+          // activeElem.style.minHeight = activeDetail.height+this.unit;
+          activeElem.style.fontSize = activeDetail.fontSize + this.unit;
+        }
+       
+      }
+    
     }
   }
   deleteDrop() {
