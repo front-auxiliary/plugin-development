@@ -1,5 +1,6 @@
 import data from './data';
-import { creatDom } from '../../../utils';
+import dreawData from '../draw-data';
+import { creatDom,getFileDetail } from '../../../utils';
 class bar {
   constructor(params, draw) {
     this.dom = params.dom;
@@ -24,9 +25,40 @@ class bar {
         backgroundColor: '#fff'
 
       }
-      let dombox = creatDom({ tag: 'div', style: style ,on:{hover:(event)=>{
-        event.currentTarget.style.backgroundColor = 'rgba(14,19,24,.15)'
-      }}});
+      let upFileDom = creatDom({
+        tag: 'input',
+        attr: {
+          type: 'file',
+
+        },
+        style: {
+          display: 'none'
+        },
+        on: {
+          change: (e) => {
+            getFileDetail(e,(file,url)=>{
+              const {fileUpload} = dreawData.getParams();
+              fileUpload(file,url)
+            })
+          }
+        }
+      })
+      let dombox = creatDom({
+        tag: 'div', style: style,
+        on: {
+          hover: (event) => {
+            event.currentTarget.style.backgroundColor = 'rgba(14,19,24,.15)'
+          },
+          click: () => {
+            if (item.type == 'img') {
+              upFileDom.click();
+            } else {
+              item.on.click()
+            }
+
+          }
+        }
+      });
       let domText = creatDom({ tag: 'span', child: item.text, style: { display: 'block' } })
       let domImg = creatDom({
         tag: 'img', attr: { src: item.img }, style: {
@@ -41,6 +73,10 @@ class bar {
       }
       dombox.appendChild(domImg);
       dombox.appendChild(domText);
+      if (item.type == 'img') {
+        dombox.appendChild(upFileDom);
+
+      }
       this.dom.appendChild(dombox);
     })
   }

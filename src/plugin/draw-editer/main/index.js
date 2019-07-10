@@ -5,20 +5,26 @@ import imgDetail from '../draw-img';
 import data from './data';
 import dreawData from '../draw-data';
 
+
+
 export default class drawEditer {
   constructor(params) {
     dreawData.setParams({
       canvas:params.canvas.dom,
       unit:params.unit||'px',
       zoom:params.canvas.zoom||1,
-      detail:params.detail.dom
+      detail:params.detail.dom,
+      fileUpload:params.fileUpload
+
     })
+    dreawData.setDrawEdit(this);
     this.canvas = params.canvas.dom;
     
     this.unit = params.unit||'px';
     this.zoom = params.canvas.zoom||1
     this.drawData = data;
     this.canvas.style.position = 'relative';
+    this.canvas.style.overflow = 'hidden';
     this.canvas.style.height = params.canvas.height*this.zoom+this.unit;
     this.canvas.style.width = params.canvas.width*this.zoom+this.unit;
     this.elements = [];
@@ -31,7 +37,7 @@ export default class drawEditer {
     this.imgDetail = new imgDetail(canvas);
     this.bar.init();
     this.detail.init();
-    // this.imgDetail.init();
+    this.imgDetail.init();
     // return this;
     // console.log((new bar()).init(),"kkkk")
   }
@@ -48,11 +54,11 @@ export default class drawEditer {
 
     drop.elemClick(callback)
   }
-  add (type){
+  add (params){
     this.id++;
     // this.elements.push()
-    this.canvas.appendChild(drop.create({
-      name:type+this.id,
+    let data = Object.assign({
+      name:this.id,
       id:this.id,
       text:'是的发送到',
       type:'text',
@@ -66,7 +72,8 @@ export default class drawEditer {
         color:'#000',
         fontSize:14,
       }
-    },this.canvas));
+    },params)
+    this.canvas.appendChild(drop.create(data,this.canvas));
   }
   render(){
     // this.drawDat

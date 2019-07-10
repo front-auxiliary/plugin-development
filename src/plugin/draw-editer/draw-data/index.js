@@ -1,13 +1,30 @@
 import {delUnit,colorHex} from '../../../utils'
 
-
 let arr = [];
 let activeDom = null;
 let activeData = {};
 let params = {};
 let detailDom = null;
-
+let imgDom = null;
+let drawEdit  = null;
+let imgDetail = {};
+let imgDetailDom = null;
 export default {
+  id:0,
+  setImgDetailDom(dom){
+    imgDetailDom = dom;
+    return imgDetailDom;
+  },
+  getImgDetailDom(){
+    return imgDetailDom;
+  },
+  setDrawEdit:(draw)=>{
+    drawEdit = draw;
+    return drawEdit;
+  },
+  getDrawEdit:()=>{
+    return drawEdit;
+  },
   add:(item)=>{
       return arr.push(item)
   },
@@ -74,6 +91,13 @@ export default {
   getDetail(){
     return detailDom;
   },
+  setImg(dom){
+    imgDom = dom;
+    return imgDom;
+  },
+  getImg(){
+    return imgDom;
+  },
   setForm(){
     let formArr = this.getActiveData()
     for (let key in formArr) {
@@ -122,6 +146,21 @@ export default {
       }
 
     }
+  },
+  getImgDetail(){
+    let elemtype = activeDom.dataset.elemtype;
+    let {transform,width,height,top,left} = activeDom.style;
+    let activeImg = activeDom.getElementsByTagName('img')[0]
+
+    if(elemtype == 'img'){
+      imgDetail.angle = transform.replace('rotate(', '').replace('deg)', '');
+      imgDetail.width = delUnit(width,params.unit)
+      imgDetail.height = delUnit(height,params.unit)
+      imgDetail.top = delUnit(top,params.unit)
+      imgDetail.left = delUnit(left,params.unit)
+      imgDetail.src = activeImg.src;
+    }
+    return imgDetail;
   }
 
 
