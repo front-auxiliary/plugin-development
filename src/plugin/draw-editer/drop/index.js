@@ -139,16 +139,12 @@ class drop {
       },
       on: {
         mousedown: (event,dom) => {
-          // console.log("---",dom.dataset.elemtype)
           event.stopPropagation()
           this.activeHighlight('none');
           drawData.setActive(dom);
           this.activeHighlight('block');
-          // drawData.getImgDetail();
           let {src} = drawData.getImgDetail()
-          // console.log(drawData.getImgDetail(),"jjj")
           drawData.getImgDetailDom().src = src;
-          // drawData.getActive().style.zIndex = drawData.id++;
           const elemtype = dom.dataset.elemtype;
           this.onmousedown(event, dropDom, this.canvas)
           if(elemtype == 'img'){

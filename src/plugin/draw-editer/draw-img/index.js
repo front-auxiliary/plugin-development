@@ -12,6 +12,7 @@ export default class drawImg {
   }
   init() {
     const { canvas } = drawData.getParams()
+    
     this.upFile = creatDom({
       tag: 'input',
       attr: {
@@ -89,8 +90,13 @@ export default class drawImg {
           cursor:'pointer'
         }, on: {
           click: (e) => {
+            if(params.type == 'cut'){
+              let model = drawData.getModel();
+              model.open()
+            }else{
+              this.upFile.click();
+            }
             
-            this.upFile.click();
           }
         }, child: params.title
       });

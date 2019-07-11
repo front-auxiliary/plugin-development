@@ -9,9 +9,17 @@ let imgDom = null;
 let drawEdit  = null;
 let imgDetail = {};
 let imgDetailDom = null;
+let model = null;
 export default {
   id:0,
-  setImgDetailDom(dom){
+  setModel:(params)=>{
+    model = params;
+    return model;
+  },
+  getModel:()=>{
+    return model;
+  },
+  setImgDetailDom:(dom)=>{
     imgDetailDom = dom;
     return imgDetailDom;
   },

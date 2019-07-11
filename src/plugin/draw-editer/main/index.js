@@ -4,7 +4,9 @@ import detail from '../draw-detail';
 import imgDetail from '../draw-img';
 import data from './data';
 import dreawData from '../draw-data';
-
+import {
+  model
+} from '../components'
 
 
 export default class drawEditer {
@@ -17,8 +19,13 @@ export default class drawEditer {
       fileUpload:params.fileUpload
 
     })
+    this.creatModel = new model();
+  
     dreawData.setDrawEdit(this);
+    dreawData.setModel(this.creatModel);
+
     this.canvas = params.canvas.dom;
+    this.canvas.parentNode.appendChild(this.creatModel.init())
     
     this.unit = params.unit||'px';
     this.zoom = params.canvas.zoom||1
