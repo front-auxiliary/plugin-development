@@ -426,7 +426,8 @@ function () {
 
     this.topics = {};
     this.token = 0;
-  }
+  } // 发布
+
 
   _createClass(pubsub, [{
     key: "pub",
@@ -439,16 +440,17 @@ function () {
       var len = subscribers ? subscribers.length : 0;
 
       while (len--) {
-        subscribers[len].func(topic, args);
+        subscribers[len].fn(name, args);
       }
 
       return this;
-    }
+    } // 订阅
+
   }, {
     key: "sub",
     value: function sub(name, fn) {
       if (!this.topics[name]) {
-        this.topics[topic] = [];
+        this.topics[name] = [];
       }
 
       this.token++;
@@ -583,6 +585,7 @@ var imgDetail = {};
 var imgDetailDom = null;
 var model = null;
 var _default = {
+  pubsub: null,
   id: 0,
   setModel: function setModel(params) {
     model = params;
@@ -6190,6 +6193,8 @@ require("./index.less");
 
 var _button = _interopRequireDefault(require("../button"));
 
+var _drawData = _interopRequireDefault(require("../../draw-data"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
@@ -6222,6 +6227,7 @@ function () {
     this.yDom = null;
     this.cropperData = {};
     this.formDom = null;
+    this.src = 'https://gss2.bdstatic.com/-fo3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=652b9cbd6b600c33f479d9ca2a4d5134/4a36acaf2edda3cc7291e78901e93901213f9225.jpg';
   }
 
   _createClass(model, [{
@@ -6236,7 +6242,7 @@ function () {
         if (!isNaN(value) && value) {
           var data = Object.assign(_this.cropperData, _defineProperty({}, dom.name, +value));
 
-          _this.cropper.setData(data);
+          _this.creatCropper.setData(data);
         }
       };
 
@@ -6431,11 +6437,7 @@ function () {
         },
         on: {
           click: function click() {
-            _this3.cropper.getData();
-
-            console.log(_this3.cropper.getData());
-            return;
-            _this3.boxDom.style.display = 'none';
+            _this3.submit();
           }
         }
       }));
@@ -6499,10 +6501,12 @@ function () {
       this.contentBoxDom.appendChild(this.renderRight());
       this.boxDom.appendChild(this.contentBoxDom);
       this.cutDom.appendChild(this.imgDom);
-      this.cropper = new _cropper.default(this.imgDom, {
+      this.creatCropper = new _cropper.default(this.imgDom, {
         zoomOnTouch: false,
         movable: true,
         crop: function crop(event) {
+          console.log(111);
+
           _this4.setCropperData(event.detail);
         }
       });
@@ -6515,20 +6519,30 @@ function () {
 
       if (params.src) {
         this.imgDom.src = params.src;
+        this.src = params.src;
       }
 
-      this.cropper.destroy();
-      this.cropper = new _cropper.default(this.imgDom, {
+      this.creatCropper.destroy();
+      this.creatCropper = new _cropper.default(this.imgDom, {
         zoomOnTouch: false,
         movable: true,
         crop: function crop(event) {
           _this5.setCropperData(event.detail);
         },
         ready: function ready() {
-          _this5.cropper.setData(params);
+          _this5.creatCropper.setData(params);
         }
       });
       this.boxDom.style.display = "block";
+    }
+  }, {
+    key: "submit",
+    value: function submit() {
+      this.boxDom.style.display = "none";
+
+      _drawData.default.pubsub.pub('imgChange', _objectSpread({
+        src: this.src
+      }, this.creatCropper.getData()));
     }
   }, {
     key: "close",
@@ -6539,7 +6553,7 @@ function () {
 }();
 
 exports.default = model;
-},{"../../../../utils":"utils/index.js","../cropper":"plugin/draw-editer/components/cropper.js","./index.less":"plugin/draw-editer/components/model/index.less","../button":"plugin/draw-editer/components/button.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
+},{"../../../../utils":"utils/index.js","../cropper":"plugin/draw-editer/components/cropper.js","./index.less":"plugin/draw-editer/components/model/index.less","../button":"plugin/draw-editer/components/button.js","../../draw-data":"plugin/draw-editer/draw-data/index.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6863,6 +6877,8 @@ var drawImg =
 /*#__PURE__*/
 function () {
   function drawImg(canvas) {
+    var _this = this;
+
     _classCallCheck(this, drawImg);
 
     var _drawData$getParams = _drawData.default.getParams(),
@@ -6871,12 +6887,17 @@ function () {
     this.canvas = detail;
     this.upFile = null;
     this.img = null;
+
+    _drawData.default.pubsub.sub('imgChange', function (name, data) {
+      console.log("00000000", name, data);
+      _this.img.src = data.src;
+    });
   }
 
   _createClass(drawImg, [{
     key: "init",
     value: function init() {
-      var _this = this;
+      var _this2 = this;
 
       var _drawData$getParams2 = _drawData.default.getParams(),
           canvas = _drawData$getParams2.canvas;
@@ -6895,7 +6916,7 @@ function () {
               activeImg.src = url; // const { fileUpload } = dreawData.getParams();
               // fileUpload(file, url)
 
-              _this.img.src = url;
+              _this2.img.src = url;
             });
           }
         },
@@ -6914,8 +6935,8 @@ function () {
           margin: '0 -300px 0 0',
           right: '-5px',
           bottom: '0px',
-          top: '0px',
-          display: 'none'
+          top: '0px' // display: 'none'
+
         }
       }); // 获取 img detail dom 
 
@@ -6923,7 +6944,7 @@ function () {
       _drawData.default.setImg(detailBox);
 
       _data.default.map(function (item, index) {
-        detailBox.appendChild(_this.divList(item));
+        detailBox.appendChild(_this2.divList(item));
       });
 
       detailBox.appendChild(this.upFile);
@@ -6932,7 +6953,7 @@ function () {
   }, {
     key: "divList",
     value: function divList(params) {
-      var _this2 = this;
+      var _this3 = this;
 
       var domBox = _utils.creatDom.call(this, {});
 
@@ -6992,7 +7013,7 @@ function () {
                   src: img.src
                 });
               } else {
-                _this2.upFile.click();
+                _this3.upFile.click();
               }
             }
           },
@@ -7127,6 +7148,7 @@ function () {
       fileUpload: params.fileUpload
     });
 
+    _drawData.default.pubsub = new _utils.pubsub();
     this.creatModel = new _components.model();
     (0, _drawDel.default)();
 
@@ -7267,7 +7289,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58651" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50120" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

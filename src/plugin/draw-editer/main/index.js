@@ -20,8 +20,11 @@ export default class drawEditer {
       fileUpload:params.fileUpload
 
     })
+    dreawData.pubsub = new pubsub();
     this.creatModel = new model();
+    
     dreawDel();
+    
     dreawData.setDrawEdit(this);
     dreawData.setModel(this.creatModel);
 

@@ -3,6 +3,7 @@ export default class pubsub{
         this.topics  = {};
         this.token = 0;
     }   
+    // 发布
     pub(name,args){
         if (!this.topics[name]) {
             return false;
@@ -10,13 +11,14 @@ export default class pubsub{
         var subscribers = this.topics[name];
         var len = subscribers ? subscribers.length : 0;
         while(len--) {
-            subscribers[len].func(topic, args);
+            subscribers[len].fn(name, args);
         }
         return this;
     }
+    // 订阅
     sub(name,fn){
         if (!this.topics[name]) {
-            this.topics[topic] = [];
+            this.topics[name] = [];
         }
         this.token++;
         this.topics[name].push({

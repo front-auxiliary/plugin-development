@@ -11,6 +11,7 @@ let imgDetail = {};
 let imgDetailDom = null;
 let model = null;
 export default {
+  pubsub:null,
   id:0,
   setModel:(params)=>{
     model = params;

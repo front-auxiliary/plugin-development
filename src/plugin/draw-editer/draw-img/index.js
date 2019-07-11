@@ -8,7 +8,10 @@ export default class drawImg {
     this.canvas = detail;
     this.upFile = null;
     this.img = null;
-
+    drawData.pubsub.sub('imgChange',(name,data)=>{
+      console.log("00000000",name,data)
+      this.img.src = data.src;
+    })
   }
   init() {
     const { canvas } = drawData.getParams()
@@ -46,7 +49,7 @@ export default class drawImg {
         right: '-5px',
         bottom: '0px',
         top: '0px',
-        display: 'none'
+        // display: 'none'
       }
     });
     // 获取 img detail dom 

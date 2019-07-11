@@ -2,6 +2,7 @@ import { creatDom, hsvToRgb, colorHex } from '../../../../utils';
 import Cropper from "../cropper";
 import './index.less'
 import botton from '../button';
+import drawData from '../../draw-data'
 const closeIcon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYyODE1MDIxNDU4IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5NzciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTUyMS42OTM4NjcgNDQ5LjI5NzA2N0wxMTEuNDExMiAzOS4wMTQ0YTUxLjIgNTEuMiAwIDEgMC03Mi40MzA5MzMgNzIuMzYyNjY3bDQxMC4yODI2NjYgNDEwLjMxNjgtNDEwLjI4MjY2NiA0MTAuMzE2OGE1MS4yIDUxLjIgMCAxIDAgNzIuMzk2OCA3Mi4zOTY4bDQxMC4zMTY4LTQxMC4yODI2NjcgNDEwLjMxNjggNDEwLjI4MjY2N2E1MS4yIDUxLjIgMCAxIDAgNzIuMzk2OC03Mi4zNjI2NjdsLTQxMC4yODI2NjctNDEwLjM1MDkzMyA0MTAuMjgyNjY3LTQxMC4yODI2NjdhNTEuMiA1MS4yIDAgMSAwLTcyLjM5NjgtNzIuMzk2OGwtNDEwLjI4MjY2NyA0MTAuMjgyNjY3eiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iMTk3OCI+PC9wYXRoPjwvc3ZnPg==';
 const imgIccn = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYyODI4Nzc1MjcxIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5OTQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTQyMC41NzE0MjkgMjQ2Ljg1NzE0M20tOTEuNDI4NTcyIDBhOTEuNDI4NTcxIDkxLjQyODU3MSAwIDEgMCAxODIuODU3MTQzIDAgOTEuNDI4NTcxIDkxLjQyODU3MSAwIDEgMC0xODIuODU3MTQzIDBaIiBmaWxsPSIjRTlFREYyIiBwLWlkPSIxOTk1Ij48L3BhdGg+PHBhdGggZD0iTTEwMDIuMDU3MTQzIDgzOS4zMTQyODZsLTI5Mi41NzE0MjktNDM4Ljg1NzE0M2MtMy42NTcxNDMtNS40ODU3MTQtOS4xNDI4NTctNy4zMTQyODYtMTQuNjI4NTcxLTcuMzE0Mjg2LTUuNDg1NzE0IDAtMTAuOTcxNDI5IDEuODI4NTcxLTE0LjYyODU3MiA1LjQ4NTcxNGwtMTc1LjU0Mjg1NyAyMDQuOCA4MC40NTcxNDMgMTI4LTI4My40Mjg1NzEtMjI0LjkxNDI4NWMtMy42NTcxNDMtMy42NTcxNDMtOS4xNDI4NTctMy42NTcxNDMtMTIuOC0zLjY1NzE0My01LjQ4NTcxNCAwLTkuMTQyODU3IDMuNjU3MTQzLTEyLjggNy4zMTQyODZsLTI1NiAzMjkuMTQyODU3Yy0zLjY1NzE0MyA1LjQ4NTcxNC01LjQ4NTcxNCAxMi44LTEuODI4NTcyIDIwLjExNDI4NSAzLjY1NzE0MyA1LjQ4NTcxNCA5LjE0Mjg1NyAxMC45NzE0MjkgMTYuNDU3MTQzIDEwLjk3MTQyOWg5NTAuODU3MTQzYzcuMzE0Mjg2IDAgMTIuOC0zLjY1NzE0MyAxNi40NTcxNDMtOS4xNDI4NTcgNS40ODU3MTQtOS4xNDI4NTcgMy42NTcxNDMtMTQuNjI4NTcxIDAtMjEuOTQyODU3eiIgZmlsbD0iI0U5RURGMiIgcC1pZD0iMTk5NiI+PC9wYXRoPjwvc3ZnPg==';
 
@@ -18,6 +19,7 @@ export default class model {
     this.yDom = null;
     this.cropperData = {};
     this.formDom = null;
+    this.src = 'https://gss2.bdstatic.com/-fo3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=652b9cbd6b600c33f479d9ca2a4d5134/4a36acaf2edda3cc7291e78901e93901213f9225.jpg';
   }
   renderForm() {
     const inputFn = (event, dom) => {
@@ -28,7 +30,7 @@ export default class model {
         const data = Object.assign(this.cropperData, {
           [dom.name]: +value,
         });
-        this.cropper.setData(data)
+        this.creatCropper.setData(data)
       }
     }
     const arr = [
@@ -227,11 +229,8 @@ export default class model {
         margin: '0 30px'
       },
       on: {
-        click: () => {
-          this.cropper.getData();
-          console.log( this.cropper.getData())
-          return ;
-          this.boxDom.style.display = 'none'
+        click: ()=>{
+          this.submit()
         }
       }
     }));
@@ -288,10 +287,11 @@ export default class model {
     this.contentBoxDom.appendChild(this.renderRight());
     this.boxDom.appendChild(this.contentBoxDom);
     this.cutDom.appendChild(this.imgDom);
-    this.cropper = new Cropper(this.imgDom, {
+    this.creatCropper = new Cropper(this.imgDom, {
       zoomOnTouch: false,
       movable: true,
       crop: (event) => {
+        console.log(111)
         this.setCropperData(event.detail)
       },
 
@@ -303,20 +303,25 @@ export default class model {
   open(params) {
     if (params.src) {
       this.imgDom.src = params.src;
+      this.src = params.src;
     }
-    this.cropper.destroy()
-    this.cropper = new Cropper(this.imgDom, {
+    this.creatCropper.destroy()
+    this.creatCropper = new Cropper(this.imgDom, {
       zoomOnTouch: false,
       movable: true,
       crop: (event) => {
         this.setCropperData(event.detail)
       },
       ready:()=>{
-        this.cropper.setData(params)
+        this.creatCropper.setData(params)
       }
     });
     this.boxDom.style.display = "block"
 
+  }
+  submit(){
+    this.boxDom.style.display = "none"
+    drawData.pubsub.pub('imgChange',{src:this.src, ...this.creatCropper.getData()})
   }
   close() {
 
