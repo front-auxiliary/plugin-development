@@ -7,7 +7,8 @@ import dreawData from '../draw-data';
 import {
   model
 } from '../components'
-
+import { pubsub } from '../../../utils';
+import dreawDel from '../draw-del';
 
 export default class drawEditer {
   constructor(params) {
@@ -20,7 +21,7 @@ export default class drawEditer {
 
     })
     this.creatModel = new model();
-  
+    dreawDel();
     dreawData.setDrawEdit(this);
     dreawData.setModel(this.creatModel);
 

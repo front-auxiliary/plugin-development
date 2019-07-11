@@ -404,6 +404,84 @@ var _default = function _default(e, callback) {
 };
 
 exports.default = _default;
+},{}],"utils/pubsub.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var pubsub =
+/*#__PURE__*/
+function () {
+  function pubsub() {
+    _classCallCheck(this, pubsub);
+
+    this.topics = {};
+    this.token = 0;
+  }
+
+  _createClass(pubsub, [{
+    key: "pub",
+    value: function pub(name, args) {
+      if (!this.topics[name]) {
+        return false;
+      }
+
+      var subscribers = this.topics[name];
+      var len = subscribers ? subscribers.length : 0;
+
+      while (len--) {
+        subscribers[len].func(topic, args);
+      }
+
+      return this;
+    }
+  }, {
+    key: "sub",
+    value: function sub(name, fn) {
+      if (!this.topics[name]) {
+        this.topics[topic] = [];
+      }
+
+      this.token++;
+      this.topics[name].push({
+        token: this.token,
+        fn: fn
+      });
+      return this.token;
+    }
+  }, {
+    key: "unSub",
+    value: function unSub(token) {
+      for (var key in this.topics) {
+        var topArr = this.topics[key];
+
+        if (topArr) {
+          for (var i = 0; i < topArr.length; i++) {
+            if (topArr[i].token == token) {
+              topArr.splice(i, 1);
+              return token;
+            }
+          }
+        }
+      }
+
+      return this;
+    }
+  }]);
+
+  return pubsub;
+}();
+
+exports.default = pubsub;
 },{}],"utils/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -446,6 +524,12 @@ Object.defineProperty(exports, "getFileDetail", {
     return _getFileDetail.default;
   }
 });
+Object.defineProperty(exports, "pubsub", {
+  enumerable: true,
+  get: function () {
+    return _pubsub.default;
+  }
+});
 
 var _setStyle = _interopRequireDefault(require("./dom/setStyle"));
 
@@ -459,8 +543,10 @@ var _hsvToRgb = _interopRequireDefault(require("./hsvToRgb"));
 
 var _getFileDetail = _interopRequireDefault(require("./getFileDetail"));
 
+var _pubsub = _interopRequireDefault(require("./pubsub"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js","./dom/delUnit":"utils/dom/delUnit.js","./colorHex":"utils/colorHex.js","./hsvToRgb":"utils/hsvToRgb.js","./getFileDetail":"utils/getFileDetail.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
+},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js","./dom/delUnit":"utils/dom/delUnit.js","./colorHex":"utils/colorHex.js","./hsvToRgb":"utils/hsvToRgb.js","./getFileDetail":"utils/getFileDetail.js","./pubsub":"utils/pubsub.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -569,7 +655,10 @@ var _default = {
   },
   setActive: function setActive(dom) {
     activeDom = dom;
-    this.getActiveData();
+
+    if (activeDom) {
+      this.getActiveData();
+    }
   },
   getActive: function getActive() {
     return activeDom;
@@ -5946,7 +6035,146 @@ function () {
 
 assign(Cropper.prototype, render, preview, events, handlers, change, methods);
 module.exports = Cropper;
-},{}],"plugin/draw-editer/components/model/index.js":[function(require,module,exports) {
+},{}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
+
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
+  }
+
+  return bundleURL;
+}
+
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+
+  return '/';
+}
+
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
+  };
+
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+}
+
+module.exports = reloadCSS;
+},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"plugin/draw-editer/components/model/index.less":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"plugin/draw-editer/components/button.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../../utils");
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var _default = function _default(params) {
+  var type = params.type,
+      style = params.style;
+  var box = null;
+  var publicStyle = {
+    display: 'inline-block',
+    padding: '5px 20px',
+    boxShadow: '0 2px 0 rgba(0,0,0,0.015)',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    transition: 'all .3s cubic-bezier(.645, .045, .355, 1)'
+  };
+  var primaryStyle = Object.assign({
+    border: '0px solid #d9d9d9',
+    fontSize: '14px',
+    color: '#fff',
+    background: '#1890ff'
+  }, publicStyle, style);
+  var defaultStyle = Object.assign({
+    border: '1px solid #d9d9d9',
+    fontSize: '14px',
+    color: '#333'
+  }, publicStyle, style);
+
+  var primaryHover = function primaryHover() {
+    box.style.background = '#40a9ff'; // box.style.color='#1890ff';
+  };
+
+  var defaultHover = function defaultHover() {
+    box.style.borderColor = '#1890ff';
+    box.style.color = '#1890ff';
+  };
+
+  var initStyle = defaultStyle;
+  var hover = defaultHover;
+
+  if (type == 'primary') {
+    initStyle = primaryStyle;
+    hover = primaryHover;
+  }
+
+  box = (0, _utils.creatDom)({
+    tag: 'div',
+    child: params.child,
+    style: initStyle,
+    on: _objectSpread({
+      hover: hover
+    }, params.on)
+  });
+  return box;
+};
+
+exports.default = _default;
+},{"../../../utils":"utils/index.js"}],"plugin/draw-editer/components/model/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5958,13 +6186,24 @@ var _utils = require("../../../../utils");
 
 var _cropper = _interopRequireDefault(require("../cropper"));
 
+require("./index.less");
+
+var _button = _interopRequireDefault(require("../button"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var closeIcon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYyODE1MDIxNDU4IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5NzciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTUyMS42OTM4NjcgNDQ5LjI5NzA2N0wxMTEuNDExMiAzOS4wMTQ0YTUxLjIgNTEuMiAwIDEgMC03Mi40MzA5MzMgNzIuMzYyNjY3bDQxMC4yODI2NjYgNDEwLjMxNjgtNDEwLjI4MjY2NiA0MTAuMzE2OGE1MS4yIDUxLjIgMCAxIDAgNzIuMzk2OCA3Mi4zOTY4bDQxMC4zMTY4LTQxMC4yODI2NjcgNDEwLjMxNjggNDEwLjI4MjY2N2E1MS4yIDUxLjIgMCAxIDAgNzIuMzk2OC03Mi4zNjI2NjdsLTQxMC4yODI2NjctNDEwLjM1MDkzMyA0MTAuMjgyNjY3LTQxMC4yODI2NjdhNTEuMiA1MS4yIDAgMSAwLTcyLjM5NjgtNzIuMzk2OGwtNDEwLjI4MjY2NyA0MTAuMjgyNjY3eiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iMTk3OCI+PC9wYXRoPjwvc3ZnPg==';
+var imgIccn = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYyODI4Nzc1MjcxIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5OTQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTQyMC41NzE0MjkgMjQ2Ljg1NzE0M20tOTEuNDI4NTcyIDBhOTEuNDI4NTcxIDkxLjQyODU3MSAwIDEgMCAxODIuODU3MTQzIDAgOTEuNDI4NTcxIDkxLjQyODU3MSAwIDEgMC0xODIuODU3MTQzIDBaIiBmaWxsPSIjRTlFREYyIiBwLWlkPSIxOTk1Ij48L3BhdGg+PHBhdGggZD0iTTEwMDIuMDU3MTQzIDgzOS4zMTQyODZsLTI5Mi41NzE0MjktNDM4Ljg1NzE0M2MtMy42NTcxNDMtNS40ODU3MTQtOS4xNDI4NTctNy4zMTQyODYtMTQuNjI4NTcxLTcuMzE0Mjg2LTUuNDg1NzE0IDAtMTAuOTcxNDI5IDEuODI4NTcxLTE0LjYyODU3MiA1LjQ4NTcxNGwtMTc1LjU0Mjg1NyAyMDQuOCA4MC40NTcxNDMgMTI4LTI4My40Mjg1NzEtMjI0LjkxNDI4NWMtMy42NTcxNDMtMy42NTcxNDMtOS4xNDI4NTctMy42NTcxNDMtMTIuOC0zLjY1NzE0My01LjQ4NTcxNCAwLTkuMTQyODU3IDMuNjU3MTQzLTEyLjggNy4zMTQyODZsLTI1NiAzMjkuMTQyODU3Yy0zLjY1NzE0MyA1LjQ4NTcxNC01LjQ4NTcxNCAxMi44LTEuODI4NTcyIDIwLjExNDI4NSAzLjY1NzE0MyA1LjQ4NTcxNCA5LjE0Mjg1NyAxMC45NzE0MjkgMTYuNDU3MTQzIDEwLjk3MTQyOWg5NTAuODU3MTQzYzcuMzE0Mjg2IDAgMTIuOC0zLjY1NzE0MyAxNi40NTcxNDMtOS4xNDI4NTcgNS40ODU3MTQtOS4xNDI4NTcgMy42NTcxNDMtMTQuNjI4NTcxIDAtMjEuOTQyODU3eiIgZmlsbD0iI0U5RURGMiIgcC1pZD0iMTk5NiI+PC9wYXRoPjwvc3ZnPg==';
 
 var model =
 /*#__PURE__*/
@@ -5977,11 +6216,249 @@ function () {
     this.contentBoxDom = null;
     this.cutDom = null;
     this.imgDom = null;
+    this.widthDom = null;
+    this.heightDom = null;
+    this.xDom = null;
+    this.yDom = null;
+    this.cropperData = {};
+    this.formDom = null;
   }
 
   _createClass(model, [{
+    key: "renderForm",
+    value: function renderForm() {
+      var _this = this;
+
+      var inputFn = function inputFn(event, dom) {
+        var value = dom.value;
+        console.log(dom.name);
+
+        if (!isNaN(value) && value) {
+          var data = Object.assign(_this.cropperData, _defineProperty({}, dom.name, +value));
+
+          _this.cropper.setData(data);
+        }
+      };
+
+      var arr = [{
+        text: '宽:',
+        name: 'width',
+        on: {
+          input: inputFn
+        }
+      }, {
+        text: '高:',
+        name: 'height',
+        on: {
+          input: inputFn
+        }
+      }, {
+        text: 'x :',
+        name: 'x',
+        on: {
+          input: inputFn
+        }
+      }, {
+        text: 'y :',
+        name: 'y',
+        on: {
+          input: inputFn
+        }
+      }];
+      this.formDom = (0, _utils.creatDom)({
+        tag: 'form',
+        style: {
+          // background:'red',
+          // height:'400px',
+          top: '80px',
+          bottom: '90px',
+          right: '30px',
+          left: '0px',
+          position: 'absolute'
+        }
+      });
+      arr.map(function (item) {
+        _this.formDom.appendChild(_this.rednerItem(item));
+      });
+      return this.formDom;
+    }
+  }, {
+    key: "rednerItem",
+    value: function rednerItem(params) {
+      var boxDom = (0, _utils.creatDom)({
+        tag: 'div'
+      });
+      var textDom = (0, _utils.creatDom)({
+        tag: 'span',
+        child: params.text,
+        style: {
+          display: 'inline-block',
+          width: '30px',
+          textAlign: 'center'
+        }
+      });
+      var inputDom = (0, _utils.creatDom)({
+        tag: 'input',
+        attr: {
+          name: params.name
+        },
+        style: {
+          display: 'inline-block',
+          width: '200px',
+          margin: '10px',
+          lineHeight: '35px',
+          borderRadius: '4px',
+          border: '1px solid #d9d9d9',
+          boxSizing: 'border-box',
+          padding: ' 0 10px'
+        },
+        on: params.on
+      });
+      boxDom.appendChild(textDom);
+      boxDom.appendChild(inputDom);
+      return boxDom;
+    }
+  }, {
+    key: "renderRight",
+    value: function renderRight() {
+      var _this2 = this;
+
+      var rightBox = (0, _utils.creatDom)({
+        tag: 'div',
+        style: {
+          display: 'inline-block',
+          width: '305px',
+          height: '100%',
+          verticalAlign: 'middle',
+          position: 'relative'
+        }
+      });
+      var close = (0, _utils.creatDom)({
+        tag: 'div',
+        style: {
+          dispaly: 'inline-block',
+          width: '30px',
+          height: '30px',
+          backgroundImage: "url(".concat(closeIcon, ")"),
+          backgroundSize: '20px',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          cursor: 'pointer'
+        },
+        on: {
+          click: function click() {
+            _this2.boxDom.style.display = 'none';
+          }
+        }
+      });
+      rightBox.appendChild(close);
+      rightBox.appendChild(this.renderBtn());
+      rightBox.appendChild(this.renderForm());
+      return rightBox;
+    } // 左侧渲染
+
+  }, {
+    key: "renderLeft",
+    value: function renderLeft() {
+      var leftBox = (0, _utils.creatDom)({
+        tag: 'div',
+        style: {
+          padding: '0px 30px 30px 30px',
+          boxSizing: 'border-box',
+          width: '650px',
+          verticalAlign: 'middle',
+          display: 'inline-block'
+        }
+      });
+      var title = (0, _utils.creatDom)({
+        tag: 'div',
+        child: '图片剪切',
+        style: {
+          lineHeight: '60px',
+          fontSize: '20px',
+          fontWeight: 'bold'
+        }
+      });
+      this.cutDom = (0, _utils.creatDom)({
+        tag: 'div',
+        style: {
+          width: '100%',
+          height: '512px',
+          background: "rgba(0,0,0,0.5)",
+          overflow: 'hidden',
+          backgroundImage: "url(".concat(imgIccn, ")"),
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '80%',
+          backgroundPosition: 'center',
+          borderRadius: '4px'
+        }
+      });
+      leftBox.appendChild(title);
+      leftBox.appendChild(this.cutDom);
+      return leftBox;
+    }
+  }, {
+    key: "renderBtn",
+    value: function renderBtn() {
+      var _this3 = this;
+
+      var btnBox = (0, _utils.creatDom)({
+        tag: 'div',
+        style: {
+          position: 'absolute',
+          bottom: '30px'
+        }
+      });
+      btnBox.appendChild((0, _button.default)({
+        child: '取消',
+        style: {
+          margin: '0 30px'
+        },
+        on: {
+          click: function click() {
+            _this3.boxDom.style.display = 'none';
+          }
+        }
+      }));
+      btnBox.appendChild((0, _button.default)({
+        type: 'primary',
+        child: '确定',
+        style: {
+          margin: '0 30px'
+        },
+        on: {
+          click: function click() {
+            _this3.cropper.getData();
+
+            console.log(_this3.cropper.getData());
+            return;
+            _this3.boxDom.style.display = 'none';
+          }
+        }
+      }));
+      return btnBox;
+    }
+  }, {
+    key: "setCropperData",
+    value: function setCropperData(params) {
+      this.cropperData = _objectSpread({}, params);
+
+      for (var key in params) {
+        var item = this.formDom.elements[key];
+
+        if (item) {
+          item.value = params[key].toFixed(0);
+        }
+      }
+    }
+  }, {
     key: "init",
     value: function init() {
+      var _this4 = this;
+
       this.boxDom = (0, _utils.creatDom)({
         tag: 'div',
         style: {
@@ -5992,8 +6469,8 @@ function () {
           top: '0px',
           left: '0px',
           right: '0px',
-          bottom: '0px',
-          display: 'none'
+          bottom: '0px' // display: 'none'
+
         }
       });
       this.contentBoxDom = (0, _utils.creatDom)({
@@ -6018,37 +6495,39 @@ function () {
           display: 'none'
         }
       });
-      this.cutDom = (0, _utils.creatDom)({
-        tag: 'div',
-        style: {
-          width: '620px',
-          height: '512px',
-          background: "#000",
-          overflow: 'hidden'
-        }
-      });
-      this.contentBoxDom.appendChild(this.cutDom);
+      this.contentBoxDom.appendChild(this.renderLeft());
+      this.contentBoxDom.appendChild(this.renderRight());
       this.boxDom.appendChild(this.contentBoxDom);
-      this.boxDom.appendChild(this.imgDom);
+      this.cutDom.appendChild(this.imgDom);
       this.cropper = new _cropper.default(this.imgDom, {
         zoomOnTouch: false,
         movable: true,
-        crop: function crop(event) {// console.log(event.detail.x);
-          // console.log(event.detail.y);
-          // console.log(event.detail.width);
-          // console.log(event.detail.height);
-          // console.log(event.detail.rotate);
-          // console.log(event.detail.scaleX);
-          // console.log(event.detail.scaleY);
+        crop: function crop(event) {
+          _this4.setCropperData(event.detail);
         }
       });
       return this.boxDom;
     }
   }, {
     key: "open",
-    value: function open() {
-      this.cutDom.appendChild(this.imgDom); // console.log(cropper,"kkkkk")
+    value: function open(params) {
+      var _this5 = this;
 
+      if (params.src) {
+        this.imgDom.src = params.src;
+      }
+
+      this.cropper.destroy();
+      this.cropper = new _cropper.default(this.imgDom, {
+        zoomOnTouch: false,
+        movable: true,
+        crop: function crop(event) {
+          _this5.setCropperData(event.detail);
+        },
+        ready: function ready() {
+          _this5.cropper.setData(params);
+        }
+      });
       this.boxDom.style.display = "block";
     }
   }, {
@@ -6060,7 +6539,7 @@ function () {
 }();
 
 exports.default = model;
-},{"../../../../utils":"utils/index.js","../cropper":"plugin/draw-editer/components/cropper.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
+},{"../../../../utils":"utils/index.js","../cropper":"plugin/draw-editer/components/cropper.js","./index.less":"plugin/draw-editer/components/model/index.less","../button":"plugin/draw-editer/components/button.js"}],"plugin/draw-editer/components/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6507,7 +6986,11 @@ function () {
               if (params.type == 'cut') {
                 var model = _drawData.default.getModel();
 
-                model.open();
+                var img = _drawData.default.getImgDetailDom();
+
+                model.open({
+                  src: img.src
+                });
               } else {
                 _this2.upFile.click();
               }
@@ -6567,7 +7050,34 @@ var _default = [{
   }
 }];
 exports.default = _default;
-},{}],"plugin/draw-editer/main/index.js":[function(require,module,exports) {
+},{}],"plugin/draw-editer/draw-del/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _drawData = _interopRequireDefault(require("../draw-data"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = function _default() {
+  document.onkeydown = function (e) {
+    var getActive = _drawData.default.getActive,
+        setActive = _drawData.default.setActive;
+    var active = getActive();
+
+    if (event.keyCode == 8 && active) {
+      active.parentNode.removeChild(active);
+      setActive(null);
+    } // console.log( event.keyCode,"kkkkk")
+
+  };
+};
+
+exports.default = _default;
+},{"../draw-data":"plugin/draw-editer/draw-data/index.js"}],"plugin/draw-editer/main/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6588,6 +7098,10 @@ var _data = _interopRequireDefault(require("./data"));
 var _drawData = _interopRequireDefault(require("../draw-data"));
 
 var _components = require("../components");
+
+var _utils = require("../../../utils");
+
+var _drawDel = _interopRequireDefault(require("../draw-del"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6614,6 +7128,7 @@ function () {
     });
 
     this.creatModel = new _components.model();
+    (0, _drawDel.default)();
 
     _drawData.default.setDrawEdit(this);
 
@@ -6696,7 +7211,7 @@ function () {
 }();
 
 exports.default = drawEditer;
-},{"../drop":"plugin/draw-editer/drop/index.js","../draw-bar":"plugin/draw-editer/draw-bar/index.js","../draw-detail":"plugin/draw-editer/draw-detail/index.js","../draw-img":"plugin/draw-editer/draw-img/index.js","./data":"plugin/draw-editer/main/data.js","../draw-data":"plugin/draw-editer/draw-data/index.js","../components":"plugin/draw-editer/components/index.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
+},{"../drop":"plugin/draw-editer/drop/index.js","../draw-bar":"plugin/draw-editer/draw-bar/index.js","../draw-detail":"plugin/draw-editer/draw-detail/index.js","../draw-img":"plugin/draw-editer/draw-img/index.js","./data":"plugin/draw-editer/main/data.js","../draw-data":"plugin/draw-editer/draw-data/index.js","../components":"plugin/draw-editer/components/index.js","../../../utils":"utils/index.js","../draw-del":"plugin/draw-editer/draw-del/index.js"}],"plugin/draw-editer/index.js":[function(require,module,exports) {
 var global = arguments[3];
 "use strict";
 

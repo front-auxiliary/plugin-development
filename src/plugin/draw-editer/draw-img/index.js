@@ -92,7 +92,8 @@ export default class drawImg {
           click: (e) => {
             if(params.type == 'cut'){
               let model = drawData.getModel();
-              model.open()
+              let img = drawData.getImgDetailDom()
+              model.open({src:img.src})
             }else{
               this.upFile.click();
             }

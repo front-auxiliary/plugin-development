@@ -80,7 +80,10 @@ export default {
   },
   setActive(dom){
     activeDom = dom 
-    this.getActiveData()
+    if(activeDom){
+      this.getActiveData()
+    }
+   
   },
   getActive(){
     return activeDom
