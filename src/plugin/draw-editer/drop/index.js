@@ -12,6 +12,23 @@ class drop {
     this.isAngleClick = false;
     this.activeElemClick = null
   }
+  activeHighlight(type){
+    let activeDom = drawData.getActive()
+    // drawData.getActive()
+    if(!activeDom){
+      return ;
+    }
+    let zoomArr = activeDom.querySelectorAll('.zoom')
+    if(type == 'none'){
+      activeDom.style.borderWidth = 0;
+    }else{
+      activeDom.style.borderWidth = '1px';
+    }
+    
+    for (let i = 0; i < zoomArr.length; i++) {
+      zoomArr[i].style.display = type
+    }
+  }
   init(canvas, params, unit, activeElemClick) {
     this.canvas = canvas;
     this.unit = unit;
@@ -22,15 +39,19 @@ class drop {
     document.onmouseup = (event) => {
       this.onmouseup(event, this.canvas)
     }
+    document.onmousedown = (event) => {
+      this.activeHighlight('none')
+    }
     document.onmousemove = (event) => {
       this.onmousemove(event, this.canvas)
     }
     this.canvas.onmousedown = ()=>{
+      
       drawData.getDetail().style.display = 'none'
+      drawData.getImg().style.display = 'none'
     }
   }
   styleFramt(style, elem) {
-    console.log(elem,"jjjj")
     let judgeStr = 'width,height,left,top,fontSize';
     let newStyle = {};
     for (let key in style) {
@@ -104,6 +125,7 @@ class drop {
         transformOrigin: 'center',
         transform: 'rotate(0deg)',
         boxSizing: 'border-box',
+        zIndex:drawData.id++
         // writingMode:'vertical-rl'
       }, this.styleFramt(elem.style, elem)),
      
@@ -116,50 +138,42 @@ class drop {
 
       },
       on: {
-        mousedown: (event) => {
-          event.stopPropagation();
+        mousedown: (event,dom) => {
+          event.stopPropagation()
+          this.activeHighlight('none');
+          drawData.setActive(dom);
+          this.activeHighlight('block');
+          let {src} = drawData.getImgDetail()
+          drawData.getImgDetailDom().src = src;
+          const elemtype = dom.dataset.elemtype;
           this.onmousedown(event, dropDom, this.canvas)
-          drawData.getDetail().style.display='block';
-          drawData.setActive(dropDom);
+          if(elemtype == 'img'){
+            drawData.getDetail().style.display='none';
+            drawData.getImg().style.display='block';
+          }else{
+            drawData.getDetail().style.display='block';
+            drawData.getImg().style.display='none';
+          }
           drawData.setForm();
           if (this.elemClick) {
             this.elemClick(dropDom)
             this.activeElemClick(dropDom)
           }
-        },
-        load:()=>{
-          console.log('uuuuuu')
-        },
-        blur: () => {
-          // console.log(that.isAngleClick)
-          // if(that.isAngleClick){
-          //   return ;
-          // }
-          let zoomArr = dropDom.querySelectorAll('.zoom')
-          dropDom.style.borderWidth = 0;
-          for (let i = 0; i < zoomArr.length; i++) {
-            zoomArr[i].style.display = 'none'
-          }
-
-          // console.log("kkkk1111")
-        },
-        focus: () => {
-          let elemType = dropDom.dataset.elemtype;
-          // console.log(elemType,"jjjjjj")
-          let zoomArr = dropDom.querySelectorAll('.zoom')
-          for (let i = 0; i < zoomArr.length; i++) {
-            zoomArr[i].style.display = 'block'
-          }
         }
-
-
       }
     })
     const textDom = creatDom({
       tag:'span',
-      child: elem.text || ''
+      child: elem.text || '',
+      style:{
+        whiteSpace:'nowrap',
+        textOverflow:'ellipsis',
+      }
     })
-    dropDom.appendChild(textDom)
+    if(elem.type == 'text'){
+      dropDom.appendChild(textDom)
+    }
+    
     
    
     // const dropDom = document.createElement('div');
@@ -383,9 +397,7 @@ class drop {
     event.stopPropagation()
   }
   onmouseup(evt) {
-
     this.activeDom = null;
-
   }
   onmousemove(evt) {
     // console.log('move')
@@ -470,7 +482,7 @@ class drop {
  
       if(activeDetail.type == 'img'){
         activeElem.style.width = activeDetail.width+this.unit;
-        activeElem.style.height = activeDetail.heigh+tthis.unit;
+        activeElem.style.height = activeDetail.height+this.unit;
         activeElem.style.left = activeDetail.x+this.unit;
         activeElem.style.top = activeDetail.y+this.unit;
       }else{

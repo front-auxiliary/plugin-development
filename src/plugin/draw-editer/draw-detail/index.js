@@ -1,8 +1,10 @@
 import { creatDom } from '../../../utils';
 import dataFn from './data';
 import drawData from '../draw-data';
-import { inputSelect, textarea, radioButton, switched,
-  color } from '../components'
+import {
+  inputSelect, textarea, radioButton, switched,
+  color
+} from '../components'
 class drawDetail {
   constructor(canvas) {
     const { detail } = drawData.getParams()
@@ -10,7 +12,7 @@ class drawDetail {
     this.form = null;
     this.activeDom = null;
     this.data = dataFn.call(this),
-      this.detailBox = null
+    this.detailBox = null
   }
   init() {
     if (this.detailBox) {
@@ -27,7 +29,8 @@ class drawDetail {
         margin: '0 -300px 0 0',
         right: '-5px',
         bottom: '0px',
-        top: '0px'
+        top: '0px',
+        display:'none'
       },
 
     });
@@ -43,7 +46,7 @@ class drawDetail {
     this.activeDom = dom;
     // this.init();
     // drawData.getDetail().style.display = 'block'
-    
+
 
     // 
     // .text = '3333'
