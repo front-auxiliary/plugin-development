@@ -258,7 +258,7 @@ export default class model {
         left: '0px',
         right: '0px',
         bottom: '0px',
-        // display: 'none'
+        display: 'none'
       }
     })
     this.contentBoxDom = creatDom({

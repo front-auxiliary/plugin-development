@@ -1806,7 +1806,7 @@ if (!window.jscolor) {
         	if (currStyle && currStyle.position.toLowerCase() === 'fixed') {
         		this.fixed = true;
         	}
-        		if (elm !== this.targetElement) {
+        			if (elm !== this.targetElement) {
         		// attach onParentScroll so that we can recompute the picker position
         		// when one of the offsetParents is scrolled
         		if (!elm._jscEventsAttached) {
@@ -1900,7 +1900,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50120" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51133" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -831,6 +831,13 @@ function () {
     value: function init(canvas, params, unit, activeElemClick) {
       var _this = this;
 
+      _drawData.default.pubsub.sub('imgChange', function (name, data) {
+        if (_this.activeDom) {
+          _this.activeDom.getElementsByTagName('img')[0];
+          img.src = data.src;
+        }
+      });
+
       this.canvas = canvas;
       this.unit = unit;
       this.canvasDetail = this.canvas.getBoundingClientRect(); // console.log(this.canvasDetail)
@@ -894,13 +901,15 @@ function () {
     value: function creatImg(elem, dropDom) {
       var _this2 = this;
 
-      var dom = (0, _utils.creatDom)({
+      var boxDom = (0, _utils.creatDom)({
         tag: 'div',
         style: {
-          backgroundImage: "url(".concat(elem.src, ")"),
-          width: '100%',
-          height: '100%',
-          display: 'block'
+          position: 'absolute',
+          top: '0px',
+          left: '0px',
+          bottom: '0px',
+          right: '0px',
+          overflow: 'hidden'
         }
       });
       var img = (0, _utils.creatDom)({
@@ -909,20 +918,28 @@ function () {
           src: elem.src
         },
         style: {
-          height: '100%',
-          width: '100%',
+          position: 'absolute',
+          // height: '100%',
+          // width: '100%',
           display: 'block',
-          userSelect: 'none' // pointerEvents:'none'
-
+          userSelect: 'none',
+          // pointerEvents:'none',
+          top: '0' + this.unit,
+          left: '0' + this.unit
         },
         on: {
           load: function load(event) {
+            console.log("-----", '---');
             dropDom.style.height = img.height + _this2.unit;
-            dropDom.style.width = img.width + _this2.unit; // console.log(img.width,"kkk")
+            dropDom.style.width = img.width + _this2.unit;
+            img.style.height = dropDom.style.height;
+            img.style.width = dropDom.style.width; // console.log(img.width,"kkk")
           }
         }
       });
-      return img;
+      console.log(boxDom, "kkkkkk");
+      boxDom.appendChild(img);
+      return boxDom;
     }
   }, {
     key: "create",
@@ -941,6 +958,7 @@ function () {
           transformOrigin: 'center',
           transform: 'rotate(0deg)',
           boxSizing: 'border-box',
+          // overflow:'hidden',
           zIndex: _drawData.default.id++ // writingMode:'vertical-rl'
 
         }, this.styleFramt(elem.style, elem)),
@@ -1277,7 +1295,11 @@ function () {
       var detail = parentNode.getBoundingClientRect();
       var width = parentNode.style.width;
       var height = parentNode.style.height;
-      var elemType = parentNode.dataset.elemtype; // console.log(parentNode.offsetWidth,"kkkkk")
+      var elemType = parentNode.dataset.elemtype;
+      var imgWidth = 0;
+      var imgHeight = 0;
+      var imgTop = 0;
+      var imgLeft = 0; // console.log(parentNode.offsetWidth,"kkkkk")
 
       if (elemType !== 'img') {
         // parentNode.style.minWidth = parentNode.offsetWidth+this.unit;
@@ -1285,6 +1307,13 @@ function () {
         // console.log( parentNode.offsetWidth+this.unit,"jjjkkkk",this.unit)
         height = parentNode.style.minHeight;
         width = parentNode.offsetWidth + this.unit;
+      } else {
+        var imgDom = parentNode.getElementsByTagName('img')[0]; // console.log(imgDom,"----")
+
+        imgWidth = imgDom.style.width.replace(this.unit, '');
+        imgHeight = imgDom.style.height.replace(this.unit, '');
+        imgTop = imgDom.style.top.replace(this.unit, '');
+        imgLeft = imgDom.style.left.replace(this.unit, '');
       } // console.log(parentNode.offsetWidth,"jjjj")
 
 
@@ -1305,7 +1334,11 @@ function () {
         x: left,
         y: top,
         fontSize: fontSize,
-        type: parentNode.dataset.elemtype
+        type: parentNode.dataset.elemtype,
+        imgWidth: imgWidth,
+        imgHeight: imgHeight,
+        imgLeft: imgLeft,
+        imgTop: imgTop
       };
       this.activeDom.dataset.activeDetail = JSON.stringify(elemDetail);
       this.activeDom.dataset.type = type;
@@ -1411,6 +1444,23 @@ function () {
         activeElem.style.transform = "rotate(".concat(activeDetail.angle, "deg) ");
 
         if (activeDetail.type == 'img') {
+          var zoom = (activeDetail.width / oldWidth).toFixed(3); // console.log(zoom,"kkkk")
+
+          var imgDom = activeElem.getElementsByTagName('img')[0]; // let imgWidth = imgDom.style.width.replace(this.unit,'')*zoom;
+          // let imgHeight = imgDom.style.height.replace(this.unit,'')*zoom;
+          // let imgTop = imgDom.style.top.replace(this.unit,'')*zoom;
+          // let imgLeft = imgDom.style.left.replace(this.unit,'')*zoom;
+          // console.log(imgWidth,imgHeight,imgTop,imgLeft)
+          // console.log(activeDetail)il)
+
+          if ('leftTop,rightTop,rightBottom,leftBottom'.indexOf(type) != -1) {
+            // console.log
+            imgDom.style.width = activeDetail.imgWidth * zoom + this.unit;
+            imgDom.style.height = activeDetail.imgHeight * zoom + this.unit;
+            imgDom.style.top = activeDetail.imgTop * zoom + this.unit;
+            imgDom.style.left = activeDetail.imgLeft * zoom + this.unit;
+          }
+
           activeElem.style.width = activeDetail.width + this.unit;
           activeElem.style.height = activeDetail.height + this.unit;
           activeElem.style.left = activeDetail.x + this.unit;
@@ -6471,8 +6521,8 @@ function () {
           top: '0px',
           left: '0px',
           right: '0px',
-          bottom: '0px' // display: 'none'
-
+          bottom: '0px',
+          display: 'none'
         }
       });
       this.contentBoxDom = (0, _utils.creatDom)({
@@ -6884,13 +6934,28 @@ function () {
     var _drawData$getParams = _drawData.default.getParams(),
         detail = _drawData$getParams.detail;
 
+    this.unit = null;
     this.canvas = detail;
     this.upFile = null;
     this.img = null;
 
     _drawData.default.pubsub.sub('imgChange', function (name, data) {
-      console.log("00000000", name, data);
-      _this.img.src = data.src;
+      var active = _drawData.default.getActive();
+
+      _this.unit = _drawData.default.getParams().unit;
+
+      if (active) {
+        var imgDom = active.getElementsByTagName('img')[0]; // console.log()
+        // imgDom.style.width = data.width + this.unit;
+        // imgDom.style.height = data.height + this.unit;
+
+        imgDom.style.top = -data.y + _this.unit;
+        imgDom.style.left = -data.x + _this.unit;
+        active.style.height = data.height + _this.unit;
+        active.style.width = data.width + _this.unit; // console.log(active,this.unit)
+
+        _this.img.src = data.src;
+      }
     });
   }
 
@@ -6935,8 +7000,8 @@ function () {
           margin: '0 -300px 0 0',
           right: '-5px',
           bottom: '0px',
-          top: '0px' // display: 'none'
-
+          top: '0px',
+          display: 'none'
         }
       }); // 获取 img detail dom 
 
@@ -7289,7 +7354,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50120" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51133" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

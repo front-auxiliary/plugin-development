@@ -5,12 +5,27 @@ import drawEditer from '../main';
 export default class drawImg {
   constructor(canvas) {
     const { detail } = drawData.getParams()
+    this.unit =null;
     this.canvas = detail;
     this.upFile = null;
     this.img = null;
     drawData.pubsub.sub('imgChange',(name,data)=>{
-      console.log("00000000",name,data)
-      this.img.src = data.src;
+      let active = drawData.getActive();
+      this.unit =  drawData.getParams().unit;
+      if(active){
+        
+        let imgDom = active.getElementsByTagName('img')[0];
+        // console.log()
+        // imgDom.style.width = data.width + this.unit;
+        // imgDom.style.height = data.height + this.unit;
+        imgDom.style.top = -data.y + this.unit;
+        imgDom.style.left = -data.x + this.unit;
+        active.style.height =  data.height + this.unit;
+        active.style.width = data.width + this.unit;
+        // console.log(active,this.unit)
+        this.img.src = data.src;
+      }
+     
     })
   }
   init() {
@@ -49,7 +64,7 @@ export default class drawImg {
         right: '-5px',
         bottom: '0px',
         top: '0px',
-        // display: 'none'
+        display: 'none'
       }
     });
     // 获取 img detail dom 
