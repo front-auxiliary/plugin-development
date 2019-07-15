@@ -119,7 +119,6 @@ class drop {
       },
       on: {
         load: (event) => {
-          console.log("-----",'---')
           dropDom.style.height = img.height + this.unit;
           dropDom.style.width = img.width + this.unit;
           img.style.height =  dropDom.style.height;
@@ -128,7 +127,6 @@ class drop {
         }
       }
     })
-    console.log(boxDom,"kkkkkk")
     boxDom.appendChild(img)
     return boxDom;
   }
@@ -159,13 +157,16 @@ class drop {
       },
       on: {
         mousedown: (event,dom) => {
+      
           event.stopPropagation()
           this.activeHighlight('none');
           drawData.setActive(dom);
           this.activeHighlight('block');
           let {src} = drawData.getImgDetail()
+         
           drawData.getImgDetailDom().src = src;
           const elemtype = dom.dataset.elemtype;
+         
           this.onmousedown(event, dropDom, this.canvas)
           if(elemtype == 'img'){
             drawData.getDetail().style.display='none';
@@ -174,6 +175,8 @@ class drop {
             drawData.getDetail().style.display='block';
             drawData.getImg().style.display='none';
           }
+          
+
           drawData.setForm();
           if (this.elemClick) {
             this.elemClick(dropDom)

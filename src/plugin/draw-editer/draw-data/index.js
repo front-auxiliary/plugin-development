@@ -1,4 +1,4 @@
-import {delUnit,colorHex} from '../../../utils'
+import {delUnit,colorHex,colorToRgb} from '../../../utils'
 
 let arr = [];
 let activeDom = null;
@@ -59,7 +59,7 @@ export default {
         height:delUnit(height,params.unit),
         fontSize:delUnit(fontSize,params.unit),
         lineHeight:delUnit(lineHeight,params.unit),
-        color:colorHex(color),
+        color:colorToRgb(color),
         textAlign:textAlign||'left',
         fontWeight:fontWeight||'normal',
         fontStyle:fontStyle||'normal',
@@ -114,49 +114,21 @@ export default {
     let formArr = this.getActiveData()
     for (let key in formArr) {
       let itemName = detailDom.elements[key];
-
       if (!itemName) {
         continue;
       }
-      if (!itemName.length) {
-
-        if (key == 'fontStyle') {
-          if (formArr[key] == 'italic') {
-            itemName.checked = true
-          } else {
-            itemName.checked = false
-          }
-        }
-        if (key == 'fontWeight') {
-          if (formArr[key] == 'bold') {
-            itemName.checked = true
-
-          } else {
-            itemName.checked = false
-          }
-        }
-        if (key == 'textDecoration') {
-          if (formArr[key] == 'underline') {
-            itemName.checked = true
-          } else {
-            itemName.checked = false
-          }
-        }
+      
+      if('color,textAlign,fontStyle,fontWeight,textDecoration'.indexOf(key)!=-1){
         itemName.value = formArr[key]
-
-      } else {
-
-        for (let i = 0; i < itemName.length; i++) {
-          let item = itemName[i];
-
-          if (item.value == formArr[key]) {
-            item.checked = true;
-          } else {
-            item.checked = false;
-          }
-        }
+         itemName.click();
+      
+      }else{
+       
+     
+        itemName.value = formArr[key]
       }
-
+     
+     
     }
   },
   getImgDetail(){

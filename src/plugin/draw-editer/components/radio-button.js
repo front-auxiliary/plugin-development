@@ -2,13 +2,52 @@ import { creatDom } from '../../../utils';
 import radio from './radio';
 let options = []
 const render = (options, boxDom, params) => {
-    const change = params.on.change;
-    boxDom.innerHTML = '';
+   
+   
+   
+    
+    // console.log("mmmmn",options)
 
+}
+export default (params) => {
+    options = [].concat(params.options);
+    let inputDom = null;
+    inputDom = creatDom({
+        tag:'input',
+        attr:{
+            name:params.name
+        },
+        style:{
+            display:'none'
+        },
+        on:{
+            click:(event,dom)=>{
+                event.stopPropagation()
+                let value = dom.value;
+                
+                options.map((item,)=>{
+                    
+                    if(value == item.value){
+                        item.dom.style.backgroundColor='rgba(14,19,24,.07)'
+                    }else{
+                        item.dom.style.backgroundColor='#FFF'
+                    }
+                })
+                // params.on.change(event, dom)
+            }
+        }
+    })
+    const boxDom = creatDom({
+        tag: 'div',
+        style: {
+            display: 'inline-block',
+        },
+    })
+    boxDom.appendChild(inputDom);
     options = options.map((item) => {
         const lableDom = creatDom({
             tag: 'label',
-            chlid: 'niho',
+            chlid: '',
             attr:{
                 value:item.value
             },
@@ -23,62 +62,33 @@ const render = (options, boxDom, params) => {
                 backgroundSize: '100%',
                 backgroundPosition: 'center',
                 borderRadius:'4px',
-            }
-        })
-        const radioDom = creatDom({
-            tag: 'input',
-            attr: {
-                type: 'radio',
-                name: params.name,
-                value: item.value
-            },
-            on: {
-                change: (event, dom) => {
-                    // console.log('iiiiii')
-                    for(let i=0;i<options.length;i++){
-                        let value = options[i].dom.dataset.value;
-                        console.log(options[i].dom.value)
-
-                        if(value == dom.value){
-                            options[i].dom.style.backgroundColor='rgba(14,19,24,.07)'
-                        }else{
-                            options[i].dom.style.backgroundColor='#fff'
-                        }
-                    }
-                    params.on.change(event, dom)
-                }
-            },
-            style: {
-                width: '30px',
-                height: '30px',
-                display: 'inline-block',
-                opacity: '0',
                 cursor:'pointer'
+            },
+            on:{
+                click:(event,dom)=>{
+                    let value = dom.dataset.value;
+                    options.map((item,)=>{
+                      
+                        if(value == item.value){
+                            item.dom.style.backgroundColor='rgba(14,19,24,.07)'
+                        }else{
+                            item.dom.style.backgroundColor='#FFF'
+                        }
+                    })
+                    params.on.change(value)
+                }
             }
         })
-       
-        lableDom.appendChild(radioDom)
         boxDom.appendChild(lableDom)
         item.dom = lableDom;
         return item;
     })
-    // console.log("mmmmn",options)
-
-}
-export default (params) => {
-    options = [].concat(params.options);
-    const boxDom = creatDom({
-        tag: 'div',
-        style: {
-            display: 'inline-block',
-        },
-    })
-
     // new Proxy(boxDom,{
     //     set:function(target, key, value){
     //         console.log(value,"jjjjj")
     //     }
     // })
     render(options, boxDom, params)
+   
     return boxDom;
 }

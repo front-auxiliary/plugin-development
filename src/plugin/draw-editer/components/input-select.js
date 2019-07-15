@@ -72,9 +72,11 @@ export default (params)=>{
                 select.style.display='none'
             },
             input:(event,dom)=>{
+                event.stopPropagation()
                 const value = dom.value||'';
+                console.log(value,"jjjjj")
                 const arr =value ? options.filter((currentValue)=>{
-                    // console.log(currentValue,"kkkkk")
+                    
                     return (currentValue.value+'').indexOf(value)!=-1;
                 }):options
                 if(value){
