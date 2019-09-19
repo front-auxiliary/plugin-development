@@ -1,25 +1,30 @@
 
 class Parser {
-    constructor(){
-        
-        this.stream = null;
-    }
-    init(stream){
-        this.stream = stream;
-        return this;
-    }
+  constructor() {
 
-    parsing(){
+    this.stream = null;
+  }
+  init(stream) {
+    this.stream = stream;
+    return this;
+  }
 
-     return this;
-    }
-    then(callback){
+  parsing() {
 
-        return this;
-    }
+    return this;
+  }
+  then(callback) {
 
-    getHtml(){
-        return 'niha';
-    }
+    return this;
+  }
+
+  getHtml() {
+    const enterReg = /\n\r/g;
+    this.stream = this.stream.replace(enterReg,function(str){
+      return <br>;
+    })
+    
+    return this.stream;
+  }
 }
 module.exports = Parser;
