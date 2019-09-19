@@ -6,13 +6,14 @@
   "author": "andy <15711367521@163.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "parcel serve src/index.html --no-cache  --port 80",
+    "dev": "parcel serve src/index.html --no-cache  --port 8081",
     "dev:quagga": "parcel serve src/quagga.html --no-cache  --port 80",
     "dev:go": "parcel serve src/go.html --no-cache  --port 80",
     "dev:image-slicer": "parcel serve src/image-slicer.html --no-cache  --port 80",
     "dev:pdf": "parcel serve src/pdf.html --no-cache  --port 80",
     "dev:dragger": "parcel serve src/dragger.html --no-cache  --port 80",
     "dev:map": "parcel serve src/map.html --no-cache  --port 80",
+    "dev:font-load": "parcel serve src/font-load.html --no-cache  --port 80",
     "build": " parcel build src/index.html --no-cache"
   },
   "devDependencies": {
@@ -20,6 +21,7 @@
     "parcel-bundler": "^1.12.3"
   },
   "dependencies": {
+    "fontfaceobserver": "^2.1.0",
     "node-ensure": "^0.0.0"
   }
 }

@@ -74,7 +74,7 @@ export default (params)=>{
             input:(event,dom)=>{
                 event.stopPropagation()
                 const value = dom.value||'';
-                console.log(value,"jjjjj")
+              
                 const arr =value ? options.filter((currentValue)=>{
                     
                     return (currentValue.value+'').indexOf(value)!=-1;

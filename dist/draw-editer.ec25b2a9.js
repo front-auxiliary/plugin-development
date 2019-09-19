@@ -2193,7 +2193,6 @@ var _default = function _default(params) {
       input: function input(event, dom) {
         event.stopPropagation();
         var value = dom.value || '';
-        console.log(value, "jjjjj");
         var arr = value ? options.filter(function (currentValue) {
           return (currentValue.value + '').indexOf(value) != -1;
         }) : options;
@@ -7636,7 +7635,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64058" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50096" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
