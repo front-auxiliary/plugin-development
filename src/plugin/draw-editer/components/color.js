@@ -1,9 +1,16 @@
-import { creatDom,hsvToRgb,colorHex } from '../../../utils';
+import { creatDom,hsvToRgb,colorHex,rgbToHsv} from '../../../utils';
 var rangeValue = 0.5
 const defaultRgb = hsvToRgb({h:rangeValue*360,s:100,v:100})
 
 const defaultColor = `rgb(${defaultRgb.r},${defaultRgb.g},${defaultRgb.b})`
 export default (params)=>{
+    // console.log(params,":------")
+    let hsv={
+        h:0,
+        s:0,
+        v:0
+    }
+    let mousedown = false;
     let boxDom = null,
           showColor = null,
           selectDom = null,
@@ -12,15 +19,41 @@ export default (params)=>{
           gradientBlack = null,
           gradientWhite = null,
           rangeDom = null,
-          hSelect = null;
+          hSelect = null,
+          inputDom = null,
+          colorPoint = null;
 
     boxDom = creatDom({
         tag:'div',
         style:{
             position:'relative',
             zIndex:10
-        }
+        },
+    
         
+    })
+    // console.log(params.name)
+    inputDom = creatDom({
+        tag:'input',
+        style:{
+            display:'none',
+        },
+        attr:{
+            name:params.name
+        },
+        on:{
+            click:(event,dom)=>{
+                let value = dom.value
+               
+                let rgbs = value.replace(/(?:\(|\)|rgb|RGB)*/g, "").split(",")
+                const hsv =  rgbToHsv({r:+rgbs[0],g:+rgbs[1],b:+rgbs[2]})
+                showColor.style.background = value;
+                rangeDom.value = hsv.h/360;
+                colorPoint.style.left = hsv.s*268/100+'px'
+                colorPoint.style.top = 112-hsv.v*112/100+'px'
+            }  
+        }
+
     })
     showColor =creatDom({
         tag:'div',
@@ -101,22 +134,46 @@ export default (params)=>{
             background:defaultColor,
             marginTop:'4px',
             borderRadius:'4px',
-            overflow:'hidden'
+            overflow:'hidden',
+            cursor:'pointer',
         },
         on:{
-            click:(event,e)=>{
-                
+            mousedown:(event,e)=>{
+                mousedown = true;
                 let svDetail = svSelevt.getBoundingClientRect();
                 let saturation = 100*(event.clientX - svDetail.left)/268;
                 // console.log()
                 let value = 100*(svDetail.bottom - event.clientY)/112;
-                console.log(value)
-              
+                // console.log(value)
+                colorPoint.style.left = event.clientX - svDetail.left+'px'
+                colorPoint.style.top = 112-(svDetail.bottom - event.clientY)+'px'
+                hsv={}
                 const {r,g,b} = hsvToRgb({h:rangeValue*360,s:saturation,v:value})
                 showColor.style.background = `rgb(${r},${g},${b})`
                 params.on.change(event,`rgb(${r},${g},${b})`)
                 showHex.value = colorHex(`rgb(${r},${g},${b})`)
-            }
+            },
+            mousemove:()=>{
+                if(!mousedown){
+                    return;
+                }
+                let svDetail = svSelevt.getBoundingClientRect();
+                let saturation = 100*(event.clientX - svDetail.left)/268;
+                // console.log()
+                let value = 100*(svDetail.bottom - event.clientY)/112;
+                // console.log(value)
+               
+                hsv = {h:rangeValue*360,s:saturation,v:value}
+                const {r,g,b} = hsvToRgb(hsv);
+                colorPoint.style.left = hsv.s*268/100+'px'
+                colorPoint.style.top = 112-hsv.v*112/100+'px'
+                showColor.style.background = `rgb(${r},${g},${b})`
+                params.on.change(event,`rgb(${r},${g},${b})`)
+                showHex.value = colorHex(`rgb(${r},${g},${b})`)
+            },
+            mouseup:()=>{
+                mousedown = false;
+            },
         }
           
             // height:
@@ -134,6 +191,7 @@ export default (params)=>{
             left:'0',
             zIndex:1,
             cursor:'pointer',
+            pointerEvents:'none'
             
         }
     })  
@@ -148,8 +206,24 @@ export default (params)=>{
             top:'0',
             left:'0',
             cursor:'pointer',
+            pointerEvents:'none'
             
         }
+    })
+    colorPoint = creatDom({
+        style:{
+            position:'absolute',
+            borderRadius:' 50%',
+            border:' 3px solid #fff',
+            width:'14px',
+            height:'14px',
+            boxShadow: 'inset 0 0 0 1px rgba(14,19,24,.15)',
+            transform:'translateX(-50%) translateY(-50%)',
+            zIndex:10,
+            pointerEvents:'none',
+            cursor:'pointer',
+        }
+       
     })
     rangeDom = creatDom({
         tag:'input',
@@ -172,8 +246,12 @@ export default (params)=>{
             input:(event,e)=>{
                 rangeValue = e.value;
                 // console.log(rangeValue*360,"jjjj")
+                hsv.h = rangeValue*360;
                 const {r,g,b} = hsvToRgb({h:rangeValue*360,s:100,v:100})
+                const showColorVal =  hsvToRgb(hsv)
                 svSelevt.style.background = `rgb(${r},${g},${b})`
+                showColor.style.background = `rgb(${showColorVal.r},${showColorVal.g},${showColorVal.b})`
+                params.on.change(event,`rgb(${showColorVal.r},${showColorVal.g},${showColorVal.b})`)
                 // console.log()
                 
             }
@@ -192,12 +270,13 @@ export default (params)=>{
     })
     svSelevt.appendChild(gradientBlack);
     svSelevt.appendChild(gradientWhite);
-   
+    svSelevt.appendChild(colorPoint);
     hSelect.appendChild(rangeDom);
     selectDom.appendChild(hSelect)
     selectDom.appendChild(svSelevt)
     boxDom.appendChild(showColor)
     boxDom.appendChild(selectDom)
+    boxDom.appendChild(inputDom);
     // selectDom.appendChild(showHex)
     return boxDom;
 }

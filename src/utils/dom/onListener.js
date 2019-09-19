@@ -14,7 +14,7 @@ export default function onListener(dom, onBar, params) {
                     }
 
                 } else {
-                    dom[`on` + key] = (event) => {
+                    dom[`on` + key] = (event,value,a) => {
                         params.on[key](event, dom)
                     };
 

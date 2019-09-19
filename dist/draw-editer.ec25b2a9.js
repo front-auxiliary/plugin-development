@@ -185,7 +185,7 @@ function onListener(dom, onBar, params) {
             (0, _setAttr.default)(dom, params.attr);
           };
         } else {
-          dom["on" + key] = function (event) {
+          dom["on" + key] = function (event, value, a) {
             params.on[key](event, dom);
           };
         }
@@ -484,6 +484,172 @@ function () {
 }();
 
 exports.default = pubsub;
+},{}],"utils/rgbToCmyk.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _default = function _default(params) {
+  var r = params.r,
+      g = params.g,
+      b = params.b;
+  var saturation = 255;
+
+  for (var key in params) {
+    if (!params[key]) {
+      throw new Error("".concat(key, "\u662F\u5FC5\u586B\u9879"));
+    }
+  }
+
+  var c = 1 - r / 255;
+  var m = 1 - g / 255;
+  var y = 1 - b / 255;
+  var k = Math.min(y, Math.min(m, Math.min(c, 1)));
+  c = Math.round((c - k) / (1 - k) * 100);
+  m = Math.round((m - k) / (1 - k) * 100);
+  y = Math.round((y - k) / (1 - k) * 100);
+  k = Math.round(k * 100);
+  return {
+    c: c,
+    m: m,
+    y: y,
+    k: k
+  };
+};
+
+exports.default = _default;
+},{}],"utils/cmykToRgb.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _default = function _default(params) {
+  var c = params.c,
+      m = params.m,
+      y = params.y,
+      k = params.k;
+
+  for (var key in params) {
+    if (!params[key]) {
+      throw new Error("".concat(key, "\u662F\u5FC5\u586B\u9879"));
+    }
+  }
+
+  return {
+    r: 255 * (100 - c) * (100 - k) / 10000,
+    g: 255 * (100 - m) * (100 - k) / 10000,
+    b: 255 * (100 - y) * (100 - k) / 10000
+  };
+};
+
+exports.default = _default;
+},{}],"utils/colorToRgb.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _default = function _default(sColor) {
+  sColor = sColor.toLowerCase(); //十六进制颜色值的正则表达式
+
+  var hexReg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+  var rgbReg = /^(rgb|RGB)/;
+
+  if (!sColor) {
+    return;
+  } // 如果是16进制颜色
+
+
+  if (hexReg.test(sColor)) {
+    if (sColor.length === 4) {
+      var sColorNew = "#";
+
+      for (var i = 1; i < 4; i += 1) {
+        sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1));
+      }
+
+      sColor = sColorNew;
+    } //处理六位的颜色值
+
+
+    var sColorChange = [];
+
+    for (var _i = 1; _i < 7; _i += 2) {
+      sColorChange.push(parseInt("0x" + sColor.slice(_i, _i + 2)));
+    }
+
+    return "RGB(" + sColorChange.join(",") + ")";
+  }
+
+  return sColor;
+};
+
+exports.default = _default;
+},{}],"utils/rgbToHsv.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _default = function _default(params) {
+  var r = params.r,
+      g = params.g,
+      b = params.b;
+  r = r / 255;
+  g = g / 255;
+  b = b / 255;
+  var h, s, v;
+  var min = Math.min(r, g, b);
+  var max = v = Math.max(r, g, b);
+  var l = (min + max) / 2;
+  var difference = max - min;
+
+  if (max == min) {
+    h = 0;
+  } else {
+    switch (max) {
+      case r:
+        h = (g - b) / difference + (g < b ? 6 : 0);
+        break;
+
+      case g:
+        h = 2.0 + (b - r) / difference;
+        break;
+
+      case b:
+        h = 4.0 + (r - g) / difference;
+        break;
+    }
+
+    h = Math.round(h * 60);
+  }
+
+  if (max == 0) {
+    s = 0;
+  } else {
+    s = 1 - min / max;
+  }
+
+  s = Math.round(s * 100);
+  v = Math.round(v * 100);
+  return {
+    s: s,
+    h: h,
+    v: v
+  };
+};
+
+exports.default = _default;
 },{}],"utils/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -532,6 +698,30 @@ Object.defineProperty(exports, "pubsub", {
     return _pubsub.default;
   }
 });
+Object.defineProperty(exports, "rgbToCmyk", {
+  enumerable: true,
+  get: function () {
+    return _rgbToCmyk.default;
+  }
+});
+Object.defineProperty(exports, "cmykToRgb", {
+  enumerable: true,
+  get: function () {
+    return _cmykToRgb.default;
+  }
+});
+Object.defineProperty(exports, "colorToRgb", {
+  enumerable: true,
+  get: function () {
+    return _colorToRgb.default;
+  }
+});
+Object.defineProperty(exports, "rgbToHsv", {
+  enumerable: true,
+  get: function () {
+    return _rgbToHsv.default;
+  }
+});
 
 var _setStyle = _interopRequireDefault(require("./dom/setStyle"));
 
@@ -547,8 +737,16 @@ var _getFileDetail = _interopRequireDefault(require("./getFileDetail"));
 
 var _pubsub = _interopRequireDefault(require("./pubsub"));
 
+var _rgbToCmyk = _interopRequireDefault(require("./rgbToCmyk"));
+
+var _cmykToRgb = _interopRequireDefault(require("./cmykToRgb"));
+
+var _colorToRgb = _interopRequireDefault(require("./colorToRgb"));
+
+var _rgbToHsv = _interopRequireDefault(require("./rgbToHsv"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js","./dom/delUnit":"utils/dom/delUnit.js","./colorHex":"utils/colorHex.js","./hsvToRgb":"utils/hsvToRgb.js","./getFileDetail":"utils/getFileDetail.js","./pubsub":"utils/pubsub.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
+},{"./dom/setStyle":"utils/dom/setStyle.js","./dom/creatDom":"utils/dom/creatDom.js","./dom/delUnit":"utils/dom/delUnit.js","./colorHex":"utils/colorHex.js","./hsvToRgb":"utils/hsvToRgb.js","./getFileDetail":"utils/getFileDetail.js","./pubsub":"utils/pubsub.js","./rgbToCmyk":"utils/rgbToCmyk.js","./cmykToRgb":"utils/cmykToRgb.js","./colorToRgb":"utils/colorToRgb.js","./rgbToHsv":"utils/rgbToHsv.js"}],"plugin/draw-editer/drop/icon.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -636,7 +834,7 @@ var _default = {
         height: (0, _utils.delUnit)(height, params.unit),
         fontSize: (0, _utils.delUnit)(fontSize, params.unit),
         lineHeight: (0, _utils.delUnit)(lineHeight, params.unit),
-        color: (0, _utils.colorHex)(color),
+        color: (0, _utils.colorToRgb)(color),
         textAlign: textAlign || 'left',
         fontWeight: fontWeight || 'normal',
         fontStyle: fontStyle || 'normal',
@@ -696,42 +894,11 @@ var _default = {
         continue;
       }
 
-      if (!itemName.length) {
-        if (key == 'fontStyle') {
-          if (formArr[key] == 'italic') {
-            itemName.checked = true;
-          } else {
-            itemName.checked = false;
-          }
-        }
-
-        if (key == 'fontWeight') {
-          if (formArr[key] == 'bold') {
-            itemName.checked = true;
-          } else {
-            itemName.checked = false;
-          }
-        }
-
-        if (key == 'textDecoration') {
-          if (formArr[key] == 'underline') {
-            itemName.checked = true;
-          } else {
-            itemName.checked = false;
-          }
-        }
-
+      if ('color,textAlign,fontStyle,fontWeight,textDecoration'.indexOf(key) != -1) {
         itemName.value = formArr[key];
+        itemName.click();
       } else {
-        for (var i = 0; i < itemName.length; i++) {
-          var item = itemName[i];
-
-          if (item.value == formArr[key]) {
-            item.checked = true;
-          } else {
-            item.checked = false;
-          }
-        }
+        itemName.value = formArr[key];
       }
     }
   },
@@ -831,6 +998,13 @@ function () {
     value: function init(canvas, params, unit, activeElemClick) {
       var _this = this;
 
+      _drawData.default.pubsub.sub('imgChange', function (name, data) {
+        if (_this.activeDom) {
+          _this.activeDom.getElementsByTagName('img')[0];
+          img.src = data.src;
+        }
+      });
+
       this.canvas = canvas;
       this.unit = unit;
       this.canvasDetail = this.canvas.getBoundingClientRect(); // console.log(this.canvasDetail)
@@ -894,13 +1068,15 @@ function () {
     value: function creatImg(elem, dropDom) {
       var _this2 = this;
 
-      var dom = (0, _utils.creatDom)({
+      var boxDom = (0, _utils.creatDom)({
         tag: 'div',
         style: {
-          backgroundImage: "url(".concat(elem.src, ")"),
-          width: '100%',
-          height: '100%',
-          display: 'block'
+          position: 'absolute',
+          top: '0px',
+          left: '0px',
+          bottom: '0px',
+          right: '0px',
+          overflow: 'hidden'
         }
       });
       var img = (0, _utils.creatDom)({
@@ -909,20 +1085,26 @@ function () {
           src: elem.src
         },
         style: {
-          height: '100%',
-          width: '100%',
+          position: 'absolute',
+          // height: '100%',
+          // width: '100%',
           display: 'block',
-          userSelect: 'none' // pointerEvents:'none'
-
+          userSelect: 'none',
+          // pointerEvents:'none',
+          top: '0' + this.unit,
+          left: '0' + this.unit
         },
         on: {
           load: function load(event) {
             dropDom.style.height = img.height + _this2.unit;
-            dropDom.style.width = img.width + _this2.unit; // console.log(img.width,"kkk")
+            dropDom.style.width = img.width + _this2.unit;
+            img.style.height = dropDom.style.height;
+            img.style.width = dropDom.style.width; // console.log(img.width,"kkk")
           }
         }
       });
-      return img;
+      boxDom.appendChild(img);
+      return boxDom;
     }
   }, {
     key: "create",
@@ -941,6 +1123,7 @@ function () {
           transformOrigin: 'center',
           transform: 'rotate(0deg)',
           boxSizing: 'border-box',
+          // overflow:'hidden',
           zIndex: _drawData.default.id++ // writingMode:'vertical-rl'
 
         }, this.styleFramt(elem.style, elem)),
@@ -1277,7 +1460,11 @@ function () {
       var detail = parentNode.getBoundingClientRect();
       var width = parentNode.style.width;
       var height = parentNode.style.height;
-      var elemType = parentNode.dataset.elemtype; // console.log(parentNode.offsetWidth,"kkkkk")
+      var elemType = parentNode.dataset.elemtype;
+      var imgWidth = 0;
+      var imgHeight = 0;
+      var imgTop = 0;
+      var imgLeft = 0; // console.log(parentNode.offsetWidth,"kkkkk")
 
       if (elemType !== 'img') {
         // parentNode.style.minWidth = parentNode.offsetWidth+this.unit;
@@ -1285,6 +1472,13 @@ function () {
         // console.log( parentNode.offsetWidth+this.unit,"jjjkkkk",this.unit)
         height = parentNode.style.minHeight;
         width = parentNode.offsetWidth + this.unit;
+      } else {
+        var imgDom = parentNode.getElementsByTagName('img')[0]; // console.log(imgDom,"----")
+
+        imgWidth = imgDom.style.width.replace(this.unit, '');
+        imgHeight = imgDom.style.height.replace(this.unit, '');
+        imgTop = imgDom.style.top.replace(this.unit, '');
+        imgLeft = imgDom.style.left.replace(this.unit, '');
       } // console.log(parentNode.offsetWidth,"jjjj")
 
 
@@ -1305,7 +1499,11 @@ function () {
         x: left,
         y: top,
         fontSize: fontSize,
-        type: parentNode.dataset.elemtype
+        type: parentNode.dataset.elemtype,
+        imgWidth: imgWidth,
+        imgHeight: imgHeight,
+        imgLeft: imgLeft,
+        imgTop: imgTop
       };
       this.activeDom.dataset.activeDetail = JSON.stringify(elemDetail);
       this.activeDom.dataset.type = type;
@@ -1411,6 +1609,23 @@ function () {
         activeElem.style.transform = "rotate(".concat(activeDetail.angle, "deg) ");
 
         if (activeDetail.type == 'img') {
+          var zoom = (activeDetail.width / oldWidth).toFixed(3); // console.log(zoom,"kkkk")
+
+          var imgDom = activeElem.getElementsByTagName('img')[0]; // let imgWidth = imgDom.style.width.replace(this.unit,'')*zoom;
+          // let imgHeight = imgDom.style.height.replace(this.unit,'')*zoom;
+          // let imgTop = imgDom.style.top.replace(this.unit,'')*zoom;
+          // let imgLeft = imgDom.style.left.replace(this.unit,'')*zoom;
+          // console.log(imgWidth,imgHeight,imgTop,imgLeft)
+          // console.log(activeDetail)il)
+
+          if ('leftTop,rightTop,rightBottom,leftBottom'.indexOf(type) != -1) {
+            // console.log
+            imgDom.style.width = activeDetail.imgWidth * zoom + this.unit;
+            imgDom.style.height = activeDetail.imgHeight * zoom + this.unit;
+            imgDom.style.top = activeDetail.imgTop * zoom + this.unit;
+            imgDom.style.left = activeDetail.imgLeft * zoom + this.unit;
+          }
+
           activeElem.style.width = activeDetail.width + this.unit;
           activeElem.style.height = activeDetail.height + this.unit;
           activeElem.style.left = activeDetail.x + this.unit;
@@ -1760,11 +1975,10 @@ function _default() {
       display: 'inline-block'
     },
     on: {
-      change: function change(event, dom) {
-        // console.log("oooo",dom.value,event)
+      change: function change(value) {
         var activeDom = _drawData.default.getActive();
 
-        activeDom.style.textAlign = dom.value;
+        activeDom.style.textAlign = value;
       }
     },
     options: [{
@@ -1788,17 +2002,20 @@ function _default() {
     title: "",
     name: 'fontWeight',
     type: 'switch',
+    value: 'bold',
     style: {
       padding: '0px',
       margin: '0px 5px'
     },
     url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzA4NjM2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5MzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjczLjUyMjA3MTA1IDg1OS42MTQyODgzM1YxNjQuNDE4NTA0MTloMjA1LjQ5ODEyNTE5cTkyLjEzNTMwMjkgMCAxNDcuMjI2Mjg5NCA0My43MjMwMDUzdDU1LjA5MDk4NzE2IDExNS45OTcxMzI5N3EwIDU3LjQ1MjAyODktMzIuNzkyMjU0MzEgMTAxLjQzNzM3MjMydC05MC4wNDc1Mjk0NiA2Mi40MTQ1OTAxOXYxLjc5MjY0MjhxNzEuMzU1OTQ0NTkgOC4wNzc4MjU1MyAxMTQuMDI5NTk4MDggNTMuNjM3MTk2OTl0NDIuNjI5OTMwMTQgMTE1LjU3MDgzMzYxcTAgODkuNzc0MjYwNS02NC44MDg0MjQ0NCAxNDUuMTkzMTcwMTV0LTE2NS45MTc4NzQ5NCA1NS40Mjk4Mzk4MXpNMzYzLjg0Mjg2OTQ3IDI0Mi45MzQwOTA1NFY0NjAuNjA5MDcyOTVoODIuMTk5MjUwMjFxNjUuNDc1MjAwMjMgMCAxMDIuNzQ5MDYyMjUtMzEuNjQ0NTI1NjJ0MzcuMjYyOTMxMTgtODcuNzQxMTQwNTZxMC05OC4yODkzMTYyMi0xMzEuODY4NTg0MjMtOTguMjg5MzE2MjR6IG0wIDI5NS43NzUyMDAyNHYyNDIuMzM0NzU3MDFoMTA4LjM4OTMzMDE2cTcwLjg5Njg1MzM4IDAgMTA5LjUxNTE5Nzg2LTMyLjU0MDg0NjM3dDM4LjYxODM0Mzc5LTkwLjQ0MTAzNjk3cTAtMTE5LjM4NTY2NjE5LTE2My4wMzIxNTU2MS0xMTkuMzg1NjY1NTF6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIxOTQwIj48L3BhdGg+PC9zdmc+',
     on: {
-      change: function change(event, e) {
+      change: function change(e) {
         var activeDom = _drawData.default.getActive(); // console.log(event,e)
 
 
-        if (e.checked) {
+        var value = e;
+
+        if (value) {
           activeDom.style.fontWeight = 'bold';
           return;
         }
@@ -1810,17 +2027,20 @@ function _default() {
     title: "",
     name: 'fontStyle',
     type: 'switch',
+    value: 'italic',
     style: {
       padding: '0px',
       margin: '0px'
     },
     url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzM0Njc1IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyNDUiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNDQ2LjEwOTMyNzgyIDkwMi43ODg1NzQyMkgzNjkuMDAxMjQ5NzVMNTc3Ljg5MDY3MjE4IDE2MS4yMTE0MjU3OGg3Ny4xMDgwNzgwN0w0NDYuMTA5MzI3ODIgOTAyLjc4ODU3NDIyeiIgZmlsbD0iIzY2NjY2NiIgcC1pZD0iMjI0NiI+PC9wYXRoPjwvc3ZnPg==',
     on: {
-      change: function change(event, e) {
+      change: function change(e) {
         var activeDom = _drawData.default.getActive(); // console.log(event,e)
 
 
-        if (e.checked) {
+        var value = e;
+
+        if (value) {
           activeDom.style.fontStyle = 'italic';
           return;
         }
@@ -1832,17 +2052,19 @@ function _default() {
     title: "",
     name: 'textDecoration',
     type: 'switch',
+    value: 'underline',
     style: {
       padding: '0px',
       margin: '5px'
     },
     url: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYxOTg4NzI4NDA5IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwOTIiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXYtNTMuMzA4MzAzNDNsNTM0LjM5MjE3NjA4LTQuODQ5MDY1NjF2NTMuMjk3ODMwMjNMMjQ0LjgwMzkxMTk2IDkzMC4yNjMzNjgwNXpNNzUzLjc5ODcxMzc4IDUyMS40MTI3Njk2NXEwIDI3My41MDYxNTcxOS0yNDguMTA4NzgyOTEgMjczLjUwNjE1Nzk3LTIzNy43NDAzNzAyNSAwLTIzNy43NDAzNzAyNy0yNjMuOTIzMjMwNzhWMTM5LjMwMDEwODQ0aDgzLjI2MTQ5NTE0djM4Ny45MzU3Mjk2OXEwIDE5My41NzUxMjIxMSAxNjIuMzMzNzMyODggMTkzLjU3NTEyMjEgMTU2Ljk0MDA2Mzg1IDAgMTU2Ljk0MDA2Mzg2LTE4Ny4zMzMxMjgyVjEzOS4yNDc3NDMwNUg3NTMuNzk4NzEzNzh6IiBmaWxsPSIjNjY2NjY2IiBwLWlkPSIyMDkzIj48L3BhdGg+PC9zdmc+',
     on: {
-      change: function change(event, e) {
-        var activeDom = _drawData.default.getActive(); // console.log(event,e)
+      change: function change(e) {
+        var activeDom = _drawData.default.getActive();
 
+        var value = e;
 
-        if (e.checked) {
+        if (value) {
           activeDom.style.textDecoration = 'underline';
           return;
         }
@@ -1969,9 +2191,9 @@ var _default = function _default(params) {
         select.style.display = 'none';
       },
       input: function input(event, dom) {
+        event.stopPropagation();
         var value = dom.value || '';
         var arr = value ? options.filter(function (currentValue) {
-          // console.log(currentValue,"kkkkk")
           return (currentValue.value + '').indexOf(value) != -1;
         }) : options;
 
@@ -2127,13 +2349,45 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var options = [];
 
-var render = function render(options, boxDom, params) {
-  var change = params.on.change;
-  boxDom.innerHTML = '';
+var render = function render(options, boxDom, params) {// console.log("mmmmn",options)
+};
+
+var _default = function _default(params) {
+  options = [].concat(params.options);
+  var inputDom = null;
+  inputDom = (0, _utils.creatDom)({
+    tag: 'input',
+    attr: {
+      name: params.name
+    },
+    style: {
+      display: 'none'
+    },
+    on: {
+      click: function click(event, dom) {
+        event.stopPropagation();
+        var value = dom.value;
+        options.map(function (item) {
+          if (value == item.value) {
+            item.dom.style.backgroundColor = 'rgba(14,19,24,.07)';
+          } else {
+            item.dom.style.backgroundColor = '#FFF';
+          }
+        }); // params.on.change(event, dom)
+      }
+    }
+  });
+  var boxDom = (0, _utils.creatDom)({
+    tag: 'div',
+    style: {
+      display: 'inline-block'
+    }
+  });
+  boxDom.appendChild(inputDom);
   options = options.map(function (item) {
     var lableDom = (0, _utils.creatDom)({
       tag: 'label',
-      chlid: 'niho',
+      chlid: '',
       attr: {
         value: item.value
       },
@@ -2147,55 +2401,26 @@ var render = function render(options, boxDom, params) {
         display: 'inline-block',
         backgroundSize: '100%',
         backgroundPosition: 'center',
-        borderRadius: '4px'
-      }
-    });
-    var radioDom = (0, _utils.creatDom)({
-      tag: 'input',
-      attr: {
-        type: 'radio',
-        name: params.name,
-        value: item.value
+        borderRadius: '4px',
+        cursor: 'pointer'
       },
       on: {
-        change: function change(event, dom) {
-          // console.log('iiiiii')
-          for (var i = 0; i < options.length; i++) {
-            var value = options[i].dom.dataset.value;
-            console.log(options[i].dom.value);
-
-            if (value == dom.value) {
-              options[i].dom.style.backgroundColor = 'rgba(14,19,24,.07)';
+        click: function click(event, dom) {
+          var value = dom.dataset.value;
+          options.map(function (item) {
+            if (value == item.value) {
+              item.dom.style.backgroundColor = 'rgba(14,19,24,.07)';
             } else {
-              options[i].dom.style.backgroundColor = '#fff';
+              item.dom.style.backgroundColor = '#FFF';
             }
-          }
-
-          params.on.change(event, dom);
+          });
+          params.on.change(value);
         }
-      },
-      style: {
-        width: '30px',
-        height: '30px',
-        display: 'inline-block',
-        opacity: '0',
-        cursor: 'pointer'
       }
     });
-    lableDom.appendChild(radioDom);
     boxDom.appendChild(lableDom);
     item.dom = lableDom;
     return item;
-  }); // console.log("mmmmn",options)
-};
-
-var _default = function _default(params) {
-  options = [].concat(params.options);
-  var boxDom = (0, _utils.creatDom)({
-    tag: 'div',
-    style: {
-      display: 'inline-block'
-    }
   }); // new Proxy(boxDom,{
   //     set:function(target, key, value){
   //         console.log(value,"jjjjj")
@@ -2218,8 +2443,13 @@ exports.default = void 0;
 var _utils = require("../../../utils");
 
 var _default = function _default(params) {
-  var boxDom = (0, _utils.creatDom)({
+  var boxDom = null,
+      inputDom = null;
+  boxDom = (0, _utils.creatDom)({
     tag: 'div',
+    data: {
+      value: params.value
+    },
     style: {
       display: 'inline-block',
       width: '30px',
@@ -2228,35 +2458,47 @@ var _default = function _default(params) {
       backgroundSize: '80%',
       backgroundPosition: 'center',
       borderRadius: '4px',
-      backgroundRepeat: 'no-repeat'
-    }
-  });
-  var checkbox = (0, _utils.creatDom)({
-    tag: 'input',
-    attr: {
-      type: 'checkbox',
-      name: params.name
-    },
-    style: {
-      width: '30px',
-      height: '30px',
-      display: 'inline-block',
-      opacity: '0',
+      backgroundRepeat: 'no-repeat',
       cursor: 'pointer'
     },
     on: {
-      change: function change(event, dom) {
-        if (dom.checked) {
+      click: function click(event, dom) {
+        var value = dom.dataset.value;
+
+        if (value == params.value) {
+          boxDom.style.backgroundColor = '#fff';
+          dom.dataset.value = '';
+        } else {
+          boxDom.style.backgroundColor = 'rgba(14,19,24,.07)';
+          dom.dataset.value = params.value;
+        }
+
+        params.on.change(dom.dataset.value);
+      }
+    }
+  });
+  inputDom = (0, _utils.creatDom)({
+    tag: 'input',
+    attr: {
+      name: params.name
+    },
+    style: {
+      display: 'none'
+    },
+    on: {
+      click: function click(event, dom) {
+        event.stopPropagation();
+        var value = dom.value;
+
+        if (value == params.value) {
           boxDom.style.backgroundColor = 'rgba(14,19,24,.07)';
         } else {
           boxDom.style.backgroundColor = '#fff';
         }
-
-        params.on.change(event, dom);
       }
     }
   });
-  boxDom.appendChild(checkbox);
+  boxDom.appendChild(inputDom);
   return boxDom;
 };
 
@@ -2284,6 +2526,13 @@ var defaultColor = "rgb(".concat(defaultRgb.r, ",").concat(defaultRgb.g, ",").co
 var _default = function _default(params) {
   var _style, _style2;
 
+  // console.log(params,":------")
+  var hsv = {
+    h: 0,
+    s: 0,
+    v: 0
+  };
+  var _mousedown = false;
   var boxDom = null,
       showColor = null,
       selectDom = null,
@@ -2292,12 +2541,39 @@ var _default = function _default(params) {
       gradientBlack = null,
       gradientWhite = null,
       rangeDom = null,
-      hSelect = null;
+      hSelect = null,
+      inputDom = null,
+      colorPoint = null;
   boxDom = (0, _utils.creatDom)({
     tag: 'div',
     style: {
       position: 'relative',
       zIndex: 10
+    }
+  }); // console.log(params.name)
+
+  inputDom = (0, _utils.creatDom)({
+    tag: 'input',
+    style: {
+      display: 'none'
+    },
+    attr: {
+      name: params.name
+    },
+    on: {
+      click: function click(event, dom) {
+        var value = dom.value;
+        var rgbs = value.replace(/(?:\(|\)|rgb|RGB)*/g, "").split(",");
+        var hsv = (0, _utils.rgbToHsv)({
+          r: +rgbs[0],
+          g: +rgbs[1],
+          b: +rgbs[2]
+        });
+        showColor.style.background = value;
+        rangeDom.value = hsv.h / 360;
+        colorPoint.style.left = hsv.s * 268 / 100 + 'px';
+        colorPoint.style.top = 112 - hsv.v * 112 / 100 + 'px';
+      }
     }
   });
   showColor = (0, _utils.creatDom)({
@@ -2355,15 +2631,20 @@ var _default = function _default(params) {
       background: defaultColor,
       marginTop: '4px',
       borderRadius: '4px',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      cursor: 'pointer'
     },
     on: {
-      click: function click(event, e) {
+      mousedown: function mousedown(event, e) {
+        _mousedown = true;
         var svDetail = svSelevt.getBoundingClientRect();
         var saturation = 100 * (event.clientX - svDetail.left) / 268; // console.log()
 
-        var value = 100 * (svDetail.bottom - event.clientY) / 112;
-        console.log(value);
+        var value = 100 * (svDetail.bottom - event.clientY) / 112; // console.log(value)
+
+        colorPoint.style.left = event.clientX - svDetail.left + 'px';
+        colorPoint.style.top = 112 - (svDetail.bottom - event.clientY) + 'px';
+        hsv = {};
 
         var _hsvToRgb = (0, _utils.hsvToRgb)({
           h: rangeValue * 360,
@@ -2377,6 +2658,36 @@ var _default = function _default(params) {
         showColor.style.background = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")");
         params.on.change(event, "rgb(".concat(r, ",").concat(g, ",").concat(b, ")"));
         showHex.value = (0, _utils.colorHex)("rgb(".concat(r, ",").concat(g, ",").concat(b, ")"));
+      },
+      mousemove: function mousemove() {
+        if (!_mousedown) {
+          return;
+        }
+
+        var svDetail = svSelevt.getBoundingClientRect();
+        var saturation = 100 * (event.clientX - svDetail.left) / 268; // console.log()
+
+        var value = 100 * (svDetail.bottom - event.clientY) / 112; // console.log(value)
+
+        hsv = {
+          h: rangeValue * 360,
+          s: saturation,
+          v: value
+        };
+
+        var _hsvToRgb2 = (0, _utils.hsvToRgb)(hsv),
+            r = _hsvToRgb2.r,
+            g = _hsvToRgb2.g,
+            b = _hsvToRgb2.b;
+
+        colorPoint.style.left = hsv.s * 268 / 100 + 'px';
+        colorPoint.style.top = 112 - hsv.v * 112 / 100 + 'px';
+        showColor.style.background = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")");
+        params.on.change(event, "rgb(".concat(r, ",").concat(g, ",").concat(b, ")"));
+        showHex.value = (0, _utils.colorHex)("rgb(".concat(r, ",").concat(g, ",").concat(b, ")"));
+      },
+      mouseup: function mouseup() {
+        _mousedown = false;
       } // height:
 
     }
@@ -2393,7 +2704,8 @@ var _default = function _default(params) {
       top: '0',
       left: '0',
       zIndex: 1,
-      cursor: 'pointer'
+      cursor: 'pointer',
+      pointerEvents: 'none'
     }
   });
   gradientWhite = (0, _utils.creatDom)({
@@ -2406,6 +2718,21 @@ var _default = function _default(params) {
       // borderRadius:'4px',
       top: '0',
       left: '0',
+      cursor: 'pointer',
+      pointerEvents: 'none'
+    }
+  });
+  colorPoint = (0, _utils.creatDom)({
+    style: {
+      position: 'absolute',
+      borderRadius: ' 50%',
+      border: ' 3px solid #fff',
+      width: '14px',
+      height: '14px',
+      boxShadow: 'inset 0 0 0 1px rgba(14,19,24,.15)',
+      transform: 'translateX(-50%) translateY(-50%)',
+      zIndex: 10,
+      pointerEvents: 'none',
       cursor: 'pointer'
     }
   });
@@ -2430,16 +2757,21 @@ var _default = function _default(params) {
       input: function input(event, e) {
         rangeValue = e.value; // console.log(rangeValue*360,"jjjj")
 
-        var _hsvToRgb2 = (0, _utils.hsvToRgb)({
+        hsv.h = rangeValue * 360;
+
+        var _hsvToRgb3 = (0, _utils.hsvToRgb)({
           h: rangeValue * 360,
           s: 100,
           v: 100
         }),
-            r = _hsvToRgb2.r,
-            g = _hsvToRgb2.g,
-            b = _hsvToRgb2.b;
+            r = _hsvToRgb3.r,
+            g = _hsvToRgb3.g,
+            b = _hsvToRgb3.b;
 
-        svSelevt.style.background = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")"); // console.log()
+        var showColorVal = (0, _utils.hsvToRgb)(hsv);
+        svSelevt.style.background = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")");
+        showColor.style.background = "rgb(".concat(showColorVal.r, ",").concat(showColorVal.g, ",").concat(showColorVal.b, ")");
+        params.on.change(event, "rgb(".concat(showColorVal.r, ",").concat(showColorVal.g, ",").concat(showColorVal.b, ")")); // console.log()
       }
     }
   });
@@ -2454,11 +2786,13 @@ var _default = function _default(params) {
   });
   svSelevt.appendChild(gradientBlack);
   svSelevt.appendChild(gradientWhite);
+  svSelevt.appendChild(colorPoint);
   hSelect.appendChild(rangeDom);
   selectDom.appendChild(hSelect);
   selectDom.appendChild(svSelevt);
   boxDom.appendChild(showColor);
-  boxDom.appendChild(selectDom); // selectDom.appendChild(showHex)
+  boxDom.appendChild(selectDom);
+  boxDom.appendChild(inputDom); // selectDom.appendChild(showHex)
 
   return boxDom;
 };
@@ -6471,8 +6805,8 @@ function () {
           top: '0px',
           left: '0px',
           right: '0px',
-          bottom: '0px' // display: 'none'
-
+          bottom: '0px',
+          display: 'none'
         }
       });
       this.contentBoxDom = (0, _utils.creatDom)({
@@ -6884,13 +7218,28 @@ function () {
     var _drawData$getParams = _drawData.default.getParams(),
         detail = _drawData$getParams.detail;
 
+    this.unit = null;
     this.canvas = detail;
     this.upFile = null;
     this.img = null;
 
     _drawData.default.pubsub.sub('imgChange', function (name, data) {
-      console.log("00000000", name, data);
-      _this.img.src = data.src;
+      var active = _drawData.default.getActive();
+
+      _this.unit = _drawData.default.getParams().unit;
+
+      if (active) {
+        var imgDom = active.getElementsByTagName('img')[0]; // console.log()
+        // imgDom.style.width = data.width + this.unit;
+        // imgDom.style.height = data.height + this.unit;
+
+        imgDom.style.top = -data.y + _this.unit;
+        imgDom.style.left = -data.x + _this.unit;
+        active.style.height = data.height + _this.unit;
+        active.style.width = data.width + _this.unit; // console.log(active,this.unit)
+
+        _this.img.src = data.src;
+      }
     });
   }
 
@@ -6935,8 +7284,8 @@ function () {
           margin: '0 -300px 0 0',
           right: '-5px',
           bottom: '0px',
-          top: '0px' // display: 'none'
-
+          top: '0px',
+          display: 'none'
         }
       }); // 获取 img detail dom 
 
@@ -7084,16 +7433,13 @@ var _drawData = _interopRequireDefault(require("../draw-data"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _default = function _default() {
-  document.onkeydown = function (e) {
-    var getActive = _drawData.default.getActive,
-        setActive = _drawData.default.setActive;
-    var active = getActive();
-
-    if (event.keyCode == 8 && active) {
-      active.parentNode.removeChild(active);
-      setActive(null);
-    } // console.log( event.keyCode,"kkkkk")
-
+  document.onkeydown = function (e) {// const {getActive,setActive} = drawData;
+    // let active = getActive();
+    // if(event.keyCode == 8 && active){
+    //     active.parentNode.removeChild(active);
+    //     setActive(null);
+    // }
+    // console.log( event.keyCode,"kkkkk")
   };
 };
 
@@ -7289,7 +7635,11 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+<<<<<<< HEAD
   var ws = new WebSocket(protocol + '://' + hostname + ':' + "57708" + '/');
+=======
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50096" + '/');
+>>>>>>> 7d95ef6bc22b337a783ef45c56beb1da9b06770e
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -11,6 +11,8 @@ class drop {
     this.type == 'text';
     this.isAngleClick = false;
     this.activeElemClick = null
+ 
+  
   }
   activeHighlight(type){
     let activeDom = drawData.getActive()
@@ -30,6 +32,13 @@ class drop {
     }
   }
   init(canvas, params, unit, activeElemClick) {
+    drawData.pubsub.sub('imgChange',(name,data)=>{
+      if(this.activeDom){
+        this.activeDom.getElementsByTagName('img')[0];
+        img.src = data.src;
+      }
+  
+    })
     this.canvas = canvas;
     this.unit = unit;
     this.canvasDetail = this.canvas.getBoundingClientRect();
@@ -84,34 +93,42 @@ class drop {
     return Object.assign({}, newStyle);
   }
   creatImg(elem, dropDom) {
-    let dom = creatDom({
-      tag: 'div',
-      style: {
-        backgroundImage: `url(${elem.src})`,
-        width: '100%',
-        height: '100%',
-        display: 'block'
-      },
+    let boxDom = creatDom({
+      tag:'div',
+      style:{
+        position:'absolute',
+        top:'0px',
+        left:'0px',
+        bottom:'0px',
+        right:'0px',
+        overflow:'hidden'
+      }
     })
     let img = creatDom({
       tag: 'img',
       attr: { src: elem.src },
       style: {
-        height: '100%',
-        width: '100%',
+        position:'absolute',
+        // height: '100%',
+        // width: '100%',
         display: 'block',
         userSelect: 'none',
-        // pointerEvents:'none'
+        // pointerEvents:'none',
+        top:'0'+this.unit,
+        left:'0'+this.unit
       },
       on: {
         load: (event) => {
           dropDom.style.height = img.height + this.unit;
           dropDom.style.width = img.width + this.unit;
+          img.style.height =  dropDom.style.height;
+          img.style.width =  dropDom.style.width;
           // console.log(img.width,"kkk")
         }
       }
     })
-    return img
+    boxDom.appendChild(img)
+    return boxDom;
   }
   create(elem, canvas) {
     let that = this;
@@ -125,6 +142,7 @@ class drop {
         transformOrigin: 'center',
         transform: 'rotate(0deg)',
         boxSizing: 'border-box',
+        // overflow:'hidden',
         zIndex:drawData.id++
         // writingMode:'vertical-rl'
       }, this.styleFramt(elem.style, elem)),
@@ -139,13 +157,16 @@ class drop {
       },
       on: {
         mousedown: (event,dom) => {
+      
           event.stopPropagation()
           this.activeHighlight('none');
           drawData.setActive(dom);
           this.activeHighlight('block');
           let {src} = drawData.getImgDetail()
+         
           drawData.getImgDetailDom().src = src;
           const elemtype = dom.dataset.elemtype;
+         
           this.onmousedown(event, dropDom, this.canvas)
           if(elemtype == 'img'){
             drawData.getDetail().style.display='none';
@@ -154,6 +175,8 @@ class drop {
             drawData.getDetail().style.display='block';
             drawData.getImg().style.display='none';
           }
+          
+
           drawData.setForm();
           if (this.elemClick) {
             this.elemClick(dropDom)
@@ -360,6 +383,10 @@ class drop {
     let width = parentNode.style.width;
     let height = parentNode.style.height;
     let elemType = parentNode.dataset.elemtype;
+    let imgWidth = 0;
+    let imgHeight = 0;
+    let imgTop = 0;
+    let imgLeft = 0;
     // console.log(parentNode.offsetWidth,"kkkkk")
      
       
@@ -367,8 +394,16 @@ class drop {
       // parentNode.style.minWidth = parentNode.offsetWidth+this.unit;
       // parentNode.style.minHeight = parentNode.offsetHeight+this.unit;
       // console.log( parentNode.offsetWidth+this.unit,"jjjkkkk",this.unit)
+     
       height = parentNode.style.minHeight;
       width =  parentNode.offsetWidth+this.unit;
+    }else{
+      let imgDom = parentNode.getElementsByTagName('img')[0]
+      // console.log(imgDom,"----")
+      imgWidth = imgDom.style.width.replace(this.unit, '');
+      imgHeight = imgDom.style.height.replace(this.unit, '');
+      imgTop = imgDom.style.top.replace(this.unit, '');
+      imgLeft = imgDom.style.left.replace(this.unit, '');
     }
     // console.log(parentNode.offsetWidth,"jjjj")
    
@@ -390,7 +425,11 @@ class drop {
       x: left,
       y: top,
       fontSize:fontSize,
-      type:parentNode.dataset.elemtype
+      type:parentNode.dataset.elemtype,
+      imgWidth,
+      imgHeight,
+      imgLeft,
+      imgTop
     }
     this.activeDom.dataset.activeDetail = JSON.stringify(elemDetail);
     this.activeDom.dataset.type = type;
@@ -481,6 +520,23 @@ class drop {
       activeElem.style.transform = `rotate(${activeDetail.angle}deg) `;
  
       if(activeDetail.type == 'img'){
+        let zoom = (activeDetail.width/oldWidth).toFixed(3);
+        // console.log(zoom,"kkkk")
+        let imgDom = activeElem.getElementsByTagName('img')[0];
+        // let imgWidth = imgDom.style.width.replace(this.unit,'')*zoom;
+        // let imgHeight = imgDom.style.height.replace(this.unit,'')*zoom;
+        // let imgTop = imgDom.style.top.replace(this.unit,'')*zoom;
+        // let imgLeft = imgDom.style.left.replace(this.unit,'')*zoom;
+        // console.log(imgWidth,imgHeight,imgTop,imgLeft)
+        // console.log(activeDetail)il)
+        if('leftTop,rightTop,rightBottom,leftBottom'.indexOf(type)!=-1){
+          // console.log
+          imgDom.style.width = activeDetail.imgWidth *zoom + this.unit;
+          imgDom.style.height = activeDetail.imgHeight *zoom + this.unit;
+          imgDom.style.top =activeDetail.imgTop * zoom +this.unit;
+          imgDom.style.left =activeDetail.imgLeft * zoom+this.unit;
+        }
+       
         activeElem.style.width = activeDetail.width+this.unit;
         activeElem.style.height = activeDetail.height+this.unit;
         activeElem.style.left = activeDetail.x+this.unit;
@@ -511,3 +567,5 @@ class drop {
 
 }
 export default new drop();
+
+
