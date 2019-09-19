@@ -14,7 +14,8 @@
     "dev:dragger": "parcel serve src/dragger.html --no-cache  --port 80",
     "dev:map": "parcel serve src/map.html --no-cache  --port 80",
     "dev:font-load": "parcel serve src/font-load.html --no-cache  --port 80",
-    "build": " parcel build src/index.html --no-cache"
+    "build": " parcel build src/index.html --no-cache",
+    "dev:tex": "node ./node/index.js"
   },
   "devDependencies": {
     "less": "^3.9.0",
