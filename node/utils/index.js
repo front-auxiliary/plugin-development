@@ -1,7 +1,6 @@
 
 class Parser {
   constructor() {
-
     this.stream = null;
   }
   init(stream) {
@@ -14,7 +13,7 @@ class Parser {
     return this;
   }
   then(callback) {
-
+    callback(this)
     return this;
   }
   includegraphicsFormat(attrStr){
@@ -40,22 +39,24 @@ class Parser {
     return {...attrObj};
   }
   // \documentclass
-  delhander (str){
-    let docReg = /\\documentclass(\[(.*?)\])*\{(.*?)\}/g
-    let begnReg = /\\begin\{(.*?)\}/g
-    let endReg = /\\end\{(.*?)\}/g
-    let usepackageReg = /\\usepackage(\[(.*?)\])*\{(.*?)\}/g
-    // console.log('----',str)
-    str = str.replace(docReg,(a)=>{
-      console.log(a,"ppp");
-      return a
-    })
+  delhander (cmd,callback){
+    const reg = RegExp(cmd+'(\\[(.*?)\\])*\\{(.*?)\\}','g')
+    this.stream = this.stream.replace(reg,callback)
+    return this;
+
   }
 
   imgFormat(){
     // \includegraphics[width=71.69045005488475mm]{/home/lsk/Desktop/Gaosi/formula_19_0212/data/test111/122/旧/6_0_img/572_77_883_319.jpg}
-    const imgReg = /\\includegraphics\[(.*?)\]\{(.*?)\}/g
-    this.delhander(this.stream )
+    // const imgReg = /\\includegraphics\[(.*?)\]\{(.*?)\}/g
+    this.delhander('\documentclass' ,(str)=>{
+      console.log(str)
+      return str;
+    })
+    // this.delhander(this.stream,'begin' )
+    // this.delhander(this.stream,'end' )
+    // this.delhander(this.stream,'usepackage' )
+    // this.delhander(this.stream,'includegraphics' )
     return ;
     this.stream = this.stream.replace(imgReg,(str)=>{
       // console.log( this.includegraphicsFormat(str))

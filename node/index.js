@@ -5,5 +5,5 @@ const fileContent = fs.readFileSync(path.join(__dirname,'./resources/6.tex'),{en
 const parser = new Parser();
 parser.init(fileContent);
 parser.imgFormat();
-console.log(parser.getHtml())
+parser.getHtml()
 
